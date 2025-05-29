@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/Nursingproject/static/css/main.503d4dc2.css",
+    "main.js": "/Nursingproject/static/js/main.e8d374ae.js",
+    "static/media/005A0097.JPG": "/Nursingproject/static/media/005A0097.a47434ba4c0dcb0ed68e.JPG",
+    "static/media/005A0006.JPG": "/Nursingproject/static/media/005A0006.8e13c2e58a097c5b0fb6.JPG",
+    "static/media/005A0024.JPG": "/Nursingproject/static/media/005A0024.b71044cebcaf85bbf0fe.JPG",
+    "static/media/005A0041.JPG": "/Nursingproject/static/media/005A0041.57ce702529033031fe49.JPG",
+    "index.html": "/Nursingproject/index.html",
+    "main.503d4dc2.css.map": "/Nursingproject/static/css/main.503d4dc2.css.map",
+    "main.e8d374ae.js.map": "/Nursingproject/static/js/main.e8d374ae.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.503d4dc2.css",
+    "static/js/main.e8d374ae.js"
+  ]
+}
