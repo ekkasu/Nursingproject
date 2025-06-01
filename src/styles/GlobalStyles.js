@@ -1,22 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyles = createGlobalStyle`
-  :root {
-    --primary-color: #1a8f4c;
-    --primary-dark: #156e3a;
-    --text-color: #333333;
-    --text-light: #666666;
-    --background-light: #f8f9fa;
-    --white: #ffffff;
-    --spacing-xs: 0.5rem;
-    --spacing-sm: 1rem;
-    --spacing-md: 2rem;
-    --spacing-lg: 4rem;
-    --spacing-xl: 8rem;
-    --container-width: 1200px;
-    --border-radius: 8px;
-  }
-
   * {
     margin: 0;
     padding: 0;
@@ -24,36 +8,59 @@ const GlobalStyles = createGlobalStyle`
   }
 
   body {
-    font-family: 'Poppins', sans-serif;
-    line-height: 1.6;
-    color: var(--text-color);
-    background-color: var(--background-light);
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: #ffffff;
+    color: #333333;
+    line-height: 1.5;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    line-height: 1.2;
-    margin-bottom: var(--spacing-sm);
-    font-weight: 600;
+  #root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
 
-  p {
-    margin-bottom: var(--spacing-sm);
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
   }
 
   img {
     max-width: 100%;
     height: auto;
-    display: block;
   }
 
-  section {
-    padding: var(--spacing-xl) 0;
+  /* Add Playfair Display font for headings */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
   }
 
-  .container {
-    max-width: var(--container-width);
-    margin: 0 auto;
-    padding: 0 var(--spacing-sm);
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Remove outline for mouse users, keep it for keyboard navigation */
+  *:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  *:focus-visible {
+    outline: 2px solid #1a8f4c;
+    outline-offset: 2px;
   }
 `;
 

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="600" height="600" viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Elements -->
+  <circle cx="300" cy="300" r="250" fill="#E8F5E9" opacity="0.3"/>
+  
+  <!-- Nurse Figure -->
+  <g transform="translate(150, 100)">
+    <!-- Scrubs -->
+    <path d="M150 200 L250 200 C270 200 280 220 280 240 L280 400 L120 400 L120 240 C120 220 130 200 150 200Z" fill="#FFFFFF"/>
+    <path d="M150 200 L250 200 C270 200 280 220 280 240 L280 400 L120 400 L120 240 C120 220 130 200 150 200Z" fill="#E8F5E9" opacity="0.5"/>
+    
+    <!-- Head -->
+    <circle cx="200" cy="150" r="50" fill="#FFE0B2"/>
+    
+    <!-- Hair -->
+    <path d="M150 150 C150 120 170 100 200 100 C230 100 250 120 250 150" fill="#4A4A4A"/>
+    
+    <!-- Face -->
+    <circle cx="180" cy="140" r="5" fill="#4A4A4A"/> <!-- Left Eye -->
+    <circle cx="220" cy="140" r="5" fill="#4A4A4A"/> <!-- Right Eye -->
+    <path d="M190 160 Q200 170 210 160" stroke="#4A4A4A" stroke-width="3" fill="none"/> <!-- Smile -->
+    
+    <!-- Nurse Cap -->
+    <path d="M150 120 L250 120 L250 100 L150 100Z" fill="#FFFFFF"/>
+    <path d="M180 100 L220 100 L220 90 L180 90Z" fill="#1a8f4c"/>
+    
+    <!-- Stethoscope -->
+    <path d="M180 220 C160 240 160 260 180 280" stroke="#1a8f4c" stroke-width="4" fill="none"/>
+    <circle cx="180" cy="280" r="8" fill="#1a8f4c"/>
+    
+    <!-- Name Tag -->
+    <rect x="200" y="240" width="40" height="20" rx="5" fill="#1a8f4c"/>
+    
+    <!-- Pockets -->
+    <rect x="140" y="300" width="60" height="40" rx="10" fill="#E8F5E9"/>
+    <rect x="220" y="300" width="60" height="40" rx="10" fill="#E8F5E9"/>
+  </g>
+  
+  <!-- Medical Symbols -->
+  <g transform="translate(400, 150)">
+    <path d="M0 20 L40 20 M20 0 L20 40" stroke="#1a8f4c" stroke-width="4"/>
+  </g>
+  <g transform="translate(100, 350)">
+    <path d="M0 20 L40 20 M20 0 L20 40" stroke="#1a8f4c" stroke-width="4"/>
+  </g>
+</svg> 
