@@ -294,14 +294,14 @@ const Header = () => {
           <NavLink to="/contact">Contact</NavLink>
           <MobileActionButtons>
             <LoginButton to="/login">Login</LoginButton>
-            <RegisterButton to="/registration">Register Now</RegisterButton>
+            <RegisterButton to="/tickets">Register Now</RegisterButton>
           </MobileActionButtons>
         </NavLinks>
 
         <ActionButtons>
           <LoginButton to="/login">Login</LoginButton>
           <ButtonSeparator />
-          <RegisterButton to="/registration">Register Now</RegisterButton>
+          <RegisterButton to="/tickets">Register Now</RegisterButton>
         </ActionButtons>
 
         <MenuButton onClick={toggleMenu} isOpen={isMenuOpen}>

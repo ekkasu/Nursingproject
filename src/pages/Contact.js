@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Header from '../components/Header';
+import { validateEmail, validatePhone, formatPhoneNumber } from '../utils/validation';
 
 const ContactContainer = styled.div`
   min-height: 100vh;
@@ -162,10 +163,67 @@ const SubmitButton = styled.button`
   }
 `;
 
+const ErrorText = styled.div`
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 5px;
+`;
+
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    fullName: '',
+    company: '',
+    email: '',
+    emailError: '',
+    phone: '',
+    phoneError: '',
+    address: '',
+    message: ''
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === 'phone') {
+      // Format phone number
+      const formattedPhone = formatPhoneNumber(value);
+      const isValid = validatePhone(formattedPhone);
+      
+      setFormData({
+        ...formData,
+        phone: formattedPhone,
+        phoneError: !isValid && formattedPhone.length > 0 
+          ? 'Please enter a valid 10-digit phone number' 
+          : ''
+      });
+    } else if (name === 'email') {
+      // Validate email
+      const isValid = validateEmail(value);
+      setFormData({
+        ...formData,
+        email: value,
+        emailError: !isValid && value.length > 0 
+          ? 'Please enter a valid email from a popular provider' 
+          : ''
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Validate form before submission
+    if (!validateEmail(formData.email) || !validatePhone(formData.phone)) {
+      return;
+    }
+    
     // Handle form submission
+    console.log('Form submitted:', formData);
   };
 
   return (
@@ -197,25 +255,76 @@ const Contact = () => {
             <form onSubmit={handleSubmit}>
               <FormGrid>
                 <FormGroup>
-                  <Input type="text" placeholder="Full Name" required />
+                  <Input 
+                    type="text"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleInputChange}
+                    placeholder="Full Name"
+                    required 
+                  />
                 </FormGroup>
                 <FormGroup>
-                  <Input type="text" placeholder="Company" />
+                  <Input 
+                    type="text"
+                    name="company"
+                    value={formData.company}
+                    onChange={handleInputChange}
+                    placeholder="Company" 
+                  />
                 </FormGroup>
                 <FormGroup>
-                  <Input type="email" placeholder="Email" required />
+                  <Input 
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="Email"
+                    required 
+                  />
+                  {formData.emailError && (
+                    <ErrorText>{formData.emailError}</ErrorText>
+                  )}
                 </FormGroup>
                 <FormGroup>
-                  <Input type="tel" placeholder="Phone number" required />
+                  <Input 
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    placeholder="Phone number (10 digits)"
+                    required
+                    pattern="[0-9]{10}"
+                  />
+                  {formData.phoneError && (
+                    <ErrorText>{formData.phoneError}</ErrorText>
+                  )}
                 </FormGroup>
               </FormGrid>
               <FormGroup>
-                <Input type="text" placeholder="Address" />
+                <Input 
+                  type="text"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  placeholder="Address" 
+                />
               </FormGroup>
               <FormGroup>
-                <TextArea placeholder="Your Message" required />
+                <TextArea 
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  placeholder="Your Message"
+                  required 
+                />
               </FormGroup>
-              <SubmitButton type="submit">Send Message</SubmitButton>
+              <SubmitButton 
+                type="submit"
+                disabled={!validateEmail(formData.email) || !validatePhone(formData.phone)}
+              >
+                Send Message
+              </SubmitButton>
             </form>
           </FormContainer>
         </ContactContent>

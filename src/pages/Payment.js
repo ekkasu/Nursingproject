@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { motion } from 'framer-motion';
+import { validatePhone, formatPhoneNumber } from '../utils/validation';
 
 const PaymentContainer = styled.div`
   min-height: 100vh;
@@ -134,12 +135,21 @@ const Button = styled.button`
   }
 `;
 
+const ErrorText = styled.div`
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 5px;
+`;
+
 const Payment = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const ticket = location.state?.ticket;
   const [selectedMethod, setSelectedMethod] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [formData, setFormData] = useState({
+    phone: '',
+    phoneError: ''
+  });
 
   // Redirect if no ticket is selected
   if (!ticket) {
@@ -147,10 +157,29 @@ const Payment = () => {
     return null;
   }
 
+  const handlePhoneChange = (e) => {
+    const { value } = e.target;
+    const formattedPhone = formatPhoneNumber(value);
+    const isValid = validatePhone(formattedPhone);
+    
+    setFormData({
+      phone: formattedPhone,
+      phoneError: !isValid && formattedPhone.length > 0 
+        ? 'Please enter a valid 10-digit mobile money number' 
+        : ''
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Validate phone number before submission
+    if (!validatePhone(formData.phone)) {
+      return;
+    }
+    
     // Handle payment submission
-    console.log('Payment submitted:', { selectedMethod, phoneNumber });
+    console.log('Payment submitted:', { selectedMethod, phone: formData.phone });
     navigate('/registration');
   };
 
@@ -206,16 +235,23 @@ const Payment = () => {
             {selectedMethod && (
               <PaymentForm onSubmit={handleSubmit}>
                 <FormGroup>
-                  <Label>Phone Number</Label>
+                  <Label>Mobile Money Number * (10 digits)</Label>
                   <Input
                     type="tel"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    value={formData.phone}
+                    onChange={handlePhoneChange}
                     placeholder="Enter your mobile money number"
                     required
+                    pattern="[0-9]{10}"
                   />
+                  {formData.phoneError && (
+                    <ErrorText>{formData.phoneError}</ErrorText>
+                  )}
                 </FormGroup>
-                <Button type="submit">
+                <Button 
+                  type="submit"
+                  disabled={!validatePhone(formData.phone)}
+                >
                   Proceed to Payment
                 </Button>
               </PaymentForm>

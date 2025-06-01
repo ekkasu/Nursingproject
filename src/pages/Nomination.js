@@ -245,34 +245,159 @@ const ErrorText = styled.div`
   margin-top: 5px;
 `;
 
+// Add new styled components for requirements section
+const RequirementsSection = styled.div`
+  background: white;
+  border-radius: 10px;
+  padding: 40px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
+`;
+
+const RequirementsTitle = styled.h2`
+  font-size: 1.8rem;
+  color: #1a8f4c;
+  margin-bottom: 25px;
+  text-align: center;
+  font-weight: 600;
+`;
+
+const RequirementsList = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+`;
+
+const RequirementCard = styled.div`
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5ee 100%);
+  padding: 25px;
+  border-radius: 8px;
+  border: 1px solid rgba(26, 143, 76, 0.1);
+
+  h3 {
+    color: #1a8f4c;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  p {
+    color: #4a5568;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+`;
+
+// Add new styled components for file upload
+const FileUploadContainer = styled.div`
+  border: 2px dashed #1a8f4c;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(26, 143, 76, 0.05);
+  }
+`;
+
+const FileInput = styled.input`
+  display: none;
+`;
+
+const UploadIcon = styled.div`
+  font-size: 2rem;
+  color: #1a8f4c;
+  margin-bottom: 10px;
+`;
+
+const UploadText = styled.p`
+  color: #4a5568;
+  font-size: 0.9rem;
+  margin: 5px 0;
+`;
+
+const FileName = styled.div`
+  color: #1a8f4c;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  font-weight: 600;
+`;
+
 const Nomination = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
-    // Nominator Information
+    // Nominator's Details
     nominatorName: '',
     nominatorEmail: '',
     nominatorPhone: '',
+    nominatorOrganization: '',
     relationship: '',
     
-    // Nominee Information
+    // Nominee's Details
     nomineeName: '',
-    nomineeTitle: '',
-    nomineeOrganization: '',
     nomineeEmail: '',
     nomineePhone: '',
+    nomineeTitle: '',
+    nomineeOrganization: '',
+    nomineeYearsExperience: '',
+    nomineeYearsExperienceError: '',
+    nomineeQualifications: '',
+    
+    // Files
+    passportPicture: null,
+    cv: null,
     
     // Nomination Details
     awardCategory: '',
     reasonForNomination: '',
-    achievements: '',
+    professionalAchievements: '',
     impactDescription: '',
-    supportingDocuments: '',
+    contributionToNursing: '',
     
     // Confirmation
     agreeTerms: false,
-    agreePrivacy: false
+    agreePrivacy: false,
+    nominatorEmailError: '',
+    nomineeEmailError: '',
+    nominatorPhoneError: '',
+    nomineePhoneError: '',
   });
   
+  // Add validation for popular email domains
+  const validateEmail = (email) => {
+    const popularDomains = [
+      'gmail.com',
+      'yahoo.com',
+      'hotmail.com',
+      'outlook.com',
+      'aol.com',
+      'icloud.com',
+      'protonmail.com',
+      'zoho.com',
+      'mail.com'
+    ];
+    
+    // Basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return false;
+    
+    // Check if domain is in popular domains list
+    const domain = email.split('@')[1].toLowerCase();
+    return popularDomains.includes(domain);
+  };
+
+  // Add validation for phone number (10 digits)
+  const validatePhone = (phone) => {
+    const phoneRegex = /^\d{10}$/;
+    return phoneRegex.test(phone.replace(/\D/g, ''));
+  };
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     
@@ -280,6 +405,34 @@ const Nomination = () => {
       setFormData({
         ...formData,
         [name]: checked
+      });
+    } else if (name.includes('Phone')) {
+      // Only allow numbers and limit to 10 digits
+      const numbersOnly = value.replace(/\D/g, '').slice(0, 10);
+      setFormData({
+        ...formData,
+        [name]: numbersOnly
+      });
+    } else if (name.includes('Email')) {
+      setFormData({
+        ...formData,
+        [name]: value,
+        [`${name}Error`]: !validateEmail(value) ? 'Please enter a valid email from a popular provider' : ''
+      });
+    } else if (name === 'nomineeYearsExperience') {
+      // Only allow digits and validate range
+      const numbersOnly = value.replace(/\D/g, '');
+      const numberValue = parseInt(numbersOnly, 10);
+      let error = '';
+      
+      if (numbersOnly.length > 0 && (numberValue < 0 || numberValue > 50)) {
+        error = 'Years of experience must be between 0 and 50';
+      }
+
+      setFormData({
+        ...formData,
+        nomineeYearsExperience: numbersOnly,
+        nomineeYearsExperienceError: error
       });
     } else {
       setFormData({
@@ -305,23 +458,78 @@ const Nomination = () => {
     nextStep();
   };
   
-  // Validation for each step
+  // Update validation functions
   const validateStep1 = () => {
-    return formData.nominatorName && formData.nominatorEmail && formData.relationship;
+    return (
+      formData.nominatorName &&
+      formData.nominatorEmail &&
+      validateEmail(formData.nominatorEmail) &&
+      formData.nominatorPhone &&
+      validatePhone(formData.nominatorPhone) &&
+      formData.relationship
+    );
   };
   
   const validateStep2 = () => {
-    return formData.nomineeName && formData.nomineeTitle && formData.nomineeOrganization;
+    return (
+      formData.nomineeName &&
+      formData.nomineeEmail &&
+      validateEmail(formData.nomineeEmail) &&
+      formData.nomineePhone &&
+      validatePhone(formData.nomineePhone) &&
+      formData.nomineeTitle &&
+      formData.nomineeOrganization &&
+      formData.nomineeYearsExperience &&
+      !formData.nomineeYearsExperienceError
+    );
   };
   
   const validateStep3 = () => {
-    return formData.awardCategory && formData.reasonForNomination && formData.achievements;
+    return formData.awardCategory && formData.reasonForNomination && formData.professionalAchievements;
   };
   
   const validateStep4 = () => {
     return formData.agreeTerms && formData.agreePrivacy;
   };
   
+  const requirements = [
+    {
+      title: "Nominee's Details",
+      description: "Complete personal and professional information about the nominee, including full name, title, and contact information.",
+      icon: "👤"
+    },
+    {
+      title: "Nominee's Passport Picture",
+      description: "A recent passport-sized photograph of the nominee in high resolution (taken within the last 6 months).",
+      icon: "📸"
+    },
+    {
+      title: "Nominee's CV",
+      description: "An up-to-date curriculum vitae highlighting the nominee's professional experience, achievements, and qualifications.",
+      icon: "📄"
+    },
+    {
+      title: "Reasons for Nomination",
+      description: "Detailed explanation of why the nominee deserves recognition, including specific examples of their contributions and impact.",
+      icon: "🏆"
+    },
+    {
+      title: "Nominator's Details",
+      description: "Your complete contact information and relationship to the nominee for verification purposes.",
+      icon: "✍️"
+    }
+  ];
+
+  const handleFileChange = (e, type) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({
+        ...formData,
+        [type]: file
+      });
+    }
+  };
+
   return (
     <>
       <Header />
@@ -331,36 +539,40 @@ const Nomination = () => {
           <PageDescription>
             Recognize excellence in healthcare by nominating an outstanding professional for our annual awards. Your nomination helps highlight the incredible work being done in the nursing and healthcare community.
           </PageDescription>
-          
+
+          {/* Requirements Section */}
+          <RequirementsSection>
+            <RequirementsTitle>Nomination Requirements</RequirementsTitle>
+            <p style={{ textAlign: 'center', color: '#4a5568', marginBottom: '20px' }}>
+              Please ensure you have all the following information ready before proceeding with your nomination:
+            </p>
+            <RequirementsList>
+              {requirements.map((req, index) => (
+                <RequirementCard key={index}>
+                  <h3>{req.icon} {req.title}</h3>
+                  <p>{req.description}</p>
+                </RequirementCard>
+              ))}
+            </RequirementsList>
+          </RequirementsSection>
+
           <FormContainer>
-            {currentStep <= 5 && (
-              <StepIndicator>
-                <Step active={currentStep === 1} completed={currentStep > 1} label="Nominator">
-                  1
-                </Step>
-                <Step active={currentStep === 2} completed={currentStep > 2} label="Nominee">
-                  2
-                </Step>
-                <Step active={currentStep === 3} completed={currentStep > 3} label="Details">
-                  3
-                </Step>
-                <Step active={currentStep === 4} completed={currentStep > 4} label="Supporting">
-                  4
-                </Step>
-                <Step active={currentStep === 5} completed={currentStep > 5} label="Confirm">
-                  5
-                </Step>
-              </StepIndicator>
-            )}
+            <StepIndicator>
+              <Step active={currentStep === 1} completed={currentStep > 1} label="Nominator">1</Step>
+              <Step active={currentStep === 2} completed={currentStep > 2} label="Nominee">2</Step>
+              <Step active={currentStep === 3} completed={currentStep > 3} label="Documents">3</Step>
+              <Step active={currentStep === 4} completed={currentStep > 4} label="Reasons">4</Step>
+              <Step active={currentStep === 5} completed={currentStep > 5} label="Confirm">5</Step>
+            </StepIndicator>
             
             <form onSubmit={handleSubmit}>
-              {/* Step 1: Nominator Information */}
+              {/* Step 1: Nominator's Details */}
               <StepContent active={currentStep === 1}>
-                <h2>Nominator Information</h2>
-                <p>Please provide your contact details as the person submitting this nomination.</p>
+                <h2>Nominator's Details</h2>
+                <p>Please provide your information as the person submitting this nomination.</p>
                 
                 <FormGroup>
-                  <Label htmlFor="nominatorName">Your Full Name *</Label>
+                  <Label htmlFor="nominatorName">Full Name *</Label>
                   <Input 
                     type="text" 
                     id="nominatorName" 
@@ -372,7 +584,7 @@ const Nomination = () => {
                 </FormGroup>
                 
                 <FormGroup>
-                  <Label htmlFor="nominatorEmail">Your Email Address *</Label>
+                  <Label htmlFor="nominatorEmail">Email Address *</Label>
                   <Input 
                     type="email" 
                     id="nominatorEmail" 
@@ -381,21 +593,42 @@ const Nomination = () => {
                     onChange={handleInputChange}
                     required
                   />
+                  {formData.nominatorEmailError && (
+                    <ErrorText>{formData.nominatorEmailError}</ErrorText>
+                  )}
                 </FormGroup>
                 
                 <FormGroup>
-                  <Label htmlFor="nominatorPhone">Your Phone Number</Label>
+                  <Label htmlFor="nominatorPhone">Phone Number * (10 digits)</Label>
                   <Input 
                     type="tel" 
                     id="nominatorPhone" 
                     name="nominatorPhone" 
                     value={formData.nominatorPhone}
                     onChange={handleInputChange}
+                    required
+                    placeholder="Enter 10 digit number"
+                    pattern="[0-9]{10}"
+                  />
+                  {!validatePhone(formData.nominatorPhone) && formData.nominatorPhone && (
+                    <ErrorText>Please enter a valid 10-digit phone number</ErrorText>
+                  )}
+                </FormGroup>
+                
+                <FormGroup>
+                  <Label htmlFor="nominatorOrganization">Organization/Institution *</Label>
+                  <Input 
+                    type="text" 
+                    id="nominatorOrganization" 
+                    name="nominatorOrganization" 
+                    value={formData.nominatorOrganization}
+                    onChange={handleInputChange}
+                    required
                   />
                 </FormGroup>
                 
                 <FormGroup>
-                  <Label htmlFor="relationship">Your Relationship to Nominee *</Label>
+                  <Label htmlFor="relationship">Relationship to Nominee *</Label>
                   <Select 
                     id="relationship" 
                     name="relationship" 
@@ -414,20 +647,18 @@ const Nomination = () => {
                 </FormGroup>
                 
                 <ButtonGroup>
-                  <div></div> {/* Empty div for spacing */}
-                  <Button type="button" onClick={nextStep} disabled={!validateStep1()}>
-                    Next Step
-                  </Button>
+                  <div></div>
+                  <Button type="button" onClick={nextStep}>Next Step</Button>
                 </ButtonGroup>
               </StepContent>
               
-              {/* Step 2: Nominee Information */}
+              {/* Step 2: Nominee's Details */}
               <StepContent active={currentStep === 2}>
-                <h2>Nominee Information</h2>
-                <p>Please provide details about the healthcare professional you are nominating.</p>
+                <h2>Nominee's Details</h2>
+                <p>Please provide comprehensive information about the healthcare professional you are nominating.</p>
                 
                 <FormGroup>
-                  <Label htmlFor="nomineeName">Nominee's Full Name *</Label>
+                  <Label htmlFor="nomineeName">Full Name *</Label>
                   <Input 
                     type="text" 
                     id="nomineeName" 
@@ -439,7 +670,7 @@ const Nomination = () => {
                 </FormGroup>
                 
                 <FormGroup>
-                  <Label htmlFor="nomineeTitle">Nominee's Title/Position *</Label>
+                  <Label htmlFor="nomineeTitle">Professional Title/Position *</Label>
                   <Input 
                     type="text" 
                     id="nomineeTitle" 
@@ -451,7 +682,7 @@ const Nomination = () => {
                 </FormGroup>
                 
                 <FormGroup>
-                  <Label htmlFor="nomineeOrganization">Nominee's Organization/Institution *</Label>
+                  <Label htmlFor="nomineeOrganization">Organization/Institution *</Label>
                   <Input 
                     type="text" 
                     id="nomineeOrganization" 
@@ -463,41 +694,124 @@ const Nomination = () => {
                 </FormGroup>
                 
                 <FormGroup>
-                  <Label htmlFor="nomineeEmail">Nominee's Email Address</Label>
+                  <Label htmlFor="nomineeEmail">Email Address *</Label>
                   <Input 
                     type="email" 
                     id="nomineeEmail" 
                     name="nomineeEmail" 
                     value={formData.nomineeEmail}
                     onChange={handleInputChange}
+                    required
                   />
+                  {formData.nomineeEmailError && (
+                    <ErrorText>{formData.nomineeEmailError}</ErrorText>
+                  )}
                 </FormGroup>
                 
                 <FormGroup>
-                  <Label htmlFor="nomineePhone">Nominee's Phone Number</Label>
+                  <Label htmlFor="nomineePhone">Phone Number * (10 digits)</Label>
                   <Input 
                     type="tel" 
                     id="nomineePhone" 
                     name="nomineePhone" 
                     value={formData.nomineePhone}
                     onChange={handleInputChange}
+                    required
+                    placeholder="Enter 10 digit number"
+                    pattern="[0-9]{10}"
+                  />
+                  {!validatePhone(formData.nomineePhone) && formData.nomineePhone && (
+                    <ErrorText>Please enter a valid 10-digit phone number</ErrorText>
+                  )}
+                </FormGroup>
+                
+                <FormGroup>
+                  <Label htmlFor="nomineeYearsExperience">Years of Experience *</Label>
+                  <Input 
+                    type="text"
+                    id="nomineeYearsExperience"
+                    name="nomineeYearsExperience"
+                    value={formData.nomineeYearsExperience}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="Enter years of experience (0-50)"
+                    pattern="[0-9]*"
+                    inputMode="numeric"
+                  />
+                  {formData.nomineeYearsExperienceError && (
+                    <ErrorText>{formData.nomineeYearsExperienceError}</ErrorText>
+                  )}
+                </FormGroup>
+                
+                <FormGroup>
+                  <Label htmlFor="nomineeQualifications">Professional Qualifications *</Label>
+                  <Textarea 
+                    id="nomineeQualifications" 
+                    name="nomineeQualifications" 
+                    value={formData.nomineeQualifications}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="List relevant degrees, certifications, and professional qualifications"
                   />
                 </FormGroup>
                 
                 <ButtonGroup>
-                  <Button type="button" onClick={prevStep} secondary>
-                    Previous Step
-                  </Button>
-                  <Button type="button" onClick={nextStep} disabled={!validateStep2()}>
-                    Next Step
-                  </Button>
+                  <Button type="button" onClick={prevStep} secondary>Previous Step</Button>
+                  <Button type="button" onClick={nextStep}>Next Step</Button>
                 </ButtonGroup>
               </StepContent>
               
-              {/* Step 3: Nomination Details */}
+              {/* Step 3: Required Documents */}
               <StepContent active={currentStep === 3}>
-                <h2>Nomination Details</h2>
-                <p>Tell us why you believe this healthcare professional deserves recognition.</p>
+                <h2>Required Documents</h2>
+                <p>Please upload the required documents for the nominee.</p>
+                
+                <FormGroup>
+                  <Label>Passport Picture *</Label>
+                  <FileUploadContainer onClick={() => document.getElementById('passportPicture').click()}>
+                    <FileInput
+                      type="file"
+                      id="passportPicture"
+                      accept="image/*"
+                      onChange={(e) => handleFileChange(e, 'passportPicture')}
+                    />
+                    <UploadIcon>📸</UploadIcon>
+                    <UploadText>Click to upload a recent passport picture</UploadText>
+                    <UploadText>(Maximum size: 2MB, Format: JPG, PNG)</UploadText>
+                    {formData.passportPicture && (
+                      <FileName>{formData.passportPicture.name}</FileName>
+                    )}
+                  </FileUploadContainer>
+                </FormGroup>
+                
+                <FormGroup>
+                  <Label>Curriculum Vitae (CV) *</Label>
+                  <FileUploadContainer onClick={() => document.getElementById('cv').click()}>
+                    <FileInput
+                      type="file"
+                      id="cv"
+                      accept=".pdf,.doc,.docx"
+                      onChange={(e) => handleFileChange(e, 'cv')}
+                    />
+                    <UploadIcon>📄</UploadIcon>
+                    <UploadText>Click to upload the nominee's CV</UploadText>
+                    <UploadText>(Maximum size: 5MB, Format: PDF, DOC, DOCX)</UploadText>
+                    {formData.cv && (
+                      <FileName>{formData.cv.name}</FileName>
+                    )}
+                  </FileUploadContainer>
+                </FormGroup>
+                
+                <ButtonGroup>
+                  <Button type="button" onClick={prevStep} secondary>Previous Step</Button>
+                  <Button type="button" onClick={nextStep}>Next Step</Button>
+                </ButtonGroup>
+              </StepContent>
+              
+              {/* Step 4: Reasons for Nomination */}
+              <StepContent active={currentStep === 4}>
+                <h2>Reasons for Nomination</h2>
+                <p>Please provide detailed information about why this nominee deserves recognition.</p>
                 
                 <FormGroup>
                   <Label htmlFor="awardCategory">Award Category *</Label>
@@ -509,88 +823,65 @@ const Nomination = () => {
                     required
                   >
                     <option value="">Select award category</option>
-                    <option value="Excellence in Clinical Practice">Excellence in Clinical Practice</option>
-                    <option value="Nursing Leadership">Nursing Leadership</option>
-                    <option value="Innovation in Healthcare">Innovation in Healthcare</option>
-                    <option value="Compassionate Care">Compassionate Care</option>
-                    <option value="Nursing Education">Nursing Education</option>
-                    <option value="Lifetime Achievement">Lifetime Achievement</option>
-                    <option value="Rising Star">Rising Star (Less than 5 years experience)</option>
+                    <option value="Clinical Excellence">Clinical Excellence</option>
+                    <option value="Education & Research">Education & Research Excellence</option>
+                    <option value="Leadership">Leadership & Governance</option>
+                    <option value="Innovation">Innovation in Healthcare</option>
+                    <option value="Community Impact">Community Impact</option>
                   </Select>
                 </FormGroup>
                 
                 <FormGroup>
-                  <Label htmlFor="reasonForNomination">Reason for Nomination *</Label>
+                  <Label htmlFor="reasonForNomination">Primary Reason for Nomination *</Label>
                   <Textarea 
                     id="reasonForNomination" 
                     name="reasonForNomination" 
                     value={formData.reasonForNomination}
                     onChange={handleInputChange}
-                    placeholder="Briefly explain why you are nominating this person"
                     required
+                    placeholder="Explain the main reasons why you are nominating this person"
                   />
                 </FormGroup>
                 
                 <FormGroup>
-                  <Label htmlFor="achievements">Key Achievements *</Label>
+                  <Label htmlFor="professionalAchievements">Professional Achievements *</Label>
                   <Textarea 
-                    id="achievements" 
-                    name="achievements" 
-                    value={formData.achievements}
+                    id="professionalAchievements" 
+                    name="professionalAchievements" 
+                    value={formData.professionalAchievements}
                     onChange={handleInputChange}
-                    placeholder="List specific accomplishments, awards, or recognition"
                     required
+                    placeholder="List specific accomplishments, awards, or recognition"
                   />
                 </FormGroup>
                 
-                <ButtonGroup>
-                  <Button type="button" onClick={prevStep} secondary>
-                    Previous Step
-                  </Button>
-                  <Button type="button" onClick={nextStep} disabled={!validateStep3()}>
-                    Next Step
-                  </Button>
-                </ButtonGroup>
-              </StepContent>
-              
-              {/* Step 4: Supporting Information */}
-              <StepContent active={currentStep === 4}>
-                <h2>Supporting Information</h2>
-                <p>Provide additional details to strengthen this nomination.</p>
-                
                 <FormGroup>
-                  <Label htmlFor="impactDescription">Impact Description</Label>
+                  <Label htmlFor="impactDescription">Impact on Healthcare *</Label>
                   <Textarea 
                     id="impactDescription" 
                     name="impactDescription" 
                     value={formData.impactDescription}
                     onChange={handleInputChange}
+                    required
                     placeholder="Describe the impact this person has had on patients, colleagues, or the healthcare community"
                   />
                 </FormGroup>
                 
                 <FormGroup>
-                  <Label htmlFor="supportingDocuments">Supporting Documents (Optional)</Label>
-                  <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '10px' }}>
-                    You may upload letters of recommendation, testimonials, or other supporting documents later via email.
-                  </p>
-                  <Input 
-                    type="text" 
-                    id="supportingDocuments" 
-                    name="supportingDocuments" 
-                    value={formData.supportingDocuments}
+                  <Label htmlFor="contributionToNursing">Contribution to Nursing Excellence *</Label>
+                  <Textarea 
+                    id="contributionToNursing" 
+                    name="contributionToNursing" 
+                    value={formData.contributionToNursing}
                     onChange={handleInputChange}
-                    placeholder="Describe any documents you plan to submit"
+                    required
+                    placeholder="Describe how the nominee has contributed to advancing nursing excellence"
                   />
                 </FormGroup>
                 
                 <ButtonGroup>
-                  <Button type="button" onClick={prevStep} secondary>
-                    Previous Step
-                  </Button>
-                  <Button type="button" onClick={nextStep}>
-                    Next Step
-                  </Button>
+                  <Button type="button" onClick={prevStep} secondary>Previous Step</Button>
+                  <Button type="button" onClick={nextStep}>Next Step</Button>
                 </ButtonGroup>
               </StepContent>
               

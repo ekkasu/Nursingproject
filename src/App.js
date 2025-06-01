@@ -9,6 +9,7 @@ import Registration from './pages/Registration';
 import Nomination from './pages/Nomination';
 import MediaGallery from './pages/MediaGallery';
 import Vote from './pages/Vote';
+import VotingForm from './pages/VotingForm';
 import RegistrationSteps from './pages/RegistrationSteps';
 import NominationRequirements from './pages/NominationRequirements';
 import NominationRules from './pages/NominationRules';
@@ -19,6 +20,7 @@ import News from './pages/News';
 import Footer from './components/Footer';
 import Tickets from './pages/Tickets';
 import Payment from './pages/Payment';
+import Gallery from './pages/Gallery';
 
 // Global styles
 const AppContainer = styled.div`
@@ -37,7 +39,7 @@ const MainContent = styled.main`
 // Component to handle conditional footer rendering
 const AppContent = () => {
   const location = useLocation();
-  const hideFooterPaths = ['/login'];
+  const hideFooterPaths = ['/login', '/tickets'];
   const shouldShowFooter = !hideFooterPaths.includes(location.pathname);
 
   return (
@@ -51,6 +53,7 @@ const AppContent = () => {
           <Route path="/nomination" element={<Nomination />} />
           <Route path="/media" element={<MediaGallery />} />
           <Route path="/vote" element={<Vote />} />
+          <Route path="/voting-form" element={<VotingForm />} />
           <Route path="/registration-steps" element={<RegistrationSteps />} />
           <Route path="/nomination-requirements" element={<NominationRequirements />} />
           <Route path="/nomination-rules" element={<NominationRules />} />
@@ -58,6 +61,7 @@ const AppContent = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/news" element={<News />} />
+          <Route path="/gallery" element={<Gallery />} />
         </Routes>
       </MainContent>
       {shouldShowFooter && <Footer />}

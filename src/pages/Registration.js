@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Header from '../components/Header';
 import { Link, useNavigate } from 'react-router-dom';
+import { validateEmail, validatePhone, formatPhoneNumber } from '../utils/validation';
 
 // Main container styles
 const PageContainer = styled.div`
@@ -350,6 +351,12 @@ const AccommodationPrice = styled.div`
   font-size: 1.1rem;
 `;
 
+const ErrorText = styled.div`
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 5px;
+`;
+
 const Registration = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
@@ -361,15 +368,19 @@ const Registration = () => {
     firstName: '',
     lastName: '',
     email: '',
+    emailError: '',
     phone: '',
+    phoneError: '',
     password: '',
     confirmPassword: '',
     profession: '',
     organization: '',
     experience: '',
+    experienceError: '',
     interests: [],
     dietaryRestrictions: '',
     emergencyContact: '',
+    emergencyContactError: '',
     agreeTerms: false,
     agreePrivacy: false,
     accommodation: ''
@@ -409,6 +420,43 @@ const Registration = () => {
           interests: updatedInterests
         });
       }
+    } else if (name === 'phone' || name === 'emergencyContact') {
+      // Format phone numbers
+      const formattedPhone = formatPhoneNumber(value);
+      const isValid = validatePhone(formattedPhone);
+      
+      setFormData({
+        ...formData,
+        [name]: formattedPhone,
+        [`${name}Error`]: !isValid && formattedPhone.length > 0 
+          ? 'Please enter a valid 10-digit phone number' 
+          : ''
+      });
+    } else if (name === 'email') {
+      // Validate email
+      const isValid = validateEmail(value);
+      setFormData({
+        ...formData,
+        [name]: value,
+        emailError: !isValid && value.length > 0 
+          ? 'Please enter a valid email from a popular provider' 
+          : ''
+      });
+    } else if (name === 'experience') {
+      // Only allow digits and validate range
+      const numbersOnly = value.replace(/\D/g, '');
+      const numberValue = parseInt(numbersOnly, 10);
+      let error = '';
+      
+      if (numbersOnly.length > 0 && (numberValue < 0 || numberValue > 50)) {
+        error = 'Years of experience must be between 0 and 50';
+      }
+
+      setFormData({
+        ...formData,
+        experience: numbersOnly,
+        experienceError: error
+      });
     } else {
       setFormData({
         ...formData,
@@ -483,16 +531,26 @@ const Registration = () => {
   
   // Validation for each step
   const validateStep1 = () => {
-    return formData.firstName && 
-           formData.lastName && 
-           formData.email && 
-           formData.phone && 
-           formData.password && 
-           formData.confirmPassword;
+    return (
+      formData.firstName &&
+      formData.lastName &&
+      formData.email &&
+      validateEmail(formData.email) &&
+      formData.phone &&
+      validatePhone(formData.phone) &&
+      formData.password &&
+      formData.confirmPassword &&
+      !passwordError
+    );
   };
   
   const validateStep2 = () => {
-    return formData.profession && formData.organization && formData.experience;
+    return (
+      formData.profession &&
+      formData.organization &&
+      formData.experience &&
+      !formData.experienceError
+    );
   };
   
   const validateStep3 = () => {
@@ -653,11 +711,15 @@ const Registration = () => {
                         value={formData.email}
                         onChange={handleInputChange}
                         required
+                        placeholder="Enter your email address"
                       />
+                      {formData.emailError && (
+                        <ErrorText>{formData.emailError}</ErrorText>
+                      )}
                     </FormGroup>
                     
                     <FormGroup>
-                      <Label htmlFor="phone">Phone Number *</Label>
+                      <Label htmlFor="phone">Phone Number * (10 digits)</Label>
                       <Input 
                         type="tel" 
                         id="phone" 
@@ -665,7 +727,12 @@ const Registration = () => {
                         value={formData.phone}
                         onChange={handleInputChange}
                         required
+                        placeholder="Enter your 10-digit phone number"
+                        pattern="[0-9]{10}"
                       />
+                      {formData.phoneError && (
+                        <ErrorText>{formData.phoneError}</ErrorText>
+                      )}
                     </FormGroup>
 
                     <FormGroup>
@@ -695,6 +762,23 @@ const Registration = () => {
                         <div style={{ color: '#dc2626', fontSize: '0.875rem', marginTop: '0.5rem' }}>
                           {passwordError}
                         </div>
+                      )}
+                    </FormGroup>
+                    
+                    <FormGroup>
+                      <Label htmlFor="emergencyContact">Emergency Contact Information *</Label>
+                      <Input 
+                        type="tel" 
+                        id="emergencyContact" 
+                        name="emergencyContact" 
+                        value={formData.emergencyContact}
+                        onChange={handleInputChange}
+                        required
+                        placeholder="Enter 10-digit emergency contact number"
+                        pattern="[0-9]{10}"
+                      />
+                      {formData.emergencyContactError && (
+                        <ErrorText>{formData.emergencyContactError}</ErrorText>
                       )}
                     </FormGroup>
                     
@@ -745,21 +829,20 @@ const Registration = () => {
                     
                     <FormGroup>
                       <Label htmlFor="experience">Years of Experience *</Label>
-                      <Select 
-                        id="experience" 
-                        name="experience" 
+                      <Input 
+                        type="text"
+                        id="experience"
+                        name="experience"
                         value={formData.experience}
                         onChange={handleInputChange}
+                        placeholder="Enter years of experience (0-50)"
                         required
-                      >
-                        <option value="">Select years of experience</option>
-                        <option value="Student">Student</option>
-                        <option value="0-2 years">0-2 years</option>
-                        <option value="3-5 years">3-5 years</option>
-                        <option value="6-10 years">6-10 years</option>
-                        <option value="11-15 years">11-15 years</option>
-                        <option value="16+ years">16+ years</option>
-                      </Select>
+                        pattern="[0-9]*"
+                        inputMode="numeric"
+                      />
+                      {formData.experienceError && (
+                        <ErrorText>{formData.experienceError}</ErrorText>
+                      )}
                     </FormGroup>
                     
                     <ButtonGroup>
@@ -849,18 +932,6 @@ const Registration = () => {
                         value={formData.dietaryRestrictions}
                         onChange={handleInputChange}
                         placeholder="If any"
-                      />
-                    </FormGroup>
-                    
-                    <FormGroup>
-                      <Label htmlFor="emergencyContact">Emergency Contact Information</Label>
-                      <Input 
-                        type="text" 
-                        id="emergencyContact" 
-                        name="emergencyContact" 
-                        value={formData.emergencyContact}
-                        onChange={handleInputChange}
-                        placeholder="Name and phone number"
                       />
                     </FormGroup>
                     

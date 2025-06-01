@@ -8,6 +8,7 @@ import TicketSection from '../components/TicketSection';
 import SponsorsSection from '../components/SponsorsSection';
 import NewsFeed from '../components/NewsFeed';
 import ConferenceFlyer from '../components/ConferenceFlyer';
+import EventCalendar from '../components/EventCalendar';
 import { Link, useNavigate } from 'react-router-dom';
 
 // Import hero images
@@ -719,29 +720,34 @@ const ProgramButton = styled(Link)`
 `;
 
 const QuickActionsSection = styled.section`
-  background: white;
-  padding: 20px 0;
+  background: #1a8f4c;
+  padding: 12px 0;
   position: relative;
   z-index: 10;
-  margin-top: -60px;
+  margin-top: -40px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   
   @media (max-width: 768px) {
-    margin-top: -40px;
-    padding: 15px 0;
+    margin-top: -25px;
+    padding: 8px 0;
   }
 `;
 
 const QuickActionsContainer = styled.div`
-  max-width: 1200px;
+  max-width: 800px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 12px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
   
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 15px;
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (max-width: 576px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
 `;
 
@@ -769,44 +775,61 @@ const heartbeat = keyframes`
 `;
 
 const ActionIcon = styled.div`
-  font-size: 2rem;
-  margin-bottom: 5px;
+  font-size: 1.5rem;
+  margin-bottom: 2px;
   
   @media (max-width: 768px) {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
+    margin-bottom: 0;
+  }
+`;
+
+const ActionTitle = styled.h3`
+  font-size: 0.9rem;
+  margin: 0;
+  font-weight: 600;
+  white-space: nowrap;
+  color: #1a8f4c;
+  
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
   }
 `;
 
 const QuickActionButton = styled(Link)`
   background: white;
-  border: 2px solid #1a8f4c;
+  border: none;
   color: #1a8f4c;
-  padding: 20px;
-  border-radius: 10px;
+  padding: 12px 8px;
+  border-radius: 6px;
   text-decoration: none;
   text-align: center;
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  gap: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   
   &:hover {
-    transform: translateY(-5px);
+    transform: translateY(-2px);
     background: #FFD700;
-    border-color: #FFD700;
     color: #1a4332;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+
+    ${ActionTitle} {
+      color: #1a4332;
+    }
   }
   
   @media (max-width: 768px) {
-    padding: 15px;
+    padding: 8px;
+    gap: 3px;
   }
 
   &.ticket-button {
+    background: white;
     animation: ${heartbeat} 1.5s ease-in-out infinite;
-    background: rgba(26, 143, 76, 0.05);
 
     &:hover {
       animation-play-state: paused;
@@ -814,32 +837,12 @@ const QuickActionButton = styled(Link)`
     }
 
     ${ActionIcon} {
-      font-size: 2.5rem;
+      font-size: 1.7rem;
       
       @media (max-width: 768px) {
-        font-size: 2rem;
+        font-size: 1.5rem;
       }
     }
-  }
-`;
-
-const ActionTitle = styled.h3`
-  font-size: 1.2rem;
-  margin: 0;
-  font-weight: 600;
-  
-  @media (max-width: 768px) {
-    font-size: 1rem;
-  }
-`;
-
-const ActionDescription = styled.p`
-  font-size: 0.9rem;
-  margin: 0;
-  opacity: 0.8;
-  
-  @media (max-width: 768px) {
-    font-size: 0.8rem;
   }
 `;
 
@@ -1032,19 +1035,21 @@ const Home = () => {
           <QuickActionButton to="/tickets" className="ticket-button">
             <ActionIcon>🎟️</ActionIcon>
             <ActionTitle>Buy Tickets</ActionTitle>
-            <ActionDescription>Secure your spot at NMCON 2025</ActionDescription>
           </QuickActionButton>
           
           <QuickActionButton to="/nomination">
             <ActionIcon>🏆</ActionIcon>
             <ActionTitle>Nominate</ActionTitle>
-            <ActionDescription>Recognize excellence in healthcare</ActionDescription>
           </QuickActionButton>
           
           <QuickActionButton to="/nomination-rules">
             <ActionIcon>📋</ActionIcon>
-            <ActionTitle>Rules & Guidelines</ActionTitle>
-            <ActionDescription>Learn about nomination criteria</ActionDescription>
+            <ActionTitle>Guidelines</ActionTitle>
+          </QuickActionButton>
+
+          <QuickActionButton to="/gallery">
+            <ActionIcon>📸</ActionIcon>
+            <ActionTitle>Gallery</ActionTitle>
           </QuickActionButton>
         </QuickActionsContainer>
       </QuickActionsSection>
@@ -1228,6 +1233,8 @@ const Home = () => {
         </ProgramContainer>
       </ProgramSection>
 
+      <EventCalendar />
+      
       <TicketSection />
       <SponsorsSection />
       <NewsFeed />
