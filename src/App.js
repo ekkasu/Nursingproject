@@ -39,7 +39,7 @@ const MainContent = styled.main`
 // Component to handle conditional footer rendering
 const AppContent = () => {
   const location = useLocation();
-  const hideFooterPaths = ['/login', '/tickets'];
+  const hideFooterPaths = ['/login', '/tickets', '/nomination'];
   const shouldShowFooter = !hideFooterPaths.includes(location.pathname);
 
   return (

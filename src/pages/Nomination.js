@@ -1,19 +1,33 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Header from '../components/Header';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { useNavigate } from 'react-router-dom';
 
 // Main container styles
 const PageContainer = styled.div`
   width: 100%;
-  min-height: 100vh;
-  padding: 120px 0 80px;
+  height: 100vh;
+  overflow: hidden;
   background: linear-gradient(135deg, #f5f7fa 0%, #e8f5ee 100%);
+  position: relative;
+  padding-top: 80px;
 `;
 
 const ContentContainer = styled.div`
   max-width: 900px;
   margin: 0 auto;
   padding: 0 20px;
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+  position: relative;
+
+  /* Hide scrollbar but keep functionality */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
 `;
 
 const PageTitle = styled.h1`
@@ -40,7 +54,7 @@ const FormContainer = styled.div`
   border-radius: 10px;
   padding: 40px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  margin-bottom: 30px;
+  margin-bottom: 100px; /* Add space for fixed buttons */
 `;
 
 const StepIndicator = styled.div`
@@ -193,7 +207,14 @@ const CheckboxLabel = styled.label`
 const ButtonGroup = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 40px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  background: white;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
 `;
 
 const Button = styled.button`
@@ -206,6 +227,7 @@ const Button = styled.button`
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 600;
+  min-width: 120px;
   
   &:hover {
     background-color: ${props => props.secondary ? '#f9f9f9' : '#156e3a'};
@@ -330,7 +352,10 @@ const FileName = styled.div`
 `;
 
 const Nomination = () => {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0); // Start with requirements (step 0)
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     // Nominator's Details
     nominatorName: '',
@@ -450,48 +475,100 @@ const Nomination = () => {
     setCurrentStep(currentStep - 1);
   };
   
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically send the data to your backend
-    console.log('Nomination submitted:', formData);
-    // Move to success step
-    nextStep();
+    setIsLoading(true);
+    setErrors({}); // Clear any previous errors
+    
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Here you would typically send the data to your backend
+      console.log('Nomination submitted:', formData);
+      
+      // Show success message by moving to step 6
+      setCurrentStep(6);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error submitting nomination:', error);
+      setErrors({ submit: 'Failed to submit nomination. Please try again.' });
+      setIsLoading(false);
+    }
   };
   
-  // Update validation functions
-  const validateStep1 = () => {
+  const handleNextAfterSuccess = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      navigate('/');
+    }, 1000);
+  };
+
+  // Validation functions for each step
+  const validateNominator = () => {
     return (
-      formData.nominatorName &&
-      formData.nominatorEmail &&
+      formData.nominatorName?.trim() &&
+      formData.nominatorEmail?.trim() &&
       validateEmail(formData.nominatorEmail) &&
-      formData.nominatorPhone &&
+      formData.nominatorPhone?.trim() &&
       validatePhone(formData.nominatorPhone) &&
+      formData.nominatorOrganization?.trim() &&
       formData.relationship
     );
   };
-  
-  const validateStep2 = () => {
+
+  const validateNominee = () => {
     return (
-      formData.nomineeName &&
-      formData.nomineeEmail &&
+      formData.nomineeName?.trim() &&
+      formData.nomineeEmail?.trim() &&
       validateEmail(formData.nomineeEmail) &&
-      formData.nomineePhone &&
+      formData.nomineePhone?.trim() &&
       validatePhone(formData.nomineePhone) &&
-      formData.nomineeTitle &&
-      formData.nomineeOrganization &&
+      formData.nomineeTitle?.trim() &&
+      formData.nomineeOrganization?.trim() &&
       formData.nomineeYearsExperience &&
-      !formData.nomineeYearsExperienceError
+      !formData.nomineeYearsExperienceError &&
+      formData.nomineeQualifications?.trim()
     );
   };
-  
-  const validateStep3 = () => {
-    return formData.awardCategory && formData.reasonForNomination && formData.professionalAchievements;
+
+  const validateDocuments = () => {
+    return formData.passportPicture && formData.cv;
   };
-  
-  const validateStep4 = () => {
+
+  const validateReasons = () => {
+    return (
+      formData.awardCategory &&
+      formData.reasonForNomination?.trim() &&
+      formData.professionalAchievements?.trim() &&
+      formData.impactDescription?.trim() &&
+      formData.contributionToNursing?.trim()
+    );
+  };
+
+  const validateConfirmation = () => {
     return formData.agreeTerms && formData.agreePrivacy;
   };
-  
+
+  // Function to check if next button should be enabled for current step
+  const canProceed = () => {
+    switch (currentStep) {
+      case 0: // Requirements page - always allow proceeding
+        return true;
+      case 1:
+        return validateNominator();
+      case 2:
+        return validateNominee();
+      case 3:
+        return validateDocuments();
+      case 4:
+        return validateReasons();
+      case 5:
+        return validateConfirmation();
+      default:
+        return false;
+    }
+  };
+
   const requirements = [
     {
       title: "Nominee's Details",
@@ -530,6 +607,10 @@ const Nomination = () => {
     }
   };
 
+  if (isLoading) {
+    return <LoadingSpinner text="Please wait..." fullScreen />;
+  }
+
   return (
     <>
       <Header />
@@ -541,21 +622,28 @@ const Nomination = () => {
           </PageDescription>
 
           {/* Requirements Section */}
-          <RequirementsSection>
-            <RequirementsTitle>Nomination Requirements</RequirementsTitle>
-            <p style={{ textAlign: 'center', color: '#4a5568', marginBottom: '20px' }}>
-              Please ensure you have all the following information ready before proceeding with your nomination:
-            </p>
-            <RequirementsList>
-              {requirements.map((req, index) => (
-                <RequirementCard key={index}>
-                  <h3>{req.icon} {req.title}</h3>
-                  <p>{req.description}</p>
-                </RequirementCard>
-              ))}
-            </RequirementsList>
-          </RequirementsSection>
+          <StepContent active={currentStep === 0}>
+            <RequirementsSection>
+              <RequirementsTitle>Nomination Requirements</RequirementsTitle>
+              <p style={{ textAlign: 'center', color: '#4a5568', marginBottom: '20px' }}>
+                Please ensure you have all the following information ready before proceeding with your nomination:
+              </p>
+              <RequirementsList>
+                {requirements.map((req, index) => (
+                  <RequirementCard key={index}>
+                    <h3>{req.icon} {req.title}</h3>
+                    <p>{req.description}</p>
+                  </RequirementCard>
+                ))}
+              </RequirementsList>
+              <ButtonGroup>
+                <div></div>
+                <Button onClick={nextStep}>Next</Button>
+              </ButtonGroup>
+            </RequirementsSection>
+          </StepContent>
 
+          {/* Nomination Form */}
           <FormContainer>
             <StepIndicator>
               <Step active={currentStep === 1} completed={currentStep > 1} label="Nominator">1</Step>
@@ -647,8 +735,8 @@ const Nomination = () => {
                 </FormGroup>
                 
                 <ButtonGroup>
-                  <div></div>
-                  <Button type="button" onClick={nextStep}>Next Step</Button>
+                  <Button type="button" onClick={prevStep} secondary>Previous</Button>
+                  <Button type="button" onClick={nextStep} disabled={!canProceed()}>Next</Button>
                 </ButtonGroup>
               </StepContent>
               
@@ -756,8 +844,8 @@ const Nomination = () => {
                 </FormGroup>
                 
                 <ButtonGroup>
-                  <Button type="button" onClick={prevStep} secondary>Previous Step</Button>
-                  <Button type="button" onClick={nextStep}>Next Step</Button>
+                  <Button type="button" onClick={prevStep} secondary>Previous</Button>
+                  <Button type="button" onClick={nextStep} disabled={!canProceed()}>Next</Button>
                 </ButtonGroup>
               </StepContent>
               
@@ -803,8 +891,8 @@ const Nomination = () => {
                 </FormGroup>
                 
                 <ButtonGroup>
-                  <Button type="button" onClick={prevStep} secondary>Previous Step</Button>
-                  <Button type="button" onClick={nextStep}>Next Step</Button>
+                  <Button type="button" onClick={prevStep} secondary>Previous</Button>
+                  <Button type="button" onClick={nextStep} disabled={!canProceed()}>Next</Button>
                 </ButtonGroup>
               </StepContent>
               
@@ -880,8 +968,8 @@ const Nomination = () => {
                 </FormGroup>
                 
                 <ButtonGroup>
-                  <Button type="button" onClick={prevStep} secondary>Previous Step</Button>
-                  <Button type="button" onClick={nextStep}>Next Step</Button>
+                  <Button type="button" onClick={prevStep} secondary>Previous</Button>
+                  <Button type="button" onClick={nextStep} disabled={!canProceed()}>Next</Button>
                 </ButtonGroup>
               </StepContent>
               
@@ -921,12 +1009,8 @@ const Nomination = () => {
                 </FormGroup>
                 
                 <ButtonGroup>
-                  <Button type="button" onClick={prevStep} secondary>
-                    Previous Step
-                  </Button>
-                  <Button type="submit" disabled={!validateStep4()}>
-                    Submit Nomination
-                  </Button>
+                  <Button type="button" onClick={prevStep} secondary>Previous</Button>
+                  <Button type="submit" disabled={!canProceed()}>Submit</Button>
                 </ButtonGroup>
               </StepContent>
               
@@ -937,6 +1021,9 @@ const Nomination = () => {
                   <h2>Nomination Submitted Successfully!</h2>
                   <p>Thank you for nominating an outstanding healthcare professional. Your nomination has been received and will be reviewed by our awards committee.</p>
                   <p>We've sent a confirmation email to {formData.nominatorEmail} with details of your submission.</p>
+                  <ButtonGroup>
+                    <Button onClick={handleNextAfterSuccess}>Next</Button>
+                  </ButtonGroup>
                 </SuccessMessage>
               </StepContent>
             </form>
