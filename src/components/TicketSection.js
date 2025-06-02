@@ -164,11 +164,11 @@ const TicketSection = () => {
 
   const tickets = [
     {
-      name: "VIP Onsite Experience",
+      name: "Join Us In Person",
       price: 240,
       featured: true,
       features: [
-        "Full Conference Access (4 Days)",
+        "Full Conference Access (3 Days)",
         "Exclusive VIP Networking Events",
         "Premium Seating at All Sessions",
         "Gourmet Lunch & Refreshments Daily",
@@ -179,7 +179,7 @@ const TicketSection = () => {
       ]
     },
     {
-      name: "Digital Pass Plus",
+      name: "Join Us Online",
       price: 79,
       featured: false,
       features: [
@@ -193,76 +193,52 @@ const TicketSection = () => {
     }
   ];
 
-  const getCardStyles = (index) => {
-    if (hoveredCard === null) {
-      return {
-        scale: index === 0 ? 1.1 : 1,
-        translateY: index === 0 ? -15 : 0,
-        zIndex: index === 0 ? 2 : 1,
-        opacity: 1
-      };
-    }
-
-    if (hoveredCard === index) {
-      return {
-        scale: 1.12,
-        translateY: -20,
-        zIndex: 2,
-        opacity: 1
-      };
-    }
-
-    return {
-      scale: 0.95,
-      translateY: 0,
-      zIndex: 1,
-      opacity: 0.5
-    };
-  };
-
   return (
-    <SectionWrapper id="tickets">
+    <SectionWrapper>
       <Container>
         <SectionHeader>
-          <Title>Choose Your Ticket Package</Title>
-          <Subtitle>Select the perfect way to join our transformative healthcare conference - whether in person or online.</Subtitle>
+          <Title>Choose Your Experience</Title>
+          <Subtitle>Select the ticket that best suits your needs and be part of this transformative event.</Subtitle>
         </SectionHeader>
-        <TicketsGrid>
-          <AnimatePresence>
-            {tickets.map((ticket, index) => (
-              <TicketCard
-                key={index}
-                featured={ticket.featured}
-                initial={getCardStyles(index)}
-                animate={getCardStyles(index)}
-                transition={{
-                  type: "spring",
-                  stiffness: 200,
-                  damping: 20,
-                  duration: 0.6
-                }}
-                onHoverStart={() => setHoveredCard(index)}
-                onHoverEnd={() => setHoveredCard(null)}
-                whileHover={{
-                  scale: 1.15,
-                  translateY: -30,
-                  zIndex: 2,
-                  opacity: 1
-                }}
-              >
-                <TicketName featured={ticket.featured}>{ticket.name}</TicketName>
-                <Price featured={ticket.featured}>${ticket.price} <span>/person</span></Price>
-                <FeaturesList>
-                  {ticket.features.map((feature, idx) => (
-                    <Feature key={idx} featured={ticket.featured}>{feature}</Feature>
-                  ))}
-                </FeaturesList>
-                <BuyButton to="/registration" featured={ticket.featured}>
-                  {ticket.featured ? "Join Us In Person" : "Join Us Online"}
-                </BuyButton>
-              </TicketCard>
-            ))}
-          </AnimatePresence>
+        <TicketsGrid
+          initial="hidden"
+          animate="visible"
+          variants={{
+            visible: {
+              transition: {
+                staggerChildren: 0.2
+              }
+            }
+          }}
+        >
+          {tickets.map((ticket, index) => (
+            <TicketCard
+              key={ticket.name}
+              featured={ticket.featured}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.6
+              }}
+              onMouseEnter={() => setHoveredCard(index)}
+              onMouseLeave={() => setHoveredCard(null)}
+            >
+              <TicketName featured={ticket.featured}>{ticket.name}</TicketName>
+              <Price featured={ticket.featured}>
+                ${ticket.price} <span>USD</span>
+              </Price>
+              <FeaturesList>
+                {ticket.features.map((feature, i) => (
+                  <Feature key={i} featured={ticket.featured}>
+                    {feature}
+                  </Feature>
+                ))}
+              </FeaturesList>
+              <BuyButton to="/tickets" featured={ticket.featured}>
+                Register Now
+              </BuyButton>
+            </TicketCard>
+          ))}
         </TicketsGrid>
       </Container>
     </SectionWrapper>

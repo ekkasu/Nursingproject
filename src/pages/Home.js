@@ -72,7 +72,7 @@ const HeroBackground = styled(motion.div)`
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: ${props => props.backgroundImage ? `linear-gradient(to bottom, rgba(26, 143, 76, 0.8), rgba(21, 110, 58, 0.9)), url(${props.backgroundImage})` : 'none'};
+    background-image: ${props => props.backgroundImage ? `linear-gradient(to bottom, rgba(26, 143, 76, 0.5), rgba(21, 110, 58, 0.6)), url(${props.backgroundImage})` : 'none'};
     background-size: cover;
     background-position: center;
     z-index: -1;
@@ -905,7 +905,7 @@ const Home = () => {
 
   useEffect(() => {
     // Set your event date here (Year, Month-1, Day, Hour, Minute)
-    const eventDate = new Date(2025, 11, 25, 10, 0, 0); // December 25, 2025, 10:00 AM
+    const eventDate = new Date(2025, 8, 2, 9, 0, 0); // September 2nd, 2025, 9:00 AM
     
     const timer = setInterval(() => {
       const now = new Date().getTime();
@@ -1066,10 +1066,14 @@ const Home = () => {
         >
           <motion.div variants={scrollFadeInVariant}>
             <TimerTitle>Nursing Excellence Conference 2025</TimerTitle>
+            <TimerSubtitle>
+              Join us from September 2nd - 5th, 2025 for four days of excellence in nursing leadership
+            </TimerSubtitle>
           </motion.div>
           
           <motion.div variants={scrollFadeInVariant}>
             <TimerSubtitle>
+              Countdown to Day 1
             </TimerSubtitle>
           </motion.div>
             
@@ -1181,7 +1185,7 @@ const Home = () => {
             >
               <h2>6th Annual Nursing and Midwifery Leaders & Managers Conference & 5th Excellence and Hall of Fame Awards</h2>
               <p>
-                Join us for this prestigious event that brings together nursing and midwifery leaders 
+                Join us for this prestigious four-day event from September 2nd - 5th, 2025, that brings together nursing and midwifery leaders 
                 to celebrate excellence in healthcare leadership. This dual event combines our annual 
                 conference with the recognition of outstanding achievements in nursing and midwifery.
               </p>

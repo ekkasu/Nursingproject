@@ -146,40 +146,40 @@ const ViewAllButton = styled(Link)`
 `;
 
 const EventCalendar = () => {
-  // Mock data - replace with actual events data
+  // Event data with correct dates and details
   const upcomingEvents = [
     {
       id: 1,
-      title: "6th Nursing Leaders Conference",
-      date: { month: "Aug", day: "15", year: "2025" },
+      title: "Conference Arrival & Registration",
+      date: { month: "Sep", day: "02", year: "2025" },
       location: "Accra International Conference Center",
-      time: "9:00 AM - 5:00 PM",
-      type: "Conference",
-      link: "/events/nursing-leaders-conference"
+      time: "9:00 AM - 4:00 PM",
+      type: "Day 1: Arrival, Registration & Welcome Reception",
+      link: "/conference-details"
     },
     {
       id: 2,
-      title: "Clinical Excellence Workshop",
-      date: { month: "Sep", day: "22", year: "2025" },
-      location: "Medical University Auditorium",
-      time: "10:00 AM - 3:00 PM",
-      type: "Workshop",
-      link: "/events/clinical-excellence-workshop"
+      title: "Conference Opening Day",
+      date: { month: "Sep", day: "03", year: "2025" },
+      location: "Accra International Conference Center",
+      time: "9:00 AM - 5:00 PM",
+      type: "Day 2: Opening Ceremony & Leadership Sessions",
+      link: "/conference-details"
     },
     {
       id: 3,
-      title: "Healthcare Innovation Summit",
-      date: { month: "Oct", day: "05", year: "2025" },
-      location: "Golden Tulip Hotel",
-      time: "8:30 AM - 4:30 PM",
-      type: "Summit",
-      link: "/events/innovation-summit"
+      title: "Excellence & Hall of Fame Awards",
+      date: { month: "Sep", day: "04", year: "2025" },
+      location: "Accra International Conference Center",
+      time: "10:00 AM - 4:00 PM",
+      type: "Day 3: Awards Ceremony & Gala Dinner",
+      link: "/conference-details"
     }
   ];
 
   return (
     <CalendarSection>
-      <SectionTitle>Upcoming Events</SectionTitle>
+      <SectionTitle>Conference Schedule</SectionTitle>
       <EventsContainer>
         {upcomingEvents.map(event => (
           <EventCard key={event.id}>
@@ -200,7 +200,7 @@ const EventCalendar = () => {
           </EventCard>
         ))}
       </EventsContainer>
-      <ViewAllButton to="/events">View All Events</ViewAllButton>
+      <ViewAllButton to="/conference-details">View Full Schedule</ViewAllButton>
     </CalendarSection>
   );
 };
