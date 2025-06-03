@@ -21,6 +21,8 @@ import Footer from './components/Footer';
 import Tickets from './pages/Tickets';
 import Payment from './pages/Payment';
 import Gallery from './pages/Gallery';
+import Reservation from './pages/Reservation';
+import ComingSoon from './pages/ComingSoon';
 
 // Global styles
 const AppContainer = styled.div`
@@ -39,7 +41,7 @@ const MainContent = styled.main`
 // Component to handle conditional footer rendering
 const AppContent = () => {
   const location = useLocation();
-  const hideFooterPaths = ['/login', '/tickets', '/nomination'];
+  const hideFooterPaths = ['/login', '/tickets', '/nomination', '/payment', '/reservation', '/coming-soon'];
   const shouldShowFooter = !hideFooterPaths.includes(location.pathname);
 
   return (
@@ -47,21 +49,23 @@ const AppContent = () => {
       <MainContent>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/registration" element={<Registration />} />
-          <Route path="/tickets" element={<Tickets />} />
-          <Route path="/payment" element={<Payment />} />
+          <Route path="/registration" element={<ComingSoon />} />
+          <Route path="/tickets" element={<ComingSoon />} />
+          <Route path="/payment" element={<ComingSoon />} />
           <Route path="/nomination" element={<Nomination />} />
           <Route path="/media" element={<MediaGallery />} />
-          <Route path="/vote" element={<Vote />} />
-          <Route path="/voting-form" element={<VotingForm />} />
+          <Route path="/vote" element={<ComingSoon />} />
+          <Route path="/voting-form" element={<ComingSoon />} />
           <Route path="/registration-steps" element={<RegistrationSteps />} />
           <Route path="/nomination-requirements" element={<NominationRequirements />} />
           <Route path="/nomination-rules" element={<NominationRules />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<ComingSoon />} />
           <Route path="/news" element={<News />} />
           <Route path="/gallery" element={<Gallery />} />
+          <Route path="/reservation" element={<ComingSoon />} />
+          <Route path="/coming-soon" element={<ComingSoon />} />
         </Routes>
       </MainContent>
       {shouldShowFooter && <Footer />}

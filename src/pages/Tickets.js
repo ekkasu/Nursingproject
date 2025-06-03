@@ -111,12 +111,17 @@ const Subtitle = styled.p`
 
 const TicketsGrid = styled(motion.div)`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
   position: relative;
   perspective: 1000px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 800px;
+  }
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -363,6 +368,38 @@ const SummaryItem = styled.div`
   }
 `;
 
+// Add disabled button component
+const DisabledButton = styled.span`
+  display: inline-block;
+  padding: 12px 25px;
+  background: ${props => props.primary ? '#1a8f4c' : 'white'};
+  color: ${props => props.primary ? 'white' : '#1a8f4c'};
+  border: 2px solid #1a8f4c;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 600;
+  text-align: center;
+  cursor: not-allowed;
+  opacity: 0.7;
+  position: relative;
+  transition: all 0.3s ease;
+  
+  &:hover::after {
+    content: 'Coming soon';
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    z-index: 10;
+  }
+`;
+
 const Tickets = () => {
   const [hoveredCard, setHoveredCard] = useState(null);
   const navigate = useNavigate();
@@ -388,11 +425,26 @@ const Tickets = () => {
 
   const tickets = [
     {
+      name: "Digital Pass Plus",
+      price: 1500,
+      currency: "GHS",
+      featured: false,
+      features: [
+        "Live Stream All Sessions",
+        "Virtual Networking Platform",
+        "Digital Conference Materials",
+        "On-Demand Session Recordings",
+        "Virtual Q&A Participation",
+        "Digital Certificate of Completion"
+      ]
+    },
+    {
       name: "VIP Onsite Experience",
-      price: 240,
+      price: 3500,
+      currency: "GHS",
       featured: true,
       features: [
-        "Full Conference Access (4 Days)",
+        "Full Conference Access (3 Days)",
         "Exclusive VIP Networking Events",
         "Premium Seating at All Sessions",
         "Gourmet Lunch & Refreshments Daily",
@@ -403,26 +455,28 @@ const Tickets = () => {
       ]
     },
     {
-      name: "Digital Pass Plus",
-      price: 79,
+      name: "Reservation",
+      hidePrice: true,
       featured: false,
       features: [
-        "Live Stream All Sessions",
-        "Virtual Networking Platform",
-        "Digital Conference Materials",
-        "On-Demand Session Recordings",
-        "Virtual Q&A Participation",
-        "Digital Certificate of Completion"
-      ]
+        "Lock in Early Bird Pricing",
+        "Payment Deadline: August 19, 2025",
+        "2 Weeks Before Conference",
+        "Flexible Payment Options",
+        "Priority Access to Sessions",
+        "Free Schedule Changes",
+        "Special Group Rates Available"
+      ],
+      customButton: "Reserve Now"
     }
   ];
 
   const getCardStyles = (index) => {
     if (hoveredCard === null) {
       return {
-        scale: index === 0 ? 1.1 : 1,
-        translateY: index === 0 ? -15 : 0,
-        zIndex: index === 0 ? 2 : 1,
+        scale: index === 1 ? 1.1 : 1,
+        translateY: index === 1 ? -15 : 0,
+        zIndex: index === 1 ? 2 : 1,
         opacity: 1
       };
     }
@@ -445,7 +499,16 @@ const Tickets = () => {
   };
 
   const handlePurchase = (ticket) => {
-    navigate('/payment', { state: { ticket } });
+    if (ticket.name === "Reservation") {
+      navigate('/reservation');
+    } else {
+      navigate('/payment', { state: { ticket } });
+    }
+  };
+
+  const handleSelectTicket = (ticket) => {
+    // This function is now disabled
+    console.log('Ticket selection is currently disabled');
   };
 
   return (
@@ -494,21 +557,21 @@ const Tickets = () => {
                     opacity: 1
                   }}
                 >
+                  {ticket.featured && <DisabledButton primary={ticket.featured}>Most Popular</DisabledButton>}
                   <TicketName featured={ticket.featured}>{ticket.name}</TicketName>
-                  <Price featured={ticket.featured}>${ticket.price} <span>/person</span></Price>
+                  <Price featured={ticket.featured}>
+                    {ticket.currency} {ticket.price}
+                  </Price>
                   <FeaturesList>
                     {ticket.features.map((feature, idx) => (
                       <Feature key={idx} featured={ticket.featured}>{feature}</Feature>
                     ))}
                   </FeaturesList>
-                  <BuyButton
-                    featured={ticket.featured}
-                    onClick={() => handlePurchase(ticket)}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Purchase Now
-                  </BuyButton>
+                  <DisabledButton primary={ticket.featured}>
+                    {ticket.name === "Digital Pass Plus" ? "Get Digital Pass" : 
+                     ticket.name === "VIP Onsite Experience" ? "Get VIP Ticket" : 
+                     "Reserve Now"}
+                  </DisabledButton>
                 </TicketCard>
               ))}
             </AnimatePresence>

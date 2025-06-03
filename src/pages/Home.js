@@ -724,11 +724,11 @@ const QuickActionsSection = styled.section`
   padding: 12px 0;
   position: relative;
   z-index: 10;
-  margin-top: -40px;
+  margin-top: 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   
   @media (max-width: 768px) {
-    margin-top: -25px;
+    margin-top: 0;
     padding: 8px 0;
   }
 `;
@@ -843,6 +843,39 @@ const QuickActionButton = styled(Link)`
         font-size: 1.5rem;
       }
     }
+  }
+`;
+
+// Add a disabled version of the button components
+const DisabledButton = styled.span`
+  display: inline-block;
+  padding: 12px 30px;
+  background: ${props => props.secondary ? 'transparent' : '#1a8f4c'};
+  color: ${props => props.secondary ? '#1a8f4c' : 'white'};
+  border: 2px solid ${props => props.secondary ? '#1a8f4c' : 'transparent'};
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: center;
+  cursor: not-allowed;
+  opacity: 0.7;
+  position: relative;
+  margin: 0 10px;
+  min-width: 150px;
+  
+  &:hover::after {
+    content: 'Coming soon';
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    z-index: 10;
   }
 `;
 
@@ -976,9 +1009,9 @@ const Home = () => {
               >
                 {imageIndex === 0 && (
                   <>
-                    <PrimaryButton to="/tickets">
+                    <DisabledButton>
                       Register Now
-                    </PrimaryButton>
+                    </DisabledButton>
                     <SecondaryButton to="/conference-details">
                       Conference Details
                     </SecondaryButton>
@@ -986,7 +1019,7 @@ const Home = () => {
                 )}
                 {imageIndex === 1 && (
                   <>
-                    <PrimaryButton to="/nominate">
+                    <PrimaryButton to="/nomination">
                       Nominate Now
                     </PrimaryButton>
                     <SecondaryButton to="/awards-criteria">
@@ -1006,9 +1039,9 @@ const Home = () => {
                 )}
                 {imageIndex === 3 && (
                   <>
-                    <PrimaryButton to="/registration">
+                    <DisabledButton>
                       Join Us
-                    </PrimaryButton>
+                    </DisabledButton>
                     <SecondaryButton to="/about">
                       Learn More
                     </SecondaryButton>
@@ -1105,8 +1138,7 @@ const Home = () => {
             variants={scrollFadeInVariant}
             style={{ textAlign: 'center', marginTop: '40px' }}
           >
-            <PrimaryButton 
-              to="/tickets" 
+            <DisabledButton 
               style={{ 
                 background: '#ffffff', 
                 color: '#1a8f4c',
@@ -1116,7 +1148,7 @@ const Home = () => {
               }}
             >
               Reserve Your Spot Now
-            </PrimaryButton>
+            </DisabledButton>
           </motion.div>
         </SectionContainer>
         </EventTimerSection>

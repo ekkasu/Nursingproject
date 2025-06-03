@@ -351,6 +351,37 @@ const FileName = styled.div`
   font-weight: 600;
 `;
 
+// Add a disabled button component
+const DisabledButton = styled.span`
+  padding: 12px 25px;
+  font-size: 1rem;
+  background-color: #e0e0e0;
+  color: #999;
+  border: none;
+  border-radius: 5px;
+  cursor: not-allowed;
+  font-weight: 600;
+  min-width: 120px;
+  position: relative;
+  display: inline-block;
+  text-align: center;
+  
+  &:hover::after {
+    content: 'Coming soon';
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    z-index: 10;
+  }
+`;
+
 const Nomination = () => {
   const [currentStep, setCurrentStep] = useState(0); // Start with requirements (step 0)
   const [isLoading, setIsLoading] = useState(false);
@@ -366,7 +397,6 @@ const Nomination = () => {
     
     // Nominee's Details
     nomineeName: '',
-    nomineeEmail: '',
     nomineePhone: '',
     nomineeTitle: '',
     nomineeOrganization: '',
@@ -389,9 +419,8 @@ const Nomination = () => {
     agreeTerms: false,
     agreePrivacy: false,
     nominatorEmailError: '',
-    nomineeEmailError: '',
-    nominatorPhoneError: '',
     nomineePhoneError: '',
+    nominatorPhoneError: '',
   });
   
   // Add validation for popular email domains
@@ -468,7 +497,9 @@ const Nomination = () => {
   };
   
   const nextStep = () => {
-    setCurrentStep(currentStep + 1);
+    if (currentStep < 1) {
+      setCurrentStep(currentStep + 1);
+    }
   };
   
   const prevStep = () => {
@@ -519,8 +550,6 @@ const Nomination = () => {
   const validateNominee = () => {
     return (
       formData.nomineeName?.trim() &&
-      formData.nomineeEmail?.trim() &&
-      validateEmail(formData.nomineeEmail) &&
       formData.nomineePhone?.trim() &&
       validatePhone(formData.nomineePhone) &&
       formData.nomineeTitle?.trim() &&
@@ -736,7 +765,7 @@ const Nomination = () => {
                 
                 <ButtonGroup>
                   <Button type="button" onClick={prevStep} secondary>Previous</Button>
-                  <Button type="button" onClick={nextStep} disabled={!canProceed()}>Next</Button>
+                  <DisabledButton>Next</DisabledButton>
                 </ButtonGroup>
               </StepContent>
               
@@ -779,21 +808,6 @@ const Nomination = () => {
                     onChange={handleInputChange}
                     required
                   />
-                </FormGroup>
-                
-                <FormGroup>
-                  <Label htmlFor="nomineeEmail">Email Address *</Label>
-                  <Input 
-                    type="email" 
-                    id="nomineeEmail" 
-                    name="nomineeEmail" 
-                    value={formData.nomineeEmail}
-                    onChange={handleInputChange}
-                    required
-                  />
-                  {formData.nomineeEmailError && (
-                    <ErrorText>{formData.nomineeEmailError}</ErrorText>
-                  )}
                 </FormGroup>
                 
                 <FormGroup>
@@ -1022,7 +1036,7 @@ const Nomination = () => {
                   <p>Thank you for nominating an outstanding healthcare professional. Your nomination has been received and will be reviewed by our awards committee.</p>
                   <p>We've sent a confirmation email to {formData.nominatorEmail} with details of your submission.</p>
                   <ButtonGroup>
-                    <Button onClick={handleNextAfterSuccess}>Next</Button>
+                    <Button onClick={handleNextAfterSuccess}>Done</Button>
                   </ButtonGroup>
                 </SuccessMessage>
               </StepContent>

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Header from '../components/Header';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -45,6 +46,21 @@ const ComingSoonMessage = styled.div`
 `;
 
 const MediaGallery = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    // Simulate loading media gallery data
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  if (isLoading) {
+    return <LoadingSpinner text="Loading media gallery..." fullScreen />;
+  }
+  
   return (
     <>
       <Header />

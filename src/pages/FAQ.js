@@ -1,7 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import Header from '../components/Header';
-import { usePullToRefresh, useOnlineStatus } from '../utils/mobileUtils';
+import { usePullToRefresh } from '../hooks/usePullToRefresh';
+import { useOnlineStatus } from '../hooks/useOnlineStatus';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -240,7 +242,17 @@ const FAQ = () => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [openQuestions, setOpenQuestions] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
   const isOnline = useOnlineStatus();
+
+  useEffect(() => {
+    // Simulate loading FAQ data
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1200);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleRefresh = useCallback(async () => {
     // Simulate refresh - replace with actual data fetching
@@ -268,6 +280,10 @@ const FAQ = () => {
     }
     return true;
   });
+
+  if (isLoading) {
+    return <LoadingSpinner text="Loading frequently asked questions..." fullScreen />;
+  }
 
   return (
     <>

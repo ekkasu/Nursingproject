@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { motion } from 'framer-motion';
 import { validatePhone, formatPhoneNumber } from '../utils/validation';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const PaymentContainer = styled.div`
   min-height: 100vh;
@@ -146,13 +147,24 @@ const Payment = () => {
   const navigate = useNavigate();
   const ticket = location.state?.ticket;
   const [selectedMethod, setSelectedMethod] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(true);
   const [formData, setFormData] = useState({
     phone: '',
     phoneError: ''
   });
 
+  useEffect(() => {
+    // Simulate initial page load
+    const timer = setTimeout(() => {
+      setIsPageLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   // Redirect if no ticket is selected
-  if (!ticket) {
+  if (!ticket && !isPageLoading) {
     navigate('/tickets');
     return null;
   }
@@ -178,9 +190,14 @@ const Payment = () => {
       return;
     }
     
-    // Handle payment submission
-    console.log('Payment submitted:', { selectedMethod, phone: formData.phone });
-    navigate('/registration');
+    setIsLoading(true);
+    
+    // Simulate payment processing
+    setTimeout(() => {
+      // Handle payment submission
+      console.log('Payment submitted:', { selectedMethod, phone: formData.phone });
+      navigate('/registration', { state: { fromPayment: true } });
+    }, 2000);
   };
 
   const paymentMethods = [
@@ -206,6 +223,14 @@ const Payment = () => {
       icon: '📱'
     }
   ];
+
+  if (isPageLoading) {
+    return <LoadingSpinner text="Loading payment options..." fullScreen />;
+  }
+  
+  if (isLoading) {
+    return <LoadingSpinner text="Processing payment..." fullScreen />;
+  }
 
   return (
     <>

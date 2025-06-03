@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Header from '../components/Header';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { validateEmail, validatePhone, formatPhoneNumber } from '../utils/validation';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 // Main container styles
 const PageContainer = styled.div`
@@ -359,11 +360,13 @@ const ErrorText = styled.div`
 
 const Registration = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [currentStep, setCurrentStep] = useState(0);
   const [verificationCode, setVerificationCode] = useState('');
   const [codeVerified, setCodeVerified] = useState(false);
   const [passwordError, setPasswordError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(true);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -385,6 +388,44 @@ const Registration = () => {
     agreePrivacy: false,
     accommodation: ''
   });
+  
+  // Check if user came from payment page or accessed directly
+  useEffect(() => {
+    // If there's no state or referrer, redirect to tickets page
+    if (!location.state?.fromPayment) {
+      navigate('/tickets', { replace: true });
+    }
+    
+    // Simulate initial page load
+    const timer = setTimeout(() => {
+      setIsPageLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [navigate, location]);
+  
+  useEffect(() => {
+    if (currentStep === 6) {
+      const redirectTimer = setTimeout(() => {
+        navigate('/login');
+      }, 3000);
+
+      return () => clearTimeout(redirectTimer);
+    }
+  }, [currentStep, navigate]);
+
+  if (isPageLoading) {
+    return <LoadingSpinner text="Loading registration form..." fullScreen />;
+  }
+  
+  if (isSubmitting) {
+    return <LoadingSpinner text="Processing your registration..." fullScreen />;
+  }
+
+  // If redirecting, return null to prevent rendering
+  if (!location.state?.fromPayment) {
+    return null;
+  }
   
   const handleCodeSubmit = (e) => {
     e.preventDefault();
@@ -560,16 +601,6 @@ const Registration = () => {
   const validateStep4 = () => {
     return formData.accommodation !== '';
   };
-  
-  useEffect(() => {
-    if (currentStep === 6) {
-      const redirectTimer = setTimeout(() => {
-        navigate('/login');
-      }, 3000);
-
-      return () => clearTimeout(redirectTimer);
-    }
-  }, [currentStep, navigate]);
   
   return (
     <>

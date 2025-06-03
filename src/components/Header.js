@@ -14,7 +14,7 @@ const HeaderContainer = styled.header`
   backdrop-filter: blur(5px);
 
   @media (max-width: 768px) {
-    height: 60px;
+    height: 70px;
   }
 `;
 
@@ -25,13 +25,13 @@ const Nav = styled.nav`
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 30px;
-  height: 80px;
+  gap: 40px;
+  height: 90px;
 
   @media (max-width: 768px) {
     grid-template-columns: auto auto;
     gap: 10px;
-    height: 60px;
+    height: 70px;
     padding: 5px 15px;
   }
 `;
@@ -42,10 +42,10 @@ const LogoContainer = styled.div`
   grid-column: 1;
   padding: 4px;
   border-radius: 4px;
-  height: 70px;
+  height: 75px;
 
   @media (max-width: 768px) {
-    height: 50px;
+    height: 60px;
     padding: 2px;
   }
 `;
@@ -64,12 +64,12 @@ const NavLinks = styled.div`
   grid-column: 2;
   border-radius: 4px;
   padding: 4px;
-  height: 48px;
+  height: 60px;
   align-items: center;
 
   @media (max-width: 768px) {
     position: fixed;
-    top: 60px;
+    top: 70px;
     left: 0;
     right: 0;
     background: white;
@@ -123,7 +123,7 @@ const NavLink = styled(Link)`
     right: 0;
     top: 50%;
     transform: translateY(-50%);
-    height: 24px;
+    height: 30px;
     width: 1px;
     background-color: rgba(26, 143, 76, 0.2);
   }
@@ -144,7 +144,8 @@ const ActionButtons = styled.div`
   align-items: center;
   border-radius: 4px;
   padding: 4px;
-  height: 48px;
+  height: 60px;
+  gap: 15px;
 
   @media (max-width: 768px) {
     display: none;
@@ -164,10 +165,10 @@ const MobileActionButtons = styled.div`
 `;
 
 const ButtonSeparator = styled.div`
-  height: 24px;
+  height: 30px;
   width: 1px;
   background-color: rgba(26, 143, 76, 0.3);
-  margin: 0;
+  margin: 0 5px;
 
   @media (max-width: 768px) {
     display: none;
@@ -175,12 +176,12 @@ const ButtonSeparator = styled.div`
 `;
 
 const LoginButton = styled(Link)`
-  padding: 8px 16px;
+  padding: 10px 20px;
   background-color: transparent;
   color: #1a8f4c;
   text-decoration: none;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 16px;
   text-transform: uppercase;
   letter-spacing: 1px;
   transition: all 0.3s ease;
@@ -203,12 +204,12 @@ const LoginButton = styled(Link)`
 `;
 
 const RegisterButton = styled(Link)`
-  padding: 8px 16px;
+  padding: 10px 20px;
   background-color: #1a8f4c;
   color: white;
   text-decoration: none;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 16px;
   text-transform: uppercase;
   letter-spacing: 1px;
   transition: all 0.3s ease;
@@ -240,16 +241,21 @@ const MenuButton = styled.button`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 24px;
-    width: 30px;
+    height: 36px;
+    width: 40px;
+    background-color: rgba(26, 143, 76, 0.1);
+    border-radius: 6px;
+    padding: 8px;
+    margin-left: auto;
   }
 
   span {
     display: block;
-    height: 2px;
+    height: 3px;
     width: 100%;
     background-color: #1a8f4c;
     transition: all 0.3s ease;
+    border-radius: 3px;
 
     &:nth-child(1) {
       transform: ${props => props.isOpen ? 'rotate(45deg) translate(6px, 6px)' : 'none'};
@@ -262,6 +268,64 @@ const MenuButton = styled.button`
     &:nth-child(3) {
       transform: ${props => props.isOpen ? 'rotate(-45deg) translate(6px, -6px)' : 'none'};
     }
+  }
+`;
+
+const DisabledNavLink = styled.span`
+  color: #999;
+  text-decoration: none;
+  padding: 8px 16px;
+  position: relative;
+  cursor: not-allowed;
+  opacity: 0.6;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  
+  &:hover::after {
+    content: 'Coming soon';
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    z-index: 10;
+  }
+`;
+
+const DisabledActionButton = styled.span`
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  background-color: ${props => props.primary ? '#1a8f4c' : 'transparent'};
+  color: ${props => props.primary ? 'white' : '#1a8f4c'};
+  border: 1px solid ${props => props.primary ? 'transparent' : '#1a8f4c'};
+  opacity: 0.6;
+  cursor: not-allowed;
+  position: relative;
+  font-size: 16px;
+
+  &:hover::after {
+    content: 'Coming soon';
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    z-index: 10;
   }
 `;
 
@@ -278,8 +342,8 @@ const Header = () => {
         <LogoContainer>
           <Logo to="/">
             <ConferenceLogo 
-              height="45px"
-              mobileHeight="35px"
+              height="55px"
+              mobileHeight="50px"
               showText={false}
             />
           </Logo>
@@ -289,19 +353,19 @@ const Header = () => {
           <NavLink to="/">Home</NavLink>
           <NavLink to="/about">About</NavLink>
           <NavLink to="/nomination">Nomination</NavLink>
-          <NavLink to="/vote">Vote</NavLink>
+          <DisabledNavLink>Vote</DisabledNavLink>
           <NavLink to="/news">News</NavLink>
           <NavLink to="/contact">Contact</NavLink>
           <MobileActionButtons>
-            <LoginButton to="/login">Login</LoginButton>
-            <RegisterButton to="/tickets">Register Now</RegisterButton>
+            <DisabledActionButton>Login</DisabledActionButton>
+            <DisabledActionButton primary>Register Now</DisabledActionButton>
           </MobileActionButtons>
         </NavLinks>
 
         <ActionButtons>
-          <LoginButton to="/login">Login</LoginButton>
+          <DisabledActionButton>Login</DisabledActionButton>
           <ButtonSeparator />
-          <RegisterButton to="/tickets">Register Now</RegisterButton>
+          <DisabledActionButton primary>Register Now</DisabledActionButton>
         </ActionButtons>
 
         <MenuButton onClick={toggleMenu} isOpen={isMenuOpen}>

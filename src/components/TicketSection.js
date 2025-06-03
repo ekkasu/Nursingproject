@@ -38,12 +38,17 @@ const Subtitle = styled.p`
 
 const TicketsGrid = styled(motion.div)`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
   position: relative;
   perspective: 1000px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 800px;
+  }
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -159,13 +164,60 @@ const BuyButton = styled(Link)`
   }
 `;
 
+const DisabledButton = styled.span`
+  display: inline-block;
+  padding: ${props => props.featured ? '12px 30px' : '10px 25px'};
+  background: ${props => props.featured ? '#FFD700' : '#1a8f4c'};
+  color: ${props => props.featured ? '#1a8f4c' : 'white'};
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 2px solid ${props => props.featured ? '#FFD700' : '#1a8f4c'};
+  font-size: 13px;
+  opacity: 0.7;
+  cursor: not-allowed;
+  position: relative;
+
+  &:hover::after {
+    content: 'Coming soon';
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    z-index: 10;
+  }
+`;
+
 const TicketSection = () => {
   const [hoveredCard, setHoveredCard] = useState(null);
 
   const tickets = [
     {
+      name: "Join Us Online",
+      price: 1500,
+      currency: "GHS",
+      featured: false,
+      features: [
+        "Live Stream All Sessions",
+        "Virtual Networking Platform",
+        "Digital Conference Materials",
+        "On-Demand Session Recordings",
+        "Virtual Q&A Participation",
+        "Digital Certificate of Completion"
+      ]
+    },
+    {
       name: "Join Us In Person",
-      price: 240,
+      price: 3500,
+      currency: "GHS",
       featured: true,
       features: [
         "Full Conference Access (3 Days)",
@@ -179,19 +231,28 @@ const TicketSection = () => {
       ]
     },
     {
-      name: "Join Us Online",
-      price: 79,
+      name: "Reservation",
+      hidePrice: true,
       featured: false,
       features: [
-        "Live Stream All Sessions",
-        "Virtual Networking Platform",
-        "Digital Conference Materials",
-        "On-Demand Session Recordings",
-        "Virtual Q&A Participation",
-        "Digital Certificate of Completion"
-      ]
+        "Lock in Early Bird Pricing",
+        "Payment Deadline: August 19, 2025",
+        "2 Weeks Before Conference",
+        "Flexible Payment Options",
+        "Priority Access to Sessions",
+        "Free Schedule Changes",
+        "Special Group Rates Available"
+      ],
+      customButton: "Reserve Now"
     }
   ];
+
+  const renderButton = (ticket) => {
+    if (ticket.customButton) {
+      return <DisabledButton featured={ticket.featured}>{ticket.customButton}</DisabledButton>;
+    }
+    return <DisabledButton featured={ticket.featured}>Register Now</DisabledButton>;
+  };
 
   return (
     <SectionWrapper>
@@ -224,9 +285,11 @@ const TicketSection = () => {
               onMouseLeave={() => setHoveredCard(null)}
             >
               <TicketName featured={ticket.featured}>{ticket.name}</TicketName>
-              <Price featured={ticket.featured}>
-                ${ticket.price} <span>USD</span>
-              </Price>
+              {!ticket.hidePrice && (
+                <Price featured={ticket.featured}>
+                  {ticket.currency} {ticket.price}
+                </Price>
+              )}
               <FeaturesList>
                 {ticket.features.map((feature, i) => (
                   <Feature key={i} featured={ticket.featured}>
@@ -234,8 +297,11 @@ const TicketSection = () => {
                   </Feature>
                 ))}
               </FeaturesList>
-              <BuyButton to="/tickets" featured={ticket.featured}>
-                Register Now
+              <BuyButton 
+                to={ticket.name === "Reservation" ? "/reservation" : "/tickets"} 
+                featured={ticket.featured}
+              >
+                {renderButton(ticket)}
               </BuyButton>
             </TicketCard>
           ))}

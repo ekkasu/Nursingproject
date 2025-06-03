@@ -1,7 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import Header from '../components/Header';
-import { usePullToRefresh, useOnlineStatus } from '../utils/mobileUtils';
+import { usePullToRefresh } from '../hooks/usePullToRefresh';
+import { useOnlineStatus } from '../hooks/useOnlineStatus';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -316,7 +318,17 @@ const scheduleData = {
 const ScheduleBuilder = () => {
   const [selectedDay, setSelectedDay] = useState('Day 1');
   const [selectedSessions, setSelectedSessions] = useState(new Set());
+  const [isLoading, setIsLoading] = useState(true);
   const isOnline = useOnlineStatus();
+
+  useEffect(() => {
+    // Simulate loading schedule data
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1300);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleRefresh = useCallback(async () => {
     // Simulate refresh - replace with actual data fetching
@@ -346,6 +358,10 @@ const ScheduleBuilder = () => {
       setSelectedSessions(new Set(JSON.parse(savedSessions)));
     }
   }, []);
+
+  if (isLoading) {
+    return <LoadingSpinner text="Loading conference schedule..." fullScreen />;
+  }
 
   return (
     <>
