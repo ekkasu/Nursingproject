@@ -451,7 +451,7 @@ const Nomination = () => {
     const phoneRegex = /^\d{10}$/;
     return phoneRegex.test(phone.replace(/\D/g, ''));
   };
-
+  
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     
@@ -498,7 +498,7 @@ const Nomination = () => {
   
   const nextStep = () => {
     if (currentStep < 1) {
-      setCurrentStep(currentStep + 1);
+    setCurrentStep(currentStep + 1);
     }
   };
   
@@ -514,8 +514,8 @@ const Nomination = () => {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
-      // Here you would typically send the data to your backend
-      console.log('Nomination submitted:', formData);
+    // Here you would typically send the data to your backend
+    console.log('Nomination submitted:', formData);
       
       // Show success message by moving to step 6
       setCurrentStep(6);
@@ -533,7 +533,7 @@ const Nomination = () => {
       navigate('/');
     }, 1000);
   };
-
+  
   // Validation functions for each step
   const validateNominator = () => {
     return (
@@ -546,7 +546,7 @@ const Nomination = () => {
       formData.relationship
     );
   };
-
+  
   const validateNominee = () => {
     return (
       formData.nomineeName?.trim() &&
@@ -559,7 +559,7 @@ const Nomination = () => {
       formData.nomineeQualifications?.trim()
     );
   };
-
+  
   const validateDocuments = () => {
     return formData.passportPicture && formData.cv;
   };
@@ -573,7 +573,7 @@ const Nomination = () => {
       formData.contributionToNursing?.trim()
     );
   };
-
+  
   const validateConfirmation = () => {
     return formData.agreeTerms && formData.agreePrivacy;
   };
@@ -639,7 +639,7 @@ const Nomination = () => {
   if (isLoading) {
     return <LoadingSpinner text="Please wait..." fullScreen />;
   }
-
+  
   return (
     <>
       <Header />
@@ -649,7 +649,7 @@ const Nomination = () => {
           <PageDescription>
             Recognize excellence in healthcare by nominating an outstanding professional for our annual awards. Your nomination helps highlight the incredible work being done in the nursing and healthcare community.
           </PageDescription>
-
+          
           {/* Requirements Section */}
           <StepContent active={currentStep === 0}>
             <RequirementsSection>
@@ -674,13 +674,13 @@ const Nomination = () => {
 
           {/* Nomination Form */}
           <FormContainer>
-            <StepIndicator>
+              <StepIndicator>
               <Step active={currentStep === 1} completed={currentStep > 1} label="Nominator">1</Step>
               <Step active={currentStep === 2} completed={currentStep > 2} label="Nominee">2</Step>
               <Step active={currentStep === 3} completed={currentStep > 3} label="Documents">3</Step>
               <Step active={currentStep === 4} completed={currentStep > 4} label="Reasons">4</Step>
               <Step active={currentStep === 5} completed={currentStep > 5} label="Confirm">5</Step>
-            </StepIndicator>
+              </StepIndicator>
             
             <form onSubmit={handleSubmit}>
               {/* Step 1: Nominator's Details */}

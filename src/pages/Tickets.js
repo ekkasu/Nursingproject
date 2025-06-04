@@ -368,38 +368,6 @@ const SummaryItem = styled.div`
   }
 `;
 
-// Add disabled button component
-const DisabledButton = styled.span`
-  display: inline-block;
-  padding: 12px 25px;
-  background: ${props => props.primary ? '#1a8f4c' : 'white'};
-  color: ${props => props.primary ? 'white' : '#1a8f4c'};
-  border: 2px solid #1a8f4c;
-  border-radius: 5px;
-  text-decoration: none;
-  font-weight: 600;
-  text-align: center;
-  cursor: not-allowed;
-  opacity: 0.7;
-  position: relative;
-  transition: all 0.3s ease;
-  
-  &:hover::after {
-    content: 'Coming soon';
-    position: absolute;
-    bottom: -30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    white-space: nowrap;
-    z-index: 10;
-  }
-`;
-
 const Tickets = () => {
   const [hoveredCard, setHoveredCard] = useState(null);
   const navigate = useNavigate();
@@ -507,8 +475,11 @@ const Tickets = () => {
   };
 
   const handleSelectTicket = (ticket) => {
-    // This function is now disabled
-    console.log('Ticket selection is currently disabled');
+    if (ticket.name === "Reservation") {
+      navigate('/reservation');
+    } else {
+      navigate('/payment', { state: { ticket } });
+    }
   };
 
   return (
@@ -557,7 +528,7 @@ const Tickets = () => {
                     opacity: 1
                   }}
                 >
-                  {ticket.featured && <DisabledButton primary={ticket.featured}>Most Popular</DisabledButton>}
+                  {ticket.featured && <BuyButton featured={ticket.featured}>Most Popular</BuyButton>}
                   <TicketName featured={ticket.featured}>{ticket.name}</TicketName>
                   <Price featured={ticket.featured}>
                     {ticket.currency} {ticket.price}
@@ -567,11 +538,14 @@ const Tickets = () => {
                       <Feature key={idx} featured={ticket.featured}>{feature}</Feature>
                     ))}
                   </FeaturesList>
-                  <DisabledButton primary={ticket.featured}>
+                  <BuyButton 
+                    featured={ticket.featured} 
+                    onClick={() => handleSelectTicket(ticket)}
+                  >
                     {ticket.name === "Digital Pass Plus" ? "Get Digital Pass" : 
                      ticket.name === "VIP Onsite Experience" ? "Get VIP Ticket" : 
                      "Reserve Now"}
-                  </DisabledButton>
+                  </BuyButton>
                 </TicketCard>
               ))}
             </AnimatePresence>

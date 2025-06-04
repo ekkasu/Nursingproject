@@ -49,22 +49,22 @@ const AppContent = () => {
       <MainContent>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/registration" element={<ComingSoon />} />
-          <Route path="/tickets" element={<ComingSoon />} />
-          <Route path="/payment" element={<ComingSoon />} />
+          <Route path="/registration" element={<Registration />} />
+          <Route path="/tickets" element={<Tickets />} />
+          <Route path="/payment" element={<Payment />} />
           <Route path="/nomination" element={<Nomination />} />
           <Route path="/media" element={<MediaGallery />} />
-          <Route path="/vote" element={<ComingSoon />} />
-          <Route path="/voting-form" element={<ComingSoon />} />
+          <Route path="/vote" element={<Vote />} />
+          <Route path="/voting-form" element={<VotingForm />} />
           <Route path="/registration-steps" element={<RegistrationSteps />} />
           <Route path="/nomination-requirements" element={<NominationRequirements />} />
           <Route path="/nomination-rules" element={<NominationRules />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<ComingSoon />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/news" element={<News />} />
           <Route path="/gallery" element={<Gallery />} />
-          <Route path="/reservation" element={<ComingSoon />} />
+          <Route path="/reservation" element={<Reservation />} />
           <Route path="/coming-soon" element={<ComingSoon />} />
         </Routes>
       </MainContent>

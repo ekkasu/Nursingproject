@@ -249,9 +249,9 @@ const TicketSection = () => {
 
   const renderButton = (ticket) => {
     if (ticket.customButton) {
-      return <DisabledButton featured={ticket.featured}>{ticket.customButton}</DisabledButton>;
+      return <BuyButton featured={ticket.featured} to="/reservation">{ticket.customButton}</BuyButton>;
     }
-    return <DisabledButton featured={ticket.featured}>Register Now</DisabledButton>;
+    return <BuyButton featured={ticket.featured} to="/tickets">Register Now</BuyButton>;
   };
 
   return (
@@ -297,12 +297,7 @@ const TicketSection = () => {
                   </Feature>
                 ))}
               </FeaturesList>
-              <BuyButton 
-                to={ticket.name === "Reservation" ? "/reservation" : "/tickets"} 
-                featured={ticket.featured}
-              >
-                {renderButton(ticket)}
-              </BuyButton>
+              {renderButton(ticket)}
             </TicketCard>
           ))}
         </TicketsGrid>

@@ -353,19 +353,19 @@ const Header = () => {
           <NavLink to="/">Home</NavLink>
           <NavLink to="/about">About</NavLink>
           <NavLink to="/nomination">Nomination</NavLink>
-          <DisabledNavLink>Vote</DisabledNavLink>
+          <NavLink to="/vote">Vote</NavLink>
           <NavLink to="/news">News</NavLink>
           <NavLink to="/contact">Contact</NavLink>
           <MobileActionButtons>
-            <DisabledActionButton>Login</DisabledActionButton>
-            <DisabledActionButton primary>Register Now</DisabledActionButton>
+            <LoginButton to="/login">Login</LoginButton>
+            <RegisterButton to="/registration">Register Now</RegisterButton>
           </MobileActionButtons>
         </NavLinks>
 
         <ActionButtons>
-          <DisabledActionButton>Login</DisabledActionButton>
+          <LoginButton to="/login">Login</LoginButton>
           <ButtonSeparator />
-          <DisabledActionButton primary>Register Now</DisabledActionButton>
+          <RegisterButton to="/registration">Register Now</RegisterButton>
         </ActionButtons>
 
         <MenuButton onClick={toggleMenu} isOpen={isMenuOpen}>
