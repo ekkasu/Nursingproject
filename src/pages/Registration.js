@@ -358,6 +358,15 @@ const ErrorText = styled.div`
   color: #e74c3c;
   font-size: 0.85rem;
   margin-top: 5px;
+  
+  ul {
+    margin-top: 5px;
+    padding-left: 20px;
+  }
+  
+  li {
+    margin-bottom: 3px;
+  }
 `;
 
 const Registration = () => {
@@ -368,8 +377,12 @@ const Registration = () => {
   const [verificationCode, setVerificationCode] = useState('');
   const [codeVerified, setCodeVerified] = useState(false);
   const [passwordError, setPasswordError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [registrationError, setRegistrationError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingDistricts, setIsLoadingDistricts] = useState(false);
   
   // Data from API endpoints
   const [jobTitles, setJobTitles] = useState([]);
@@ -390,8 +403,15 @@ const Registration = () => {
     district_id: '',
     profile: '',
     password: '',
-    password_confirmation: ''
+    password_confirmation: '',
+    accommodation: 'none',
+    agreeTerms: false,
+    agreePrivacy: false
   });
+
+  // Add state for profile picture
+  const [profilePicture, setProfilePicture] = useState(null);
+  const [profilePicturePreview, setProfilePicturePreview] = useState(null);
 
   // Fetch all necessary data when component mounts
   useEffect(() => {
@@ -413,6 +433,12 @@ const Registration = () => {
         console.log('Job Titles Response:', jobTitlesRes);
         console.log('User Titles Response:', userTitlesRes);
         console.log('Regions Response:', regionsRes);
+        console.log('Regions Response Type:', typeof regionsRes);
+        console.log('Regions Array Check:', Array.isArray(regionsRes));
+        console.log('Regions Length:', regionsRes ? regionsRes.length : 'undefined');
+        if (regionsRes && regionsRes.length > 0) {
+          console.log('First Region Item:', regionsRes[0]);
+        }
         console.log('Categories Response:', categoriesRes);
 
         setJobTitles(jobTitlesRes);
@@ -434,10 +460,13 @@ const Registration = () => {
     const fetchDistricts = async () => {
       if (formData.region_id) {
         try {
-          const response = await api.getDistricts(formData.region_id);
+          setIsLoadingDistricts(true);
+          const response = await api.getDistrictsByRegion(formData.region_id);
           setDistricts(response);
         } catch (error) {
           console.error('Error fetching districts:', error);
+        } finally {
+          setIsLoadingDistricts(false);
         }
       }
     };
@@ -492,27 +521,106 @@ const Registration = () => {
     }
   };
   
+  // Handle profile picture upload
+  const handleProfilePictureChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProfilePicture(file);
+      
+      // Create a preview URL for the image
+      const previewUrl = URL.createObjectURL(file);
+      setProfilePicturePreview(previewUrl);
+      
+      // Convert image to base64 if needed by the API
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result;
+        // Store the base64 string in case the API needs it instead of a file
+        setFormData(prev => ({
+          ...prev,
+          profileBase64: base64String
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
+    
+    // Handle checkbox inputs differently
+    if (type === 'checkbox') {
+      setFormData(prev => ({
+        ...prev,
+        [name]: checked
+      }));
+      return;
+    }
     
     if (name === 'phone') {
-      const isValid = validatePhone(value);
-      if (!isValid && value.length > 0) {
-        // Handle phone validation error
-        return;
+      // Always update the form data
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+      
+      // Only show validation errors if there's input and it's invalid
+      if (value && value.length > 0) {
+        const isValid = validatePhone(value);
+        if (!isValid) {
+          setPhoneError('Please enter a valid phone number (minimum 9 digits)');
+        } else {
+          setPhoneError('');
+        }
+      } else {
+        setPhoneError('');
       }
+      return;
     } else if (name === 'email') {
-      const isValid = validateEmail(value);
-      if (!isValid && value.length > 0) {
-        // Handle email validation error
-        return;
+      // Always update the form data
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+      
+      // Only show validation errors if there's input and it's invalid
+      if (value && value.length > 0) {
+        const isValid = validateEmail(value);
+        if (!isValid) {
+          setEmailError('Please enter a valid email address');
+        } else {
+          setEmailError('');
+        }
+      } else {
+        setEmailError('');
+      }
+      return;
+    } else if (name === 'password') {
+      // Validate password strength
+      if (value.length > 0 && value.length < 8) {
+        setPasswordError('Password must be at least 8 characters long');
+      } else {
+        // If password confirmation exists, check if they match
+        if (formData.password_confirmation && value !== formData.password_confirmation) {
+          setPasswordError('Passwords do not match');
+        } else {
+          setPasswordError('');
+        }
       }
     } else if (name === 'password_confirmation') {
-      if (value !== formData.password) {
+      if (formData.password && value !== formData.password) {
         setPasswordError('Passwords do not match');
       } else {
         setPasswordError('');
       }
+    } else if (name === 'region_id') {
+      // Clear the district selection when a new region is selected
+      setFormData(prev => ({
+        ...prev,
+        [name]: value,
+        district_id: ''
+      }));
+      return;
     }
 
     setFormData(prev => ({
@@ -561,21 +669,153 @@ const Registration = () => {
     e.preventDefault();
     
     if (passwordError) {
+      setRegistrationError(passwordError);
+      setIsSubmitting(false);
       return;
     }
 
+    // Clear any previous registration errors
+    setRegistrationError('');
     setIsSubmitting(true);
 
     try {
-      const response = await api.register(formData);
+      // Make sure the terms checkboxes are checked
+      if (!formData.agreeTerms || !formData.agreePrivacy) {
+        setRegistrationError('Please agree to the terms and privacy policy');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Ensure all required fields are present
+      const requiredFields = [
+        'user_title_id', 'full_name', 'phone', 'email', 'gender',
+        'job_title_id', 'place_of_work', 'region_id', 'district_id',
+        'password', 'password_confirmation'
+      ];
+      
+      const missingFields = requiredFields.filter(field => !formData[field]);
+      if (missingFields.length > 0) {
+        setRegistrationError(`Missing required fields: ${missingFields.join(', ')}`);
+        setIsSubmitting(false);
+        return;
+      }
+      
+      // Verify passwords match and meet minimum length
+      if (formData.password !== formData.password_confirmation) {
+        setRegistrationError('Passwords do not match');
+        setIsSubmitting(false);
+        return;
+      }
+      
+      if (formData.password.length < 8) {
+        setRegistrationError('Password must be at least 8 characters long');
+        setIsSubmitting(false);
+        return;
+      }
+
+      let response;
+      
+      // Log the data we're about to send
+      console.log('Preparing to submit registration form with data:', {
+        ...formData,
+        password: '********', // Don't log actual password
+        password_confirmation: '********',
+        profilePicture: profilePicture ? `File: ${profilePicture.name}` : 'None'
+      });
+      
+      // Try with simple JSON payload first - sometimes FormData can cause issues
+      try {
+        console.log('Trying registration with direct JSON payload');
+        
+        // Create a clean JSON payload
+        const jsonData = {
+          user_title_id: String(formData.user_title_id),
+          full_name: formData.full_name,
+          phone: formData.phone,
+          email: formData.email,
+          gender: formData.gender,
+          job_title_id: String(formData.job_title_id),
+          place_of_work: formData.place_of_work,
+          region_id: String(formData.region_id),
+          district_id: String(formData.district_id),
+          password: formData.password,
+          password_confirmation: formData.password_confirmation
+        };
+        
+        // Add profile if available
+        if (formData.profileBase64) {
+          jsonData.profile = formData.profileBase64;
+        }
+        
+        console.log('JSON data keys:', Object.keys(jsonData));
+        response = await api.registerWithProfilePicture(jsonData);
+      } catch (jsonError) {
+        console.error('JSON approach failed:', jsonError);
+        
+        // If JSON fails, try with FormData (file upload approach)
+        console.log('Trying registration with FormData approach');
+        const formDataToSend = new FormData();
+        
+        // Add all form fields to FormData - ensure all values are strings
+        Object.keys(formData).forEach(key => {
+          if (key !== 'profile' && key !== 'profileBase64' && key !== 'agreeTerms' && key !== 'agreePrivacy' && key !== 'accommodation') {
+            // Convert all values to strings
+            const value = formData[key] === null || formData[key] === undefined ? '' : String(formData[key]);
+            formDataToSend.append(key, value);
+            console.log(`Adding form field: ${key} = ${key.includes('password') ? '********' : value}`);
+          }
+        });
+        
+        // Explicitly add password fields to ensure they're sent correctly
+        formDataToSend.set('password', formData.password);
+        formDataToSend.set('password_confirmation', formData.password_confirmation);
+        console.log('Password fields added to FormData');
+        
+        // Add profile picture if selected
+        if (profilePicture) {
+          formDataToSend.append('profile', profilePicture);
+          console.log(`Adding profile picture: ${profilePicture.name} (${profilePicture.type}, ${profilePicture.size} bytes)`);
+        }
+        
+        response = await api.registerWithProfilePicture(formDataToSend);
+      }
+      
+      console.log('Registration response:', response);
       
       if (response) {
         // Handle successful registration
-        navigate('/login');
+        setCurrentStep(6); // Show success message
+        // Redirect will happen automatically after delay due to useEffect
       }
     } catch (error) {
       console.error('Registration failed:', error);
-      // Handle registration error
+      
+      // Extract error message if available
+      let errorMessage = 'Registration failed. Please try again.';
+      if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      // Check if it's a validation error and format it nicely
+      if (typeof errorMessage === 'string' && errorMessage.startsWith('Validation failed:')) {
+        const validationErrors = errorMessage.replace('Validation failed:', '').trim();
+        
+        // Split by semicolon and format as bullet points
+        const errorPoints = validationErrors.split(';').map(err => err.trim());
+        
+        errorMessage = (
+          <div>
+            <strong>Please fix the following errors:</strong>
+            <ul style={{ textAlign: 'left', marginTop: '10px' }}>
+              {errorPoints.map((err, index) => (
+                <li key={index}>{err}</li>
+              ))}
+            </ul>
+          </div>
+        );
+      }
+      
+      setRegistrationError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -583,22 +823,38 @@ const Registration = () => {
   
   // Update the button validation logic
   const validateForm = () => {
-    return (
+    // Final validation before allowing form submission
+    const isPhoneValid = formData.phone && validatePhone(formData.phone);
+    const isEmailValid = formData.email && validateEmail(formData.email);
+    
+    // Check password requirements
+    const isPasswordValid = formData.password && formData.password.length >= 8;
+    const doPasswordsMatch = formData.password === formData.password_confirmation;
+    
+    // Basic validation for all steps
+    const baseValidation = (
       formData.user_title_id &&
       formData.full_name &&
-      formData.phone &&
-      validatePhone(formData.phone) &&
-      formData.email &&
-      validateEmail(formData.email) &&
+      isPhoneValid &&
+      isEmailValid &&
       formData.gender &&
       formData.job_title_id &&
       formData.place_of_work &&
       formData.region_id &&
       formData.district_id &&
-      formData.password &&
-      formData.password_confirmation &&
-      !passwordError
+      isPasswordValid &&
+      doPasswordsMatch &&
+      !passwordError &&
+      !phoneError &&
+      !emailError
     );
+    
+    // Additional validation for step 5 (confirmation)
+    if (currentStep === 5) {
+      return baseValidation && formData.agreeTerms && formData.agreePrivacy;
+    }
+    
+    return baseValidation;
   };
 
   // Function to get button text based on current step
@@ -771,8 +1027,12 @@ const Registration = () => {
                           name="phone"
                           value={formData.phone}
                           onChange={handleInputChange}
+                          placeholder="e.g. +233 20 123 4567"
                           required
                         />
+                        {phoneError && (
+                          <ErrorText>{phoneError}</ErrorText>
+                        )}
                       </FormGroup>
                       
                       <FormGroup>
@@ -783,8 +1043,12 @@ const Registration = () => {
                           name="email"
                           value={formData.email}
                           onChange={handleInputChange}
+                          placeholder="e.g. your.name@example.com"
                           required
                         />
+                        {emailError && (
+                          <ErrorText>{emailError}</ErrorText>
+                        )}
                       </FormGroup>
                       
                       <FormGroup>
@@ -813,14 +1077,11 @@ const Registration = () => {
                         >
                           <option value="">Select Job Title</option>
                           {jobTitles && jobTitles.length > 0 ? (
-                            jobTitles.map(title => {
-                              console.log('Rendering job title:', title);
-                              return (
-                                <option key={title.id} value={title.id}>
-                                  {title.name || title.title || 'Unnamed Title'}
-                                </option>
-                              );
-                            })
+                            jobTitles.map(title => (
+                              <option key={title.id} value={title.id}>
+                                {title.name || title.title || 'Unnamed Title'}
+                              </option>
+                            ))
                           ) : (
                             <option value="" disabled>Loading job titles...</option>
                           )}
@@ -849,11 +1110,15 @@ const Registration = () => {
                           required
                         >
                           <option value="">Select Region</option>
-                          {regions.map(region => (
-                            <option key={region.id} value={region.id}>
-                              {region.name}
-                            </option>
-                          ))}
+                          {regions && regions.length > 0 ? (
+                            regions.map(region => (
+                              <option key={region.id} value={region.id}>
+                                {region.region_name || region.name || 'Unnamed Region'}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="" disabled>Loading regions...</option>
+                          )}
                         </Select>
                       </FormGroup>
                       
@@ -865,27 +1130,53 @@ const Registration = () => {
                           value={formData.district_id}
                           onChange={handleInputChange}
                           required
-                          disabled={!formData.region_id}
+                          disabled={!formData.region_id || isLoadingDistricts}
                         >
                           <option value="">Select District</option>
-                          {districts.map(district => (
-                            <option key={district.id} value={district.id}>
-                              {district.name}
-                            </option>
-                          ))}
+                          {isLoadingDistricts ? (
+                            <option value="" disabled>Loading districts...</option>
+                          ) : districts && districts.length > 0 ? (
+                            districts.map(district => (
+                              <option key={district.id} value={district.id}>
+                                {district.district_name || district.name || 'Unnamed District'}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="" disabled>{formData.region_id ? 'No districts found for this region' : 'Select a region first'}</option>
+                          )}
                         </Select>
                       </FormGroup>
                       
                       <FormGroup>
-                        <Label htmlFor="profile">Profile</Label>
-                        <Input
-                          as="textarea"
-                          id="profile"
-                          name="profile"
-                          value={formData.profile}
-                          onChange={handleInputChange}
-                          rows={4}
-                        />
+                        <Label htmlFor="profile">Profile Picture</Label>
+                        <div>
+                          <Input
+                            type="file"
+                            id="profile"
+                            name="profile"
+                            accept="image/*"
+                            onChange={handleProfilePictureChange}
+                            style={{ marginBottom: '10px' }}
+                          />
+                          {profilePicturePreview && (
+                            <div style={{ marginTop: '10px' }}>
+                              <img 
+                                src={profilePicturePreview} 
+                                alt="Profile Preview" 
+                                style={{ 
+                                  width: '100px', 
+                                  height: '100px', 
+                                  objectFit: 'cover',
+                                  borderRadius: '50%',
+                                  border: '2px solid #1a8f4c'
+                                }} 
+                              />
+                            </div>
+                          )}
+                          <small style={{ color: '#666', display: 'block', marginTop: '5px' }}>
+                            Upload a profile picture (optional)
+                          </small>
+                        </div>
                       </FormGroup>
                       
                       <FormGroup>
@@ -1004,11 +1295,15 @@ const Registration = () => {
                           required
                         >
                           <option value="">Select Region</option>
-                          {regions.map(region => (
-                            <option key={region.id} value={region.id}>
-                              {region.name}
-                            </option>
-                          ))}
+                          {regions && regions.length > 0 ? (
+                            regions.map(region => (
+                              <option key={region.id} value={region.id}>
+                                {region.region_name || region.name || 'Unnamed Region'}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="" disabled>Loading regions...</option>
+                          )}
                         </Select>
                       </FormGroup>
                       
@@ -1020,14 +1315,20 @@ const Registration = () => {
                           value={formData.district_id}
                           onChange={handleInputChange}
                           required
-                          disabled={!formData.region_id}
+                          disabled={!formData.region_id || isLoadingDistricts}
                         >
                           <option value="">Select District</option>
-                          {districts.map(district => (
-                            <option key={district.id} value={district.id}>
-                              {district.name}
-                            </option>
-                          ))}
+                          {isLoadingDistricts ? (
+                            <option value="" disabled>Loading districts...</option>
+                          ) : districts && districts.length > 0 ? (
+                            districts.map(district => (
+                              <option key={district.id} value={district.id}>
+                                {district.district_name || district.name || 'Unnamed District'}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="" disabled>{formData.region_id ? 'No districts found for this region' : 'Select a region first'}</option>
+                          )}
                         </Select>
                       </FormGroup>
                       
@@ -1171,11 +1472,24 @@ const Registration = () => {
                         <Button 
                           type="submit" 
                           disabled={!validateForm() || isSubmitting}
-                          onClick={handleSubmit}
                         >
                           {isSubmitting ? 'Processing...' : 'Complete Registration'}
                         </Button>
                       </ButtonGroup>
+                      
+                      {registrationError && (
+                        <div style={{ 
+                          marginTop: '20px', 
+                          padding: '15px', 
+                          backgroundColor: '#ffebee', 
+                          color: '#c62828', 
+                          borderRadius: '5px',
+                          fontSize: '0.9rem',
+                          textAlign: 'center'
+                        }}>
+                          {registrationError}
+                        </div>
+                      )}
                     </StepContent>
                     
                     {/* Success Message */}

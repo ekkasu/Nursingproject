@@ -1,13 +1,21 @@
 // Email validation
 export const validateEmail = (email) => {
+  // Allow empty email for form filling, validation will happen on submit
+  if (!email || email === '') return true;
+  
   const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
   return re.test(String(email).toLowerCase());
 };
 
-// Phone validation (accepts formats: +XXX-XXXXXXXXX or XXXXXXXXXX)
+// Phone validation (more lenient to allow for various formats)
 export const validatePhone = (phone) => {
-  const re = /^(\+\d{1,3}-?)?\d{9,10}$/;
-  return re.test(String(phone).replace(/\s/g, ''));
+  // Allow empty phone for form filling, validation will happen on submit
+  if (!phone || phone === '') return true;
+  
+  // Remove all non-digit characters for comparison
+  const digits = String(phone).replace(/\D/g, '');
+  // Allow phone numbers with 9-15 digits (to accommodate international formats)
+  return digits.length >= 9 && digits.length <= 15;
 };
 
 // Password validation (min 8 chars, at least one number, one letter)
@@ -19,8 +27,5 @@ export const validatePassword = (password) => {
 // Format phone number to standard format
 export const formatPhoneNumber = (phone) => {
   const cleaned = String(phone).replace(/\D/g, '');
-  if (cleaned.length <= 10) {
-    return cleaned;
-  }
-  return cleaned.slice(0, 10);
+  return cleaned;
 }; 
