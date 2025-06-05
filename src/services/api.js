@@ -84,12 +84,12 @@ const api = {
       console.log('Sending registration request to:', endpoint);
       
       const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'ngrok-skip-browser-warning': 'true'
-        },
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'ngrok-skip-browser-warning': 'true'
+      },
         body: JSON.stringify(formattedData),
       });
       
@@ -259,11 +259,11 @@ const api = {
       console.log('Fetching regions from:', `${API_BASE_URL}/utils/regions/get`);
       const response = await fetch(`${API_BASE_URL}/utils/regions/get`, {
         method: 'GET',
-        headers: {
-          'Accept': 'application/json',
+      headers: {
+        'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true'
-        }
+        'ngrok-skip-browser-warning': 'true'
+      }
       });
       
       console.log('Regions Response Status:', response.status);
@@ -296,11 +296,11 @@ const api = {
       console.log('Fetching districts from:', `${API_BASE_URL}/utils/districts/get`);
       const response = await fetch(`${API_BASE_URL}/utils/districts/get`, {
         method: 'GET',
-        headers: {
-          'Accept': 'application/json',
+      headers: {
+        'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true'
-        }
+        'ngrok-skip-browser-warning': 'true'
+      }
       });
       
       console.log('Districts Response Status:', response.status);
@@ -333,11 +333,11 @@ const api = {
       console.log('Fetching districts by region from:', `${API_BASE_URL}/utils/districts/get`);
       const response = await fetch(`${API_BASE_URL}/utils/districts/get`, {
         method: 'GET',
-        headers: {
-          'Accept': 'application/json',
+      headers: {
+        'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true'
-        }
+        'ngrok-skip-browser-warning': 'true'
+      }
       });
       
       console.log('Districts by Region Response Status:', response.status);
@@ -381,11 +381,11 @@ const api = {
       console.log('Fetching categories from:', `${API_BASE_URL}/utils/categories/get`);
       const response = await fetch(`${API_BASE_URL}/utils/categories/get`, {
         method: 'GET',
-        headers: {
-          'Accept': 'application/json',
+      headers: {
+        'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true'
-        }
+        'ngrok-skip-browser-warning': 'true'
+      }
       });
       
       console.log('Categories Response Status:', response.status);

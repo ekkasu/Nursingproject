@@ -17,77 +17,6 @@ const Container = styled.div`
   padding: 0 20px;
 `;
 
-// Registration Steps Styles
-const StepsSection = styled.div`
-  margin-bottom: 60px;
-  background: white;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-`;
-
-const StepsTitle = styled.h2`
-  font-size: 32px;
-  color: #1a8f4c;
-  margin-bottom: 30px;
-  text-align: center;
-  font-family: 'Playfair Display', serif;
-  font-weight: 700;
-`;
-
-const StepsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 30px;
-  margin-top: 30px;
-`;
-
-const StepCard = styled.div`
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8f5ee 100%);
-  padding: 25px;
-  border-radius: 10px;
-  text-align: center;
-  position: relative;
-  border: 1px solid rgba(26, 143, 76, 0.1);
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  }
-
-  &::before {
-    content: '${props => props.number}';
-    position: absolute;
-    top: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 30px;
-    height: 30px;
-    background: #FFD700;
-    color: #1a8f4c;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    border: 2px solid white;
-  }
-`;
-
-const StepTitle = styled.h3`
-  color: #1a8f4c;
-  font-size: 18px;
-  margin-bottom: 10px;
-  font-weight: 600;
-`;
-
-const StepDescription = styled.p`
-  color: #4a5568;
-  font-size: 14px;
-  line-height: 1.6;
-`;
-
 const SectionHeader = styled.div`
   text-align: center;
   margin-bottom: 80px;
@@ -372,25 +301,6 @@ const Tickets = () => {
   const [hoveredCard, setHoveredCard] = useState(null);
   const navigate = useNavigate();
 
-  const registrationSteps = [
-    {
-      title: "Choose Your Ticket",
-      description: "Select from our VIP Onsite or Digital Pass options based on your preferences."
-    },
-    {
-      title: "Complete Payment",
-      description: "Securely pay for your ticket using our supported payment methods."
-    },
-    {
-      title: "Registration Form",
-      description: "Fill out your details and preferences for the conference experience."
-    },
-    {
-      title: "Access Portal",
-      description: "Get immediate access to the conference portal and start planning your experience."
-    }
-  ];
-
   const tickets = [
     {
       name: "Digital Pass Plus",
@@ -487,68 +397,58 @@ const Tickets = () => {
       <Header />
       <PageContainer>
         <Container>
-          {/* Registration Steps Section */}
-          <StepsSection>
-            <StepsTitle>Registration Process</StepsTitle>
-            <StepsGrid>
-              {registrationSteps.map((step, index) => (
-                <StepCard key={index} number={index + 1}>
-                  <StepTitle>{step.title}</StepTitle>
-                  <StepDescription>{step.description}</StepDescription>
-                </StepCard>
-              ))}
-            </StepsGrid>
-          </StepsSection>
-
           <SectionHeader>
-            <Title>Choose Your Ticket Package</Title>
-            <Subtitle>Select the perfect way to join our transformative healthcare conference - whether in person or online.</Subtitle>
+            <Title>Choose Your Ticket</Title>
+            <Subtitle>Select the perfect ticket option that suits your needs and preferences.</Subtitle>
           </SectionHeader>
-          
-          <TicketsGrid>
-            <AnimatePresence>
-              {tickets.map((ticket, index) => (
-                <TicketCard
-                  key={index}
-                  featured={ticket.featured}
-                  initial={getCardStyles(index)}
-                  animate={getCardStyles(index)}
-                  transition={{
-                    type: "spring",
-                    stiffness: 200,
-                    damping: 20,
-                    duration: 0.6
-                  }}
-                  onHoverStart={() => setHoveredCard(index)}
-                  onHoverEnd={() => setHoveredCard(null)}
-                  whileHover={{
-                    scale: 1.15,
-                    translateY: -30,
-                    zIndex: 2,
-                    opacity: 1
-                  }}
-                >
-                  {ticket.featured && <BuyButton featured={ticket.featured}>Most Popular</BuyButton>}
-                  <TicketName featured={ticket.featured}>{ticket.name}</TicketName>
+
+          <TicketsGrid
+            initial="hidden"
+            animate="visible"
+            variants={{
+              visible: {
+                transition: {
+                  staggerChildren: 0.1
+                }
+              }
+            }}
+          >
+            {tickets.map((ticket, index) => (
+              <TicketCard
+                key={index}
+                featured={ticket.featured}
+                style={getCardStyles(index)}
+                onHoverStart={() => setHoveredCard(index)}
+                onHoverEnd={() => setHoveredCard(null)}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0 }
+                }}
+              >
+                <TicketName featured={ticket.featured}>{ticket.name}</TicketName>
+                {!ticket.hidePrice && (
                   <Price featured={ticket.featured}>
                     {ticket.currency} {ticket.price}
+                    <span>/person</span>
                   </Price>
-                  <FeaturesList>
-                    {ticket.features.map((feature, idx) => (
-                      <Feature key={idx} featured={ticket.featured}>{feature}</Feature>
-                    ))}
-                  </FeaturesList>
-                  <BuyButton 
-                    featured={ticket.featured} 
-                    onClick={() => handleSelectTicket(ticket)}
-                  >
-                    {ticket.name === "Digital Pass Plus" ? "Get Digital Pass" : 
-                     ticket.name === "VIP Onsite Experience" ? "Get VIP Ticket" : 
-                     "Reserve Now"}
-                  </BuyButton>
-                </TicketCard>
-              ))}
-            </AnimatePresence>
+                )}
+                <FeaturesList>
+                  {ticket.features.map((feature, i) => (
+                    <Feature key={i} featured={ticket.featured}>
+                      {feature}
+                    </Feature>
+                  ))}
+                </FeaturesList>
+                <BuyButton
+                  featured={ticket.featured}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleSelectTicket(ticket)}
+                >
+                  {ticket.customButton || "Select Ticket"}
+                </BuyButton>
+              </TicketCard>
+            ))}
           </TicketsGrid>
         </Container>
       </PageContainer>
