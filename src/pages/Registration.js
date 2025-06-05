@@ -369,13 +369,45 @@ const ErrorText = styled.div`
   }
 `;
 
+// Add ProcessOverview component
+const ProcessOverview = ({ onStart, steps }) => {
+  return (
+    <ProcessSection>
+      <ProcessTitle>Registration Process</ProcessTitle>
+      <ProcessSteps>
+        {steps.map((step, index) => (
+          <ProcessStep key={index} number={index + 1}>
+            <StepTitle>{step.title}</StepTitle>
+            <StepDescription>{step.description}</StepDescription>
+          </ProcessStep>
+        ))}
+      </ProcessSteps>
+      <div style={{ textAlign: 'center', marginTop: '40px' }}>
+        <Button 
+          onClick={onStart}
+          style={{
+            padding: '15px 30px',
+            fontSize: '1.1rem',
+            fontWeight: '600',
+            backgroundColor: '#1a8f4c',
+            color: 'white',
+            borderRadius: '30px',
+            boxShadow: '0 4px 10px rgba(26, 143, 76, 0.3)',
+            transition: 'all 0.3s ease'
+          }}
+        >
+          Start Registration
+        </Button>
+      </div>
+    </ProcessSection>
+  );
+};
+
 const Registration = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [currentStep, setCurrentStep] = useState(1);
   const [showProcessOverview, setShowProcessOverview] = useState(true);
-  const [verificationCode, setVerificationCode] = useState('');
-  const [codeVerified, setCodeVerified] = useState(false);
   const [passwordError, setPasswordError] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -412,6 +444,48 @@ const Registration = () => {
   // Add state for profile picture
   const [profilePicture, setProfilePicture] = useState(null);
   const [profilePicturePreview, setProfilePicturePreview] = useState(null);
+
+  // Add registrationSteps
+  const registrationSteps = [
+    {
+      title: "Personal Information",
+      description: "Fill in your basic contact details and create your account."
+    },
+    {
+      title: "Professional Details",
+      description: "Tell us about your professional background and experience."
+    },
+    {
+      title: "Location & Preferences",
+      description: "Select your region and customize your conference experience."
+    },
+    {
+      title: "Accommodation",
+      description: "Choose your accommodation preferences for the conference."
+    },
+    {
+      title: "Review & Submit",
+      description: "Review your information and complete your registration."
+    }
+  ];
+
+  // Add getStepLabel function
+  const getStepLabel = (step) => {
+    switch (step) {
+      case 1:
+        return "Personal";
+      case 2:
+        return "Professional";
+      case 3:
+        return "Location";
+      case 4:
+        return "Accommodation";
+      case 5:
+        return "Confirm";
+      default:
+        return "";
+    }
+  };
 
   // Fetch all necessary data when component mounts
   useEffect(() => {
@@ -474,10 +548,10 @@ const Registration = () => {
     fetchDistricts();
   }, [formData.region_id]);
 
-  // Check if user came from payment page or accessed directly
+  // Check if user has selected a ticket
   useEffect(() => {
-    // If there's no state or referrer, redirect to tickets page
-    if (!location.state?.fromPayment) {
+    // If there's no selected ticket, redirect to tickets page
+    if (!location.state?.selectedTicket) {
       navigate('/tickets', { replace: true });
     }
     
@@ -488,16 +562,6 @@ const Registration = () => {
 
     return () => clearTimeout(timer);
   }, [navigate, location]);
-  
-  useEffect(() => {
-    if (currentStep === 6) {
-      const redirectTimer = setTimeout(() => {
-        navigate('/login');
-      }, 3000);
-
-      return () => clearTimeout(redirectTimer);
-    }
-  }, [currentStep, navigate]);
 
   if (isLoading) {
     return <LoadingSpinner text="Loading registration form..." fullScreen />;
@@ -507,19 +571,10 @@ const Registration = () => {
     return <LoadingSpinner text="Processing your registration..." fullScreen />;
   }
 
-  // If redirecting, return null to prevent rendering
-  if (!location.state?.fromPayment) {
+  // If no ticket selected, return null to prevent rendering
+  if (!location.state?.selectedTicket) {
     return null;
   }
-  
-  const handleCodeSubmit = (e) => {
-    e.preventDefault();
-    // Here you would verify the code with your backend
-    if (verificationCode) {
-      setCodeVerified(true);
-      setCurrentStep(1);
-    }
-  };
   
   // Handle profile picture upload
   const handleProfilePictureChange = (e) => {
@@ -870,650 +925,555 @@ const Registration = () => {
         <ContentContainer>
           <PageTitle>Register for NMCON 2025</PageTitle>
           <PageDescription>
-            {!codeVerified 
-              ? "Enter your verification code received after ticket purchase to begin registration."
-              : "Join us for an enriching experience of learning, networking, and professional growth."
-            }
+            Join us for an enriching experience of learning, networking, and professional growth.
           </PageDescription>
 
-          {!codeVerified ? (
-            <FormContainer>
-              <form onSubmit={handleCodeSubmit}>
-                <h2>Verification Required</h2>
-                <p>Please enter the verification code sent to you after your ticket purchase.</p>
-                
-                <FormGroup>
-                  <Label htmlFor="verificationCode">Verification Code *</Label>
-                  <Input 
-                    type="text" 
-                    id="verificationCode" 
-                    value={verificationCode}
-                    onChange={(e) => setVerificationCode(e.target.value)}
-                    placeholder="Enter your verification code"
-                    required
-                  />
-                </FormGroup>
-
-                <ButtonGroup>
-                  <div></div>
-                  <Button type="submit">
-                    Verify Code
-                  </Button>
-                </ButtonGroup>
-
-                <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                  <Link to="/tickets" style={{ color: '#1a8f4c', textDecoration: 'none' }}>
-                    Need to purchase a ticket first?
-                  </Link>
-                </div>
-              </form>
-            </FormContainer>
-          ) : (
-            <>
-              {showProcessOverview ? (
-                <ProcessSection>
-                  <ProcessTitle>Registration Process</ProcessTitle>
-                  <ProcessSteps>
-                    <ProcessStep number="1">
-                      <StepTitle>Enter Details</StepTitle>
-                      <StepDescription>
-                        Complete all required personal and professional information in the registration form.
-                      </StepDescription>
-                    </ProcessStep>
-                    
-                    <ProcessStep number="2">
-                      <StepTitle>Select Accommodation</StepTitle>
-                      <StepDescription>
-                        Choose from available accommodation options for your stay during the conference.
-                      </StepDescription>
-                    </ProcessStep>
-                    
-                    <ProcessStep number="3">
-                      <StepTitle>Create Account</StepTitle>
-                      <StepDescription>
-                        Set up your login credentials for accessing the conference portal.
-                      </StepDescription>
-                    </ProcessStep>
-                    
-                    <ProcessStep number="4">
-                      <StepTitle>Access Portal</StepTitle>
-                      <StepDescription>
-                        Log into the portal to access conference materials and updates.
-                      </StepDescription>
-                    </ProcessStep>
-                  </ProcessSteps>
-                  
-                  <div style={{ textAlign: 'center', marginTop: '40px' }}>
-                    <Button 
-                      onClick={startRegistration}
-                      style={{
-                        padding: '15px 30px',
-                        fontSize: '1.1rem',
-                        fontWeight: '600',
-                        backgroundColor: '#1a8f4c',
-                        color: 'white',
-                        borderRadius: '30px',
-                        boxShadow: '0 4px 10px rgba(26, 143, 76, 0.3)',
-                        transition: 'all 0.3s ease'
-                      }}
+          <FormContainer>
+            {showProcessOverview ? (
+              <ProcessOverview onStart={startRegistration} steps={registrationSteps} />
+            ) : (
+              <form onSubmit={handleSubmit}>
+                <StepIndicator>
+                  {[1, 2, 3, 4, 5].map((step) => (
+                    <Step
+                      key={step}
+                      active={currentStep === step}
+                      completed={currentStep > step}
+                      label={getStepLabel(step)}
                     >
-                      Start Registration
-                    </Button>
-                  </div>
-                </ProcessSection>
-              ) : (
-                <FormContainer>
-                  {currentStep <= 5 && (
-                    <StepIndicator>
-                      <Step active={currentStep === 1} completed={currentStep > 1} label="Personal">
-                        1
-                      </Step>
-                      <Step active={currentStep === 2} completed={currentStep > 2} label="Professional">
-                        2
-                      </Step>
-                      <Step active={currentStep === 3} completed={currentStep > 3} label="Preferences">
-                        3
-                      </Step>
-                      <Step active={currentStep === 4} completed={currentStep > 4} label="Accommodation">
-                        4
-                      </Step>
-                      <Step active={currentStep === 5} completed={currentStep > 5} label="Confirm">
-                        5
-                      </Step>
-                    </StepIndicator>
-                  )}
+                      {step}
+                    </Step>
+                  ))}
+                </StepIndicator>
+                
+                {/* Step 1: Personal Information */}
+                <StepContent active={currentStep === 1}>
+                  <h2>Personal Information</h2>
+                  <p>Please provide your contact details and create your account password.</p>
                   
-                  <form onSubmit={handleSubmit}>
-                    {/* Step 1: Personal Information */}
-                    <StepContent active={currentStep === 1}>
-                      <h2>Personal Information</h2>
-                      <p>Please provide your contact details and create your account password.</p>
-                      
-                      <FormGroup>
-                        <Label htmlFor="user_title_id">Title *</Label>
-                        <Select
-                          id="user_title_id"
-                          name="user_title_id"
-                          value={formData.user_title_id}
-                          onChange={handleInputChange}
-                          required
-                        >
-                          <option value="">Select Title</option>
-                          {userTitles.map(title => (
-                            <option key={title.id} value={title.id}>
-                              {title.name}
-                            </option>
-                          ))}
-                        </Select>
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="full_name">Full Name *</Label>
-                        <Input
-                          type="text"
-                          id="full_name"
-                          name="full_name"
-                          value={formData.full_name}
-                          onChange={handleInputChange}
-                          required
-                        />
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="phone">Phone Number *</Label>
-                        <Input
-                          type="tel"
-                          id="phone"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleInputChange}
-                          placeholder="e.g. +233 20 123 4567"
-                          required
-                        />
-                        {phoneError && (
-                          <ErrorText>{phoneError}</ErrorText>
-                        )}
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="email">Email Address *</Label>
-                        <Input
-                          type="email"
-                          id="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          placeholder="e.g. your.name@example.com"
-                          required
-                        />
-                        {emailError && (
-                          <ErrorText>{emailError}</ErrorText>
-                        )}
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="gender">Gender *</Label>
-                        <Select
-                          id="gender"
-                          name="gender"
-                          value={formData.gender}
-                          onChange={handleInputChange}
-                          required
-                        >
-                          <option value="">Select Gender</option>
-                          <option value="male">Male</option>
-                          <option value="female">Female</option>
-                        </Select>
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="job_title_id">Job Title *</Label>
-                        <Select
-                          id="job_title_id"
-                          name="job_title_id"
-                          value={formData.job_title_id}
-                          onChange={handleInputChange}
-                          required
-                        >
-                          <option value="">Select Job Title</option>
-                          {jobTitles && jobTitles.length > 0 ? (
-                            jobTitles.map(title => (
-                              <option key={title.id} value={title.id}>
-                                {title.name || title.title || 'Unnamed Title'}
-                              </option>
-                            ))
-                          ) : (
-                            <option value="" disabled>Loading job titles...</option>
-                          )}
-                        </Select>
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="place_of_work">Place of Work *</Label>
-                        <Input
-                          type="text"
-                          id="place_of_work"
-                          name="place_of_work"
-                          value={formData.place_of_work}
-                          onChange={handleInputChange}
-                          required
-                        />
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="region_id">Region *</Label>
-                        <Select
-                          id="region_id"
-                          name="region_id"
-                          value={formData.region_id}
-                          onChange={handleInputChange}
-                          required
-                        >
-                          <option value="">Select Region</option>
-                          {regions && regions.length > 0 ? (
-                            regions.map(region => (
-                              <option key={region.id} value={region.id}>
-                                {region.region_name || region.name || 'Unnamed Region'}
-                              </option>
-                            ))
-                          ) : (
-                            <option value="" disabled>Loading regions...</option>
-                          )}
-                        </Select>
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="district_id">District *</Label>
-                        <Select
-                          id="district_id"
-                          name="district_id"
-                          value={formData.district_id}
-                          onChange={handleInputChange}
-                          required
-                          disabled={!formData.region_id || isLoadingDistricts}
-                        >
-                          <option value="">Select District</option>
-                          {isLoadingDistricts ? (
-                            <option value="" disabled>Loading districts...</option>
-                          ) : districts && districts.length > 0 ? (
-                            districts.map(district => (
-                              <option key={district.id} value={district.id}>
-                                {district.district_name || district.name || 'Unnamed District'}
-                              </option>
-                            ))
-                          ) : (
-                            <option value="" disabled>{formData.region_id ? 'No districts found for this region' : 'Select a region first'}</option>
-                          )}
-                        </Select>
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="profile">Profile Picture</Label>
-                        <div>
-                          <Input
-                            type="file"
-                            id="profile"
-                            name="profile"
-                            accept="image/*"
-                            onChange={handleProfilePictureChange}
-                            style={{ marginBottom: '10px' }}
+                  <FormGroup>
+                    <Label htmlFor="user_title_id">Title *</Label>
+                    <Select
+                      id="user_title_id"
+                      name="user_title_id"
+                      value={formData.user_title_id}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="">Select Title</option>
+                      {userTitles.map(title => (
+                        <option key={title.id} value={title.id}>
+                          {title.name}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="full_name">Full Name *</Label>
+                    <Input
+                      type="text"
+                      id="full_name"
+                      name="full_name"
+                      value={formData.full_name}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="phone">Phone Number *</Label>
+                    <Input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      placeholder="e.g. +233 20 123 4567"
+                      required
+                    />
+                    {phoneError && (
+                      <ErrorText>{phoneError}</ErrorText>
+                    )}
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="email">Email Address *</Label>
+                    <Input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      placeholder="e.g. your.name@example.com"
+                      required
+                    />
+                    {emailError && (
+                      <ErrorText>{emailError}</ErrorText>
+                    )}
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="gender">Gender *</Label>
+                    <Select
+                      id="gender"
+                      name="gender"
+                      value={formData.gender}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </Select>
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="job_title_id">Job Title *</Label>
+                    <Select
+                      id="job_title_id"
+                      name="job_title_id"
+                      value={formData.job_title_id}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="">Select Job Title</option>
+                      {jobTitles && jobTitles.length > 0 ? (
+                        jobTitles.map(title => (
+                          <option key={title.id} value={title.id}>
+                            {title.name || title.title || 'Unnamed Title'}
+                          </option>
+                        ))
+                      ) : (
+                        <option value="" disabled>Loading job titles...</option>
+                      )}
+                    </Select>
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="place_of_work">Place of Work *</Label>
+                    <Input
+                      type="text"
+                      id="place_of_work"
+                      name="place_of_work"
+                      value={formData.place_of_work}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="region_id">Region *</Label>
+                    <Select
+                      id="region_id"
+                      name="region_id"
+                      value={formData.region_id}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="">Select Region</option>
+                      {regions && regions.length > 0 ? (
+                        regions.map(region => (
+                          <option key={region.id} value={region.id}>
+                            {region.region_name || region.name || 'Unnamed Region'}
+                          </option>
+                        ))
+                      ) : (
+                        <option value="" disabled>Loading regions...</option>
+                      )}
+                    </Select>
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="district_id">District *</Label>
+                    <Select
+                      id="district_id"
+                      name="district_id"
+                      value={formData.district_id}
+                      onChange={handleInputChange}
+                      required
+                      disabled={!formData.region_id || isLoadingDistricts}
+                    >
+                      <option value="">Select District</option>
+                      {isLoadingDistricts ? (
+                        <option value="" disabled>Loading districts...</option>
+                      ) : districts && districts.length > 0 ? (
+                        districts.map(district => (
+                          <option key={district.id} value={district.id}>
+                            {district.district_name || district.name || 'Unnamed District'}
+                          </option>
+                        ))
+                      ) : (
+                        <option value="" disabled>{formData.region_id ? 'No districts found for this region' : 'Select a region first'}</option>
+                      )}
+                    </Select>
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="profile">Profile Picture</Label>
+                    <div>
+                      <Input
+                        type="file"
+                        id="profile"
+                        name="profile"
+                        accept="image/*"
+                        onChange={handleProfilePictureChange}
+                        style={{ marginBottom: '10px' }}
+                      />
+                      {profilePicturePreview && (
+                        <div style={{ marginTop: '10px' }}>
+                          <img 
+                            src={profilePicturePreview} 
+                            alt="Profile Preview" 
+                            style={{ 
+                              width: '100px', 
+                              height: '100px', 
+                              objectFit: 'cover',
+                              borderRadius: '50%',
+                              border: '2px solid #1a8f4c'
+                            }} 
                           />
-                          {profilePicturePreview && (
-                            <div style={{ marginTop: '10px' }}>
-                              <img 
-                                src={profilePicturePreview} 
-                                alt="Profile Preview" 
-                                style={{ 
-                                  width: '100px', 
-                                  height: '100px', 
-                                  objectFit: 'cover',
-                                  borderRadius: '50%',
-                                  border: '2px solid #1a8f4c'
-                                }} 
-                              />
-                            </div>
-                          )}
-                          <small style={{ color: '#666', display: 'block', marginTop: '5px' }}>
-                            Upload a profile picture (optional)
-                          </small>
-                        </div>
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="password">Password *</Label>
-                        <Input
-                          type="password"
-                          id="password"
-                          name="password"
-                          value={formData.password}
-                          onChange={handleInputChange}
-                          required
-                          minLength={8}
-                        />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Label htmlFor="password_confirmation">Confirm Password *</Label>
-                        <Input
-                          type="password"
-                          id="password_confirmation"
-                          name="password_confirmation"
-                          value={formData.password_confirmation}
-                          onChange={handleInputChange}
-                          required
-                        />
-                        {passwordError && (
-                          <ErrorText>{passwordError}</ErrorText>
-                        )}
-                      </FormGroup>
-                      
-                      <ButtonGroup>
-                        <Button 
-                          type="button" 
-                          onClick={prevStep} 
-                          secondary
-                          style={{
-                            padding: '12px 20px',
-                            fontSize: '1rem',
-                            fontWeight: '600'
-                          }}
-                        >
-                          Back to Overview
-                        </Button>
-                        <Button 
-                          type="button" 
-                          onClick={nextStep} 
-                          disabled={!validateForm()}
-                          style={{
-                            padding: '12px 20px',
-                            fontSize: '1rem',
-                            fontWeight: '600'
-                          }}
-                        >
-                          Next Step
-                        </Button>
-                      </ButtonGroup>
-                    </StepContent>
-                    
-                    {/* Step 2: Professional Information */}
-                    <StepContent active={currentStep === 2}>
-                      <h2>Professional Information</h2>
-                      <p>Tell us about your professional background to help us tailor the event to your needs.</p>
-                      
-                      <FormGroup>
-                        <Label htmlFor="job_title_id">Job Title *</Label>
-                        <Select
-                          id="job_title_id"
-                          name="job_title_id"
-                          value={formData.job_title_id}
-                          onChange={handleInputChange}
-                          required
-                        >
-                          <option value="">Select Job Title</option>
-                          {jobTitles.map(title => (
-                            <option key={title.id} value={title.id}>
-                              {title.name}
-                            </option>
-                          ))}
-                        </Select>
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="place_of_work">Place of Work *</Label>
-                        <Input
-                          type="text"
-                          id="place_of_work"
-                          name="place_of_work"
-                          value={formData.place_of_work}
-                          onChange={handleInputChange}
-                          required
-                        />
-                      </FormGroup>
-                      
-                      <ButtonGroup>
-                        <Button type="button" onClick={prevStep} secondary>
-                          Previous Step
-                        </Button>
-                        <Button type="button" onClick={nextStep}>
-                          Next Step
-                        </Button>
-                      </ButtonGroup>
-                    </StepContent>
-                    
-                    {/* Step 3: Preferences */}
-                    <StepContent active={currentStep === 3}>
-                      <h2>Preferences & Additional Information</h2>
-                      <p>Help us make your conference experience better by sharing your preferences.</p>
-                      
-                      <FormGroup>
-                        <Label htmlFor="region_id">Region *</Label>
-                        <Select
-                          id="region_id"
-                          name="region_id"
-                          value={formData.region_id}
-                          onChange={handleInputChange}
-                          required
-                        >
-                          <option value="">Select Region</option>
-                          {regions && regions.length > 0 ? (
-                            regions.map(region => (
-                              <option key={region.id} value={region.id}>
-                                {region.region_name || region.name || 'Unnamed Region'}
-                              </option>
-                            ))
-                          ) : (
-                            <option value="" disabled>Loading regions...</option>
-                          )}
-                        </Select>
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="district_id">District *</Label>
-                        <Select
-                          id="district_id"
-                          name="district_id"
-                          value={formData.district_id}
-                          onChange={handleInputChange}
-                          required
-                          disabled={!formData.region_id || isLoadingDistricts}
-                        >
-                          <option value="">Select District</option>
-                          {isLoadingDistricts ? (
-                            <option value="" disabled>Loading districts...</option>
-                          ) : districts && districts.length > 0 ? (
-                            districts.map(district => (
-                              <option key={district.id} value={district.id}>
-                                {district.district_name || district.name || 'Unnamed District'}
-                              </option>
-                            ))
-                          ) : (
-                            <option value="" disabled>{formData.region_id ? 'No districts found for this region' : 'Select a region first'}</option>
-                          )}
-                        </Select>
-                      </FormGroup>
-                      
-                      <ButtonGroup>
-                        <Button type="button" onClick={prevStep} secondary>
-                          Previous Step
-                        </Button>
-                        <Button type="button" onClick={nextStep}>
-                          Next Step
-                        </Button>
-                      </ButtonGroup>
-                    </StepContent>
-                    
-                    {/* Step 4: Accommodation */}
-                    <StepContent active={currentStep === 4}>
-                      <h2>Select Accommodation</h2>
-                      <p>Choose your preferred accommodation option for the duration of the conference.</p>
-
-                      <FormGroup>
-                        <AccommodationCard 
-                          selected={formData.accommodation === 'standard'}
-                          onClick={() => handleInputChange({ target: { name: 'accommodation', value: 'standard' } })}
-                        >
-                          <AccommodationTitle>Standard Room</AccommodationTitle>
-                          <AccommodationDetails>
-                            <ul>
-                              <li>Single occupancy</li>
-                              <li>En-suite bathroom</li>
-                              <li>Basic amenities</li>
-                              <li>Daily housekeeping</li>
-                            </ul>
-                          </AccommodationDetails>
-                          <AccommodationPrice>$150/night</AccommodationPrice>
-                        </AccommodationCard>
-
-                        <AccommodationCard 
-                          selected={formData.accommodation === 'deluxe'}
-                          onClick={() => handleInputChange({ target: { name: 'accommodation', value: 'deluxe' } })}
-                        >
-                          <AccommodationTitle>Deluxe Room</AccommodationTitle>
-                          <AccommodationDetails>
-                            <ul>
-                              <li>Spacious room with city view</li>
-                              <li>Premium amenities</li>
-                              <li>Work desk and seating area</li>
-                              <li>24/7 room service</li>
-                            </ul>
-                          </AccommodationDetails>
-                          <AccommodationPrice>$250/night</AccommodationPrice>
-                        </AccommodationCard>
-
-                        <AccommodationCard 
-                          selected={formData.accommodation === 'suite'}
-                          onClick={() => handleInputChange({ target: { name: 'accommodation', value: 'suite' } })}
-                        >
-                          <AccommodationTitle>Executive Suite</AccommodationTitle>
-                          <AccommodationDetails>
-                            <ul>
-                              <li>Separate living area</li>
-                              <li>Luxury amenities</li>
-                              <li>Complimentary breakfast</li>
-                              <li>VIP services</li>
-                            </ul>
-                          </AccommodationDetails>
-                          <AccommodationPrice>$350/night</AccommodationPrice>
-                        </AccommodationCard>
-
-                        <AccommodationCard 
-                          selected={formData.accommodation === 'none'}
-                          onClick={() => handleInputChange({ target: { name: 'accommodation', value: 'none' } })}
-                        >
-                          <AccommodationTitle>No Accommodation Needed</AccommodationTitle>
-                          <AccommodationDetails>
-                            Select this option if you have your own accommodation arrangements.
-                          </AccommodationDetails>
-                        </AccommodationCard>
-                      </FormGroup>
-
-                      <ButtonGroup>
-                        <Button type="button" onClick={prevStep} secondary>
-                          Previous Step
-                        </Button>
-                        <Button type="button" onClick={nextStep} disabled={!validateForm()}>
-                          Next Step
-                        </Button>
-                      </ButtonGroup>
-                    </StepContent>
-                    
-                    {/* Step 5: Confirmation */}
-                    <StepContent active={currentStep === 5}>
-                      <h2>Confirm Registration</h2>
-                      <p>Please review your information and confirm your registration.</p>
-                      
-                      <div style={{ marginBottom: '30px' }}>
-                        <h3 style={{ color: '#2c3e50', marginBottom: '15px' }}>Registration Summary</h3>
-                        <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '8px' }}>
-                          <p><strong>Name:</strong> {formData.full_name}</p>
-                          <p><strong>Email:</strong> {formData.email}</p>
-                          <p><strong>Phone:</strong> {formData.phone}</p>
-                          <p><strong>Job Title:</strong> {formData.job_title_id}</p>
-                          <p><strong>Place of Work:</strong> {formData.place_of_work}</p>
-                          <p><strong>Region:</strong> {formData.region_id}</p>
-                          <p><strong>District:</strong> {formData.district_id}</p>
-                        </div>
-                      </div>
-                      
-                      <FormGroup>
-                        <CheckboxGroup>
-                          <Checkbox 
-                            type="checkbox" 
-                            id="agreeTerms" 
-                            name="agreeTerms" 
-                            checked={formData.agreeTerms}
-                            onChange={handleInputChange}
-                            required
-                          />
-                          <CheckboxLabel htmlFor="agreeTerms">
-                            I agree to the terms and conditions of the conference *
-                          </CheckboxLabel>
-                        </CheckboxGroup>
-                        
-                        <CheckboxGroup>
-                          <Checkbox 
-                            type="checkbox" 
-                            id="agreePrivacy" 
-                            name="agreePrivacy" 
-                            checked={formData.agreePrivacy}
-                            onChange={handleInputChange}
-                            required
-                          />
-                          <CheckboxLabel htmlFor="agreePrivacy">
-                            I consent to the processing of my personal data in accordance with the privacy policy *
-                          </CheckboxLabel>
-                        </CheckboxGroup>
-                      </FormGroup>
-                      
-                      <ButtonGroup>
-                        <Button type="button" onClick={prevStep} secondary>
-                          Previous Step
-                        </Button>
-                        <Button 
-                          type="submit" 
-                          disabled={!validateForm() || isSubmitting}
-                        >
-                          {isSubmitting ? 'Processing...' : 'Complete Registration'}
-                        </Button>
-                      </ButtonGroup>
-                      
-                      {registrationError && (
-                        <div style={{ 
-                          marginTop: '20px', 
-                          padding: '15px', 
-                          backgroundColor: '#ffebee', 
-                          color: '#c62828', 
-                          borderRadius: '5px',
-                          fontSize: '0.9rem',
-                          textAlign: 'center'
-                        }}>
-                          {registrationError}
                         </div>
                       )}
-                    </StepContent>
+                      <small style={{ color: '#666', display: 'block', marginTop: '5px' }}>
+                        Upload a profile picture (optional)
+                      </small>
+                    </div>
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="password">Password *</Label>
+                    <Input
+                      type="password"
+                      id="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      required
+                      minLength={8}
+                    />
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label htmlFor="password_confirmation">Confirm Password *</Label>
+                    <Input
+                      type="password"
+                      id="password_confirmation"
+                      name="password_confirmation"
+                      value={formData.password_confirmation}
+                      onChange={handleInputChange}
+                      required
+                    />
+                    {passwordError && (
+                      <ErrorText>{passwordError}</ErrorText>
+                    )}
+                  </FormGroup>
+                  
+                  <ButtonGroup>
+                    <Button 
+                      type="button" 
+                      onClick={prevStep} 
+                      secondary
+                      style={{
+                        padding: '12px 20px',
+                        fontSize: '1rem',
+                        fontWeight: '600'
+                      }}
+                    >
+                      Back to Overview
+                    </Button>
+                    <Button 
+                      type="button" 
+                      onClick={nextStep} 
+                      disabled={!validateForm()}
+                      style={{
+                        padding: '12px 20px',
+                        fontSize: '1rem',
+                        fontWeight: '600'
+                      }}
+                    >
+                      Next Step
+                    </Button>
+                  </ButtonGroup>
+                </StepContent>
+                
+                {/* Step 2: Professional Information */}
+                <StepContent active={currentStep === 2}>
+                  <h2>Professional Information</h2>
+                  <p>Tell us about your professional background to help us tailor the event to your needs.</p>
+                  
+                  <FormGroup>
+                    <Label htmlFor="job_title_id">Job Title *</Label>
+                    <Select
+                      id="job_title_id"
+                      name="job_title_id"
+                      value={formData.job_title_id}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="">Select Job Title</option>
+                      {jobTitles.map(title => (
+                        <option key={title.id} value={title.id}>
+                          {title.name}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="place_of_work">Place of Work *</Label>
+                    <Input
+                      type="text"
+                      id="place_of_work"
+                      name="place_of_work"
+                      value={formData.place_of_work}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </FormGroup>
+                  
+                  <ButtonGroup>
+                    <Button type="button" onClick={prevStep} secondary>
+                      Previous Step
+                    </Button>
+                    <Button type="button" onClick={nextStep}>
+                      Next Step
+                    </Button>
+                  </ButtonGroup>
+                </StepContent>
+                
+                {/* Step 3: Preferences */}
+                <StepContent active={currentStep === 3}>
+                  <h2>Preferences & Additional Information</h2>
+                  <p>Help us make your conference experience better by sharing your preferences.</p>
+                  
+                  <FormGroup>
+                    <Label htmlFor="region_id">Region *</Label>
+                    <Select
+                      id="region_id"
+                      name="region_id"
+                      value={formData.region_id}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="">Select Region</option>
+                      {regions && regions.length > 0 ? (
+                        regions.map(region => (
+                          <option key={region.id} value={region.id}>
+                            {region.region_name || region.name || 'Unnamed Region'}
+                          </option>
+                        ))
+                      ) : (
+                        <option value="" disabled>Loading regions...</option>
+                      )}
+                    </Select>
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="district_id">District *</Label>
+                    <Select
+                      id="district_id"
+                      name="district_id"
+                      value={formData.district_id}
+                      onChange={handleInputChange}
+                      required
+                      disabled={!formData.region_id || isLoadingDistricts}
+                    >
+                      <option value="">Select District</option>
+                      {isLoadingDistricts ? (
+                        <option value="" disabled>Loading districts...</option>
+                      ) : districts && districts.length > 0 ? (
+                        districts.map(district => (
+                          <option key={district.id} value={district.id}>
+                            {district.district_name || district.name || 'Unnamed District'}
+                          </option>
+                        ))
+                      ) : (
+                        <option value="" disabled>{formData.region_id ? 'No districts found for this region' : 'Select a region first'}</option>
+                      )}
+                    </Select>
+                  </FormGroup>
+                  
+                  <ButtonGroup>
+                    <Button type="button" onClick={prevStep} secondary>
+                      Previous Step
+                    </Button>
+                    <Button type="button" onClick={nextStep}>
+                      Next Step
+                    </Button>
+                  </ButtonGroup>
+                </StepContent>
+                
+                {/* Step 4: Accommodation */}
+                <StepContent active={currentStep === 4}>
+                  <h2>Select Accommodation</h2>
+                  <p>Choose your preferred accommodation option for the duration of the conference.</p>
+
+                  <FormGroup>
+                    <AccommodationCard 
+                      selected={formData.accommodation === 'standard'}
+                      onClick={() => handleInputChange({ target: { name: 'accommodation', value: 'standard' } })}
+                    >
+                      <AccommodationTitle>Standard Room</AccommodationTitle>
+                      <AccommodationDetails>
+                        <ul>
+                          <li>Single occupancy</li>
+                          <li>En-suite bathroom</li>
+                          <li>Basic amenities</li>
+                          <li>Daily housekeeping</li>
+                        </ul>
+                      </AccommodationDetails>
+                      <AccommodationPrice>$150/night</AccommodationPrice>
+                    </AccommodationCard>
+
+                    <AccommodationCard 
+                      selected={formData.accommodation === 'deluxe'}
+                      onClick={() => handleInputChange({ target: { name: 'accommodation', value: 'deluxe' } })}
+                    >
+                      <AccommodationTitle>Deluxe Room</AccommodationTitle>
+                      <AccommodationDetails>
+                        <ul>
+                          <li>Spacious room with city view</li>
+                          <li>Premium amenities</li>
+                          <li>Work desk and seating area</li>
+                          <li>24/7 room service</li>
+                        </ul>
+                      </AccommodationDetails>
+                      <AccommodationPrice>$250/night</AccommodationPrice>
+                    </AccommodationCard>
+
+                    <AccommodationCard 
+                      selected={formData.accommodation === 'suite'}
+                      onClick={() => handleInputChange({ target: { name: 'accommodation', value: 'suite' } })}
+                    >
+                      <AccommodationTitle>Executive Suite</AccommodationTitle>
+                      <AccommodationDetails>
+                        <ul>
+                          <li>Separate living area</li>
+                          <li>Luxury amenities</li>
+                          <li>Complimentary breakfast</li>
+                          <li>VIP services</li>
+                        </ul>
+                      </AccommodationDetails>
+                      <AccommodationPrice>$350/night</AccommodationPrice>
+                    </AccommodationCard>
+
+                    <AccommodationCard 
+                      selected={formData.accommodation === 'none'}
+                      onClick={() => handleInputChange({ target: { name: 'accommodation', value: 'none' } })}
+                    >
+                      <AccommodationTitle>No Accommodation Needed</AccommodationTitle>
+                      <AccommodationDetails>
+                        Select this option if you have your own accommodation arrangements.
+                      </AccommodationDetails>
+                    </AccommodationCard>
+                  </FormGroup>
+
+                  <ButtonGroup>
+                    <Button type="button" onClick={prevStep} secondary>
+                      Previous Step
+                    </Button>
+                    <Button type="button" onClick={nextStep} disabled={!validateForm()}>
+                      Next Step
+                    </Button>
+                  </ButtonGroup>
+                </StepContent>
+                
+                {/* Step 5: Confirmation */}
+                <StepContent active={currentStep === 5}>
+                  <h2>Confirm Registration</h2>
+                  <p>Please review your information and confirm your registration.</p>
+                  
+                  <div style={{ marginBottom: '30px' }}>
+                    <h3 style={{ color: '#2c3e50', marginBottom: '15px' }}>Registration Summary</h3>
+                    <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '8px' }}>
+                      <p><strong>Name:</strong> {formData.full_name}</p>
+                      <p><strong>Email:</strong> {formData.email}</p>
+                      <p><strong>Phone:</strong> {formData.phone}</p>
+                      <p><strong>Job Title:</strong> {formData.job_title_id}</p>
+                      <p><strong>Place of Work:</strong> {formData.place_of_work}</p>
+                      <p><strong>Region:</strong> {formData.region_id}</p>
+                      <p><strong>District:</strong> {formData.district_id}</p>
+                    </div>
+                  </div>
+                  
+                  <FormGroup>
+                    <CheckboxGroup>
+                      <Checkbox 
+                        type="checkbox" 
+                        id="agreeTerms" 
+                        name="agreeTerms" 
+                        checked={formData.agreeTerms}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <CheckboxLabel htmlFor="agreeTerms">
+                        I agree to the terms and conditions of the conference *
+                      </CheckboxLabel>
+                    </CheckboxGroup>
                     
-                    {/* Success Message */}
-                    <StepContent active={currentStep === 6}>
-                      <SuccessMessage>
-                        <SuccessIcon>✓</SuccessIcon>
-                        <SuccessTitle>Registration Successful!</SuccessTitle>
-                        <SuccessText>
-                          Congratulations! Your registration for NMCON 2025 has been completed successfully.
-                          We've sent a confirmation email to {formData.email} with your registration details.
-                        </SuccessText>
-                        <SuccessText>
-                          Get ready for an enriching experience of learning, networking, and professional growth!
-                        </SuccessText>
-                        <RedirectText>
-                          Redirecting you to login page in 3 seconds...
-                        </RedirectText>
-                      </SuccessMessage>
-                    </StepContent>
-                  </form>
-                </FormContainer>
-              )}
-            </>
-          )}
+                    <CheckboxGroup>
+                      <Checkbox 
+                        type="checkbox" 
+                        id="agreePrivacy" 
+                        name="agreePrivacy" 
+                        checked={formData.agreePrivacy}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <CheckboxLabel htmlFor="agreePrivacy">
+                        I consent to the processing of my personal data in accordance with the privacy policy *
+                      </CheckboxLabel>
+                    </CheckboxGroup>
+                  </FormGroup>
+                  
+                  <ButtonGroup>
+                    <Button type="button" onClick={prevStep} secondary>
+                      Previous Step
+                    </Button>
+                    <Button 
+                      type="submit" 
+                      disabled={!validateForm() || isSubmitting}
+                    >
+                      {isSubmitting ? 'Processing...' : 'Complete Registration'}
+                    </Button>
+                  </ButtonGroup>
+                  
+                  {registrationError && (
+                    <div style={{ 
+                      marginTop: '20px', 
+                      padding: '15px', 
+                      backgroundColor: '#ffebee', 
+                      color: '#c62828', 
+                      borderRadius: '5px',
+                      fontSize: '0.9rem',
+                      textAlign: 'center'
+                    }}>
+                      {registrationError}
+                    </div>
+                  )}
+                </StepContent>
+                
+                {/* Success Message */}
+                <StepContent active={currentStep === 6}>
+                  <SuccessMessage>
+                    <SuccessIcon>✓</SuccessIcon>
+                    <SuccessTitle>Registration Successful!</SuccessTitle>
+                    <SuccessText>
+                      Congratulations! Your registration for NMCON 2025 has been completed successfully.
+                      We've sent a confirmation email to {formData.email} with your registration details.
+                    </SuccessText>
+                    <SuccessText>
+                      Get ready for an enriching experience of learning, networking, and professional growth!
+                    </SuccessText>
+                    <RedirectText>
+                      Redirecting you to login page in 3 seconds...
+                    </RedirectText>
+                  </SuccessMessage>
+                </StepContent>
+              </form>
+            )}
+          </FormContainer>
         </ContentContainer>
       </PageContainer>
     </>

@@ -19,7 +19,6 @@ import Login from './pages/Login';
 import News from './pages/News';
 import Footer from './components/Footer';
 import Tickets from './pages/Tickets';
-import Payment from './pages/Payment';
 import Gallery from './pages/Gallery';
 import Reservation from './pages/Reservation';
 import ComingSoon from './pages/ComingSoon';
@@ -41,7 +40,7 @@ const MainContent = styled.main`
 // Component to handle conditional footer rendering
 const AppContent = () => {
   const location = useLocation();
-  const hideFooterPaths = ['/login', '/tickets', '/nomination', '/payment', '/reservation', '/coming-soon'];
+  const hideFooterPaths = ['/login', '/tickets', '/nomination', '/reservation', '/coming-soon'];
   const shouldShowFooter = !hideFooterPaths.includes(location.pathname);
 
   return (
@@ -51,7 +50,6 @@ const AppContent = () => {
           <Route path="/" element={<Home />} />
           <Route path="/registration" element={<Registration />} />
           <Route path="/tickets" element={<Tickets />} />
-          <Route path="/payment" element={<Payment />} />
           <Route path="/nomination" element={<Nomination />} />
           <Route path="/media" element={<MediaGallery />} />
           <Route path="/vote" element={<Vote />} />

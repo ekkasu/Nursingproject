@@ -470,7 +470,7 @@ const Tickets = () => {
     if (ticket.name === "Reservation") {
       navigate('/reservation');
     } else {
-      navigate('/payment', { state: { ticket } });
+      navigate('/registration', { state: { selectedTicket: ticket } });
     }
   };
 
@@ -478,7 +478,7 @@ const Tickets = () => {
     if (ticket.name === "Reservation") {
       navigate('/reservation');
     } else {
-      navigate('/payment', { state: { ticket } });
+      navigate('/registration', { state: { selectedTicket: ticket } });
     }
   };
 
