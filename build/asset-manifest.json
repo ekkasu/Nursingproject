@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "./static/css/main.55b0e81d.css",
-    "main.js": "./static/js/main.007f209b.js",
+    "main.js": "./static/js/main.c00805c6.js",
     "static/media/005A0097.JPG": "./static/media/005A0097.a47434ba4c0dcb0ed68e.JPG",
     "static/media/289A3265.jpg": "./static/media/289A3265.61f141a576fcdd348560.jpg",
     "static/media/005A0006.JPG": "./static/media/005A0006.8e13c2e58a097c5b0fb6.JPG",
@@ -23,10 +23,10 @@
     "static/media/nurse_conference_logo.png": "./static/media/nurse_conference_logo.1b67745c6a46d746536f.png",
     "index.html": "./index.html",
     "main.55b0e81d.css.map": "./static/css/main.55b0e81d.css.map",
-    "main.007f209b.js.map": "./static/js/main.007f209b.js.map"
+    "main.c00805c6.js.map": "./static/js/main.c00805c6.js.map"
   },
   "entrypoints": [
     "static/css/main.55b0e81d.css",
-    "static/js/main.007f209b.js"
+    "static/js/main.c00805c6.js"
   ]
 }
