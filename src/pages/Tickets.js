@@ -106,8 +106,15 @@ const TicketCard = styled(motion.div)`
 const TicketName = styled.h3`
   font-size: ${props => props.featured ? '22px' : '20px'};
   color: #1a8f4c;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   font-weight: 700;
+`;
+
+const TicketDescription = styled.p`
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 15px;
+  font-style: italic;
 `;
 
 const Price = styled.div`
@@ -303,7 +310,9 @@ const Tickets = () => {
 
   const tickets = [
     {
-      name: "Digital Pass Plus",
+      name: "Online",
+      apiValue: "online",
+      description: "Virtual attendance with full digital access to all sessions",
       price: 1500,
       currency: "GHS",
       featured: false,
@@ -317,7 +326,9 @@ const Tickets = () => {
       ]
     },
     {
-      name: "VIP Onsite Experience",
+      name: "Onsite",
+      apiValue: "onsite",
+      description: "In-person attendance with full VIP conference experience",
       price: 3500,
       currency: "GHS",
       featured: true,
@@ -334,6 +345,7 @@ const Tickets = () => {
     },
     {
       name: "Reservation",
+      description: "Reserve your spot now and pay later",
       hidePrice: true,
       featured: false,
       features: [
@@ -388,7 +400,11 @@ const Tickets = () => {
     if (ticket.name === "Reservation") {
       navigate('/reservation');
     } else {
-      navigate('/registration', { state: { selectedTicket: ticket } });
+      const ticketForRegistration = {
+        ...ticket,
+        registration_type: ticket.apiValue
+      };
+      navigate('/registration', { state: { selectedTicket: ticketForRegistration } });
     }
   };
 
@@ -399,7 +415,7 @@ const Tickets = () => {
         <Container>
           <SectionHeader>
             <Title>Choose Your Ticket</Title>
-            <Subtitle>Select the perfect ticket option that suits your needs and preferences.</Subtitle>
+            <Subtitle>Select between Online or Onsite attendance for the NMCON 2025 conference.</Subtitle>
           </SectionHeader>
 
           <TicketsGrid
@@ -426,6 +442,7 @@ const Tickets = () => {
                 }}
               >
                 <TicketName featured={ticket.featured}>{ticket.name}</TicketName>
+                <TicketDescription>{ticket.description}</TicketDescription>
                 {!ticket.hidePrice && (
                   <Price featured={ticket.featured}>
                     {ticket.currency} {ticket.price}
@@ -445,7 +462,7 @@ const Tickets = () => {
                   whileTap={{ scale: 0.95 }}
                   onClick={() => handleSelectTicket(ticket)}
                 >
-                  {ticket.customButton || "Select Ticket"}
+                  {ticket.customButton || "Select This Ticket"}
                 </BuyButton>
               </TicketCard>
             ))}

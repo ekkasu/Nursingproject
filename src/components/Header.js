@@ -175,7 +175,7 @@ const ButtonSeparator = styled.div`
   }
 `;
 
-const LoginButton = styled(Link)`
+const LoginButton = styled.a`
   padding: 10px 20px;
   background-color: transparent;
   color: #1a8f4c;
@@ -357,13 +357,13 @@ const Header = () => {
           <NavLink to="/news">News</NavLink>
           <NavLink to="/contact">Contact</NavLink>
           <MobileActionButtons>
-            <LoginButton to="/login">Login</LoginButton>
+            <LoginButton href="https://portal.mohannualcon.com/" target="_blank">Login</LoginButton>
             <RegisterButton to="/registration">Register Now</RegisterButton>
           </MobileActionButtons>
         </NavLinks>
 
         <ActionButtons>
-          <LoginButton to="/login">Login</LoginButton>
+          <LoginButton href="https://portal.mohannualcon.com/" target="_blank">Login</LoginButton>
           <ButtonSeparator />
           <RegisterButton to="/registration">Register Now</RegisterButton>
         </ActionButtons>

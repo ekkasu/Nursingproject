@@ -4,6 +4,35 @@ import Header from '../components/Header';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { useNavigate } from 'react-router-dom';
 
+// API base URL
+const API_BASE_URL = 'https://portal.mohannualcon.com/api';
+
+// Utility function to safely read response data
+const safelyReadResponse = async (response) => {
+  // Always clone before reading
+  const clonedResponse = response.clone();
+  
+  try {
+    // Try to parse as JSON first
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return await response.json();
+    } else {
+      // If not JSON, read as text
+      return await clonedResponse.text();
+    }
+  } catch (error) {
+    console.error('Error reading response:', error);
+    // Fallback to text if JSON parsing fails
+    try {
+      return await clonedResponse.text();
+    } catch (textError) {
+      console.error('Error reading response as text:', textError);
+      return { error: 'Failed to read response' };
+    }
+  }
+};
+
 // Main container styles
 const PageContainer = styled.div`
   width: 100%;
@@ -403,7 +432,6 @@ const Nomination = () => {
   const [formData, setFormData] = useState({
     // Nominator's Details
     nominatorName: '',
-    nominatorEmail: '',
     nominatorPhone: '',
     nominatorOrganization: '',
     relationship: '',
@@ -411,8 +439,8 @@ const Nomination = () => {
     // Nominee's Details
     nomineeName: '',
     nomineePhone: '',
-    nomineeTitle: '',
-    jobTitle: '',
+    user_title_id: '',
+    job_title_id: '',
     nomineeOrganization: '',
     
     // Files
@@ -426,7 +454,6 @@ const Nomination = () => {
     // Confirmation
     agreeTerms: false,
     agreePrivacy: false,
-    nominatorEmailError: '',
     nomineePhoneError: '',
     nominatorPhoneError: '',
   });
@@ -528,7 +555,7 @@ const Nomination = () => {
     console.log('Browser details:', navigator.userAgent);
     
     // Use the confirmed API endpoint
-    const apiEndpoint = 'https://portal.mohannualcon.com/api/nominate';
+    const apiEndpoint = `${API_BASE_URL}/nominate`;
     console.log(`Using confirmed API endpoint: ${apiEndpoint}`);
     
     try {
@@ -542,6 +569,8 @@ const Nomination = () => {
         nominator_relationship: formData.relationship,
         primary_nomination_reason: formData.reasonForNomination,
         category_id: String(formData.awardCategory),
+        user_title_id: String(formData.user_title_id),
+        job_title_id: String(formData.job_title_id)
       };
       
       // Convert image to base64 if available
@@ -571,99 +600,16 @@ const Nomination = () => {
       // Log the payload
       console.log('Sending payload:', payload);
       
-      // Try different content-type headers
-      const contentTypes = [
-        'application/json',
-        'application/json; charset=UTF-8',
-        'application/json;charset=UTF-8'
-      ];
-      
-      let successfulResponse = null;
-      
-      // Try each content type
-      for (let i = 0; i < contentTypes.length; i++) {
-        const contentType = contentTypes[i];
-        console.log(`Attempt ${i+1}: Using Content-Type: ${contentType}`);
-        
-        try {
-          const response = await fetch(apiEndpoint, {
-            method: 'POST',
-            headers: {
-              'Content-Type': contentType,
-              'Accept': 'application/json',
-              'ngrok-skip-browser-warning': 'true'
-            },
-            body: JSON.stringify(payload)
-          });
-          
-          console.log(`Attempt ${i+1} response status:`, response.status);
-          
-          // Try to get response data
-          let responseData;
-          try {
-            const respContentType = response.headers.get('content-type');
-            if (respContentType && respContentType.includes('application/json')) {
-              responseData = await response.json();
-              console.log(`Attempt ${i+1} response data:`, responseData);
-            } else {
-              responseData = await response.text();
-              console.log(`Attempt ${i+1} response text:`, responseData);
-            }
-          } catch (parseError) {
-            console.error(`Error parsing response for attempt ${i+1}:`, parseError);
-          }
-          
-          if (response.ok) {
-            console.log(`Attempt ${i+1} successful!`);
-            successfulResponse = response;
-            break;
-          }
-        } catch (fetchError) {
-          console.error(`Error in attempt ${i+1}:`, fetchError);
-        }
-      }
-      
-      // If any attempt was successful
-      if (successfulResponse) {
-        await handleApiResponse(successfulResponse);
-        return;
-      }
-      
-      // If all attempts with profile failed, try without profile
-      console.log('All attempts with profile failed. Trying without profile...');
-      
-      const payloadWithoutProfile = { ...payload };
-      delete payloadWithoutProfile.profile;
-      
-      const response = await fetch(apiEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'ngrok-skip-browser-warning': 'true'
-        },
-        body: JSON.stringify(payloadWithoutProfile)
-      });
-      
-      console.log('Response without profile status:', response.status);
-      
-      if (response.ok) {
-        console.log('Submission without profile successful!');
-        await handleApiResponse(response);
-        return;
-      }
-      
-      // If all attempts failed, try with FormData instead of JSON
-      console.log('All JSON attempts failed. Trying FormData...');
-      
+      // Make a single API request with FormData for better compatibility
       const formDataToSend = new FormData();
       
       // Add all fields to FormData
-      Object.entries(payloadWithoutProfile).forEach(([key, value]) => {
+      Object.entries(payload).forEach(([key, value]) => {
         formDataToSend.append(key, value);
       });
       
-      const formDataResponse = await fetch(apiEndpoint, {
+      console.log('Sending nomination data to API...');
+      const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -672,15 +618,17 @@ const Nomination = () => {
         body: formDataToSend
       });
       
-      console.log('FormData response status:', formDataResponse.status);
+      console.log('API response status:', response.status);
       
-      if (formDataResponse.ok) {
-        console.log('FormData submission successful!');
-        await handleApiResponse(formDataResponse);
-        return;
+      if (response.ok) {
+        console.log('Nomination submission successful!');
+        await handleApiResponse(response.clone());
+      } else {
+        // If the request failed, throw an error to be caught below
+        const errorData = await safelyReadResponse(response);
+        console.error('Error response from API:', errorData);
+        throw new Error(`Server returned ${response.status} ${response.statusText}`);
       }
-      
-      throw new Error(`All submission attempts failed. Please check the console for detailed error information.`);
     } catch (error) {
       console.error('Error submitting nomination:', error);
       
@@ -689,7 +637,7 @@ const Nomination = () => {
       
       // Add troubleshooting information
       setErrors({ 
-        submit: `${errorMessage}\n\nTroubleshooting tips:\n- Check your internet connection\n- Verify all fields are completed correctly\n- Try submitting with just the required fields\n- If problems persist, please contact support at support@mohannualcon.com with error details shown in the browser console (F12)`
+        submit: `${errorMessage}\n\nTroubleshooting tips:\n- Check your internet connection\n- Verify all fields are completed correctly\n- If problems persist, please contact support at support@mohannualcon.com with error details shown in the browser console (F12)`
       });
     } finally {
       setIsLoading(false);
@@ -702,27 +650,8 @@ const Nomination = () => {
     let responseData;
     
     try {
-      // Clone the response before reading it
-      const responseClone = response.clone();
-      
-      // Try to get response as JSON first
-      try {
-        responseData = await response.json();
-        console.log('Parsed JSON response:', responseData);
-      } catch (jsonError) {
-        // If JSON parsing fails, try to get text response
-        console.log('Response is not valid JSON, trying text response');
-        const responseText = await responseClone.text();
-        console.log('Raw response text:', responseText);
-        
-        // Try to parse the text as JSON if possible
-        try {
-          responseData = JSON.parse(responseText);
-        } catch (e) {
-          // If parsing fails, use text as is
-          responseData = { message: responseText || 'Unknown server error' };
-        }
-      }
+      responseData = await safelyReadResponse(response);
+      console.log('Response data:', responseData);
     } catch (error) {
       console.error('Error reading response:', error);
       throw new Error('Failed to read server response: ' + error.message);
@@ -770,9 +699,9 @@ const Nomination = () => {
       try {
         // Try multiple possible endpoints for categories
         const endpoints = [
-          'https://portal.mohannualcon.com/api/utils/categories/get',
-          'https://portal.mohannualcon.com/api/categories',
-          'https://portal.mohannualcon.com/api/award-categories'
+          `${API_BASE_URL}/utils/categories/get`,
+          `${API_BASE_URL}/categories`,
+          `${API_BASE_URL}/award-categories`
         ];
         
         let categoryData = null;
@@ -843,7 +772,7 @@ const Nomination = () => {
       setIsLoadingTitles(true);
       try {
         // Fetch professional titles
-        const professionalTitlesResponse = await fetch('https://portal.mohannualcon.com/api/utils/user-title/get', {
+        const professionalTitlesResponse = await fetch(`${API_BASE_URL}/utils/user-title/get`, {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
@@ -852,7 +781,7 @@ const Nomination = () => {
         });
         
         // Fetch job titles
-        const jobTitlesResponse = await fetch('https://portal.mohannualcon.com/api/utils/job-title/get', {
+        const jobTitlesResponse = await fetch(`${API_BASE_URL}/utils/job-title/get`, {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
@@ -948,8 +877,6 @@ const Nomination = () => {
   const validateNominator = () => {
     return (
       formData.nominatorName?.trim() &&
-      formData.nominatorEmail?.trim() &&
-      validateEmail(formData.nominatorEmail) &&
       formData.nominatorPhone?.trim() &&
       validatePhone(formData.nominatorPhone) &&
       formData.relationship
@@ -961,8 +888,8 @@ const Nomination = () => {
       formData.nomineeName?.trim() &&
       formData.nomineePhone?.trim() &&
       validatePhone(formData.nomineePhone) &&
-      formData.nomineeTitle &&
-      formData.jobTitle &&
+      formData.user_title_id &&
+      formData.job_title_id &&
       formData.nomineeOrganization?.trim()
     );
   };
@@ -1004,14 +931,22 @@ const Nomination = () => {
   };
 
   const requirements = [
+
+    {
+      title: "Nominator's Details",
+      description: "Your complete contact information and relationship to the nominee for verification purposes.",
+      icon: "✍️"
+    },
+    
     {
       title: "Nominee's Details",
       description: "Complete personal and professional information about the nominee, including full name, title, and contact information.",
       icon: "👤"
     },
+
     {
-      title: "Nominee's Passport Picture (Optional)",
-      description: "A passport-sized photograph of the nominee can be included but is not required.",
+      title: "Nominee's Passport Picture ",
+      description: "A passport-sized photograph of the nominee is required.",
       icon: "📸"
     },
     {
@@ -1024,11 +959,7 @@ const Nomination = () => {
       description: "Detailed explanation of why the nominee deserves recognition, including specific examples of their contributions and impact.",
       icon: "🏆"
     },
-    {
-      title: "Nominator's Details",
-      description: "Your complete contact information and relationship to the nominee for verification purposes.",
-      icon: "✍️"
-    }
+    
   ];
 
   // Helper function to resize an image to reduce file size
@@ -1237,21 +1168,6 @@ const Nomination = () => {
                 </FormGroup>
                 
                 <FormGroup>
-                  <Label htmlFor="nominatorEmail">Email Address *</Label>
-                  <Input 
-                    type="email" 
-                    id="nominatorEmail" 
-                    name="nominatorEmail" 
-                    value={formData.nominatorEmail}
-                    onChange={handleInputChange}
-                    required
-                  />
-                  {formData.nominatorEmailError && (
-                    <ErrorText>{formData.nominatorEmailError}</ErrorText>
-                  )}
-                </FormGroup>
-                
-                <FormGroup>
                   <Label htmlFor="nominatorPhone">Phone Number * (10 digits)</Label>
                   <Input 
                     type="tel" 
@@ -1299,11 +1215,11 @@ const Nomination = () => {
                 <p>Please provide comprehensive information about the healthcare professional you are nominating.</p>
                 
                 <FormGroup>
-                  <Label htmlFor="nomineeTitle">Title *</Label>
+                  <Label htmlFor="user_title_id">Title *</Label>
                   <Select 
-                    id="nomineeTitle" 
-                    name="nomineeTitle" 
-                    value={formData.nomineeTitle}
+                    id="user_title_id" 
+                    name="user_title_id" 
+                    value={formData.user_title_id}
                     onChange={handleInputChange}
                     disabled={isLoadingTitles}
                     required
@@ -1347,11 +1263,11 @@ const Nomination = () => {
                 </FormGroup>
                 
                 <FormGroup>
-                  <Label htmlFor="jobTitle">Job Title *</Label>
+                  <Label htmlFor="job_title_id">Job Title *</Label>
                   <Select 
-                    id="jobTitle" 
-                    name="jobTitle" 
-                    value={formData.jobTitle}
+                    id="job_title_id" 
+                    name="job_title_id" 
+                    value={formData.job_title_id}
                     onChange={handleInputChange}
                     disabled={isLoadingTitles}
                     required
@@ -1589,7 +1505,6 @@ const Nomination = () => {
                   <SuccessIcon>✓</SuccessIcon>
                   <h2>Nomination Submitted Successfully!</h2>
                   <p>Thank you for nominating an outstanding healthcare professional. Your nomination has been received and will be reviewed by our awards committee.</p>
-                  <p>We've sent a confirmation email to {formData.nominatorEmail} with details of your submission.</p>
                   <ButtonGroup>
                     <div></div>
                     <Button onClick={handleNextAfterSuccess}>Back to Home</Button>

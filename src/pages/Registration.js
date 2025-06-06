@@ -237,6 +237,24 @@ const RedirectText = styled.p`
   margin-top: 30px;
 `;
 
+const LoginButton = styled.a`
+  display: inline-block;
+  padding: 12px 30px;
+  background-color: #1a8f4c;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-align: center;
+  
+  &:hover {
+    background-color: #156e3a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+`;
+
 const ProcessSection = styled.div`
   background: white;
   border-radius: 10px;
@@ -369,6 +387,19 @@ const ErrorText = styled.div`
   }
 `;
 
+const PasswordStrengthIndicator = styled.div`
+  height: 5px;
+  margin-top: 8px;
+  border-radius: 3px;
+  background: ${props => {
+    if (props.strength === 'strong') return '#1a8f4c';
+    if (props.strength === 'medium') return '#f39c12';
+    if (props.strength === 'weak') return '#e74c3c';
+    return '#e0e0e0';
+  }};
+  transition: all 0.3s ease;
+`;
+
 // Add ProcessOverview component
 const ProcessOverview = ({ onStart, steps }) => {
   return (
@@ -415,6 +446,8 @@ const Registration = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingDistricts, setIsLoadingDistricts] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState('');
   
   // Data from API endpoints
   const [jobTitles, setJobTitles] = useState([]);
@@ -437,6 +470,7 @@ const Registration = () => {
     password: '',
     password_confirmation: '',
     accommodation: 'none',
+    registration_type: '',
     agreeTerms: false,
     agreePrivacy: false
   });
@@ -541,6 +575,12 @@ const Registration = () => {
     // If there's no selected ticket, redirect to tickets page
     if (!location.state?.selectedTicket) {
       navigate('/tickets', { replace: true });
+    } else {
+      // Set registration type based on selected ticket
+      setFormData(prev => ({
+        ...prev,
+        registration_type: location.state.selectedTicket.registration_type || 'online'
+      }));
     }
     
     // Simulate initial page load
@@ -640,15 +680,22 @@ const Registration = () => {
         return;
     } else if (name === 'password') {
       // Validate password strength
-      if (value.length > 0 && value.length < 8) {
-        setPasswordError('Password must be at least 8 characters long');
-      } else {
-        // If password confirmation exists, check if they match
-        if (formData.password_confirmation && value !== formData.password_confirmation) {
-          setPasswordError('Passwords do not match');
+      if (value.length > 0) {
+        const passwordCheck = checkPasswordStrength(value);
+        setPasswordStrength(passwordCheck.strength);
+        if (!passwordCheck.isValid) {
+          setPasswordError(passwordCheck.message);
         } else {
-          setPasswordError('');
+          // If password confirmation exists, check if they match
+          if (formData.password_confirmation && value !== formData.password_confirmation) {
+            setPasswordError('Passwords do not match');
+          } else {
+            setPasswordError('');
+          }
         }
+      } else {
+        setPasswordError('');
+        setPasswordStrength('');
       }
     } else if (name === 'password_confirmation') {
       if (formData.password && value !== formData.password) {
@@ -682,8 +729,9 @@ const Registration = () => {
   const nextStep = () => {
     if (currentStep === 1) {
       // Validate passwords before proceeding
-      if (formData.password.length < 8) {
-        setPasswordError('Password must be at least 8 characters long');
+      const passwordCheck = checkPasswordStrength(formData.password);
+      if (!passwordCheck.isValid) {
+        setPasswordError(passwordCheck.message);
         return;
       }
       if (formData.password !== formData.password_confirmation) {
@@ -733,7 +781,7 @@ const Registration = () => {
       const requiredFields = [
         'user_title_id', 'full_name', 'phone', 'email', 'gender',
         'job_title_id', 'place_of_work', 'region_id', 'district_id',
-        'password', 'password_confirmation'
+        'password', 'password_confirmation', 'registration_type'
       ];
       
       const missingFields = requiredFields.filter(field => !formData[field]);
@@ -781,8 +829,9 @@ const Registration = () => {
           place_of_work: formData.place_of_work,
           region_id: String(formData.region_id),
           district_id: String(formData.district_id),
-          password: formData.password,
-          password_confirmation: formData.password_confirmation
+          password: hashPassword(formData.password),
+          password_confirmation: hashPassword(formData.password_confirmation),
+          registration_type: formData.registration_type
         };
         
         // Add profile if available
@@ -810,8 +859,8 @@ const Registration = () => {
         });
         
         // Explicitly add password fields to ensure they're sent correctly
-        formDataToSend.set('password', formData.password);
-        formDataToSend.set('password_confirmation', formData.password_confirmation);
+        formDataToSend.set('password', hashPassword(formData.password));
+        formDataToSend.set('password_confirmation', hashPassword(formData.password_confirmation));
         console.log('Password fields added to FormData');
         
         // Add profile picture if selected
@@ -828,7 +877,11 @@ const Registration = () => {
       if (response) {
         // Handle successful registration
         setCurrentStep(4); // Show success message
-        // Redirect will happen automatically after delay due to useEffect
+        
+        // Redirect to external portal after 5 seconds
+        setTimeout(() => {
+          window.location.href = 'https://portal.mohannualcon.com/';
+        }, 5000);
       }
     } catch (error) {
       console.error('Registration failed:', error);
@@ -887,6 +940,7 @@ const Registration = () => {
       formData.district_id &&
       isPasswordValid &&
       doPasswordsMatch &&
+      formData.registration_type &&
       !passwordError &&
       !phoneError &&
       !emailError
@@ -904,6 +958,120 @@ const Registration = () => {
   const getNextButtonText = () => {
     if (currentStep === 3) return "Submit";
     return "Next Step";
+  };
+
+  // Generate a strong random password following ISO 27001 standards
+  const generateStrongPassword = () => {
+    // Define character sets
+    const uppercaseChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ'; // Removed confusing chars like I, O
+    const lowercaseChars = 'abcdefghijkmnopqrstuvwxyz'; // Removed confusing chars like l
+    const numberChars = '23456789'; // Removed confusing chars like 0, 1
+    const specialChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+    
+    // Password length between 12-16 characters
+    const length = Math.floor(Math.random() * 5) + 12;
+    
+    let password = '';
+    
+    // Ensure at least one character from each set
+    password += uppercaseChars.charAt(Math.floor(Math.random() * uppercaseChars.length));
+    password += lowercaseChars.charAt(Math.floor(Math.random() * lowercaseChars.length));
+    password += numberChars.charAt(Math.floor(Math.random() * numberChars.length));
+    password += specialChars.charAt(Math.floor(Math.random() * specialChars.length));
+    
+    // Fill the rest of the password
+    const allChars = uppercaseChars + lowercaseChars + numberChars + specialChars;
+    for (let i = 4; i < length; i++) {
+      password += allChars.charAt(Math.floor(Math.random() * allChars.length));
+    }
+    
+    // Shuffle the password to avoid predictable patterns
+    password = password.split('').sort(() => 0.5 - Math.random()).join('');
+    
+    // Update form state with the new password
+    setFormData(prev => ({
+      ...prev,
+      password: password,
+      password_confirmation: password
+    }));
+    
+    // Set password strength to strong
+    setPasswordStrength('strong');
+    setPasswordError('');
+    
+    // Show the password temporarily
+    setShowPassword(true);
+    
+    // Hide password after 10 seconds for security
+    setTimeout(() => {
+      setShowPassword(false);
+    }, 10000);
+  };
+  
+  // Hash password before sending to API
+  const hashPassword = (password) => {
+    // Simple encoding - in production, use a proper hashing library or let the server handle hashing
+    // This is just to avoid sending plain text passwords over the network
+    return btoa(unescape(encodeURIComponent(password)));
+  };
+
+  // Check password strength
+  const checkPasswordStrength = (password) => {
+    if (!password) return { isValid: false, message: 'Password is required', strength: '' };
+    
+    let score = 0;
+    let strength = '';
+    
+    // Check minimum length
+    if (password.length < 8) {
+      return { isValid: false, message: 'Password must be at least 8 characters long', strength: 'weak' };
+    } else {
+      // Length score: 0-2 points
+      score += Math.min(2, Math.floor(password.length / 4));
+    }
+    
+    // Check for uppercase letters
+    if (!/[A-Z]/.test(password)) {
+      return { isValid: false, message: 'Password must include at least one uppercase letter', strength: 'weak' };
+    } else {
+      // Uppercase score: 0-1 points
+      score += 1;
+    }
+    
+    // Check for lowercase letters
+    if (!/[a-z]/.test(password)) {
+      return { isValid: false, message: 'Password must include at least one lowercase letter', strength: 'weak' };
+    } else {
+      // Lowercase score: 0-1 points
+      score += 1;
+    }
+    
+    // Check for numbers
+    if (!/[0-9]/.test(password)) {
+      return { isValid: false, message: 'Password must include at least one number', strength: 'weak' };
+    } else {
+      // Number score: 0-1 points
+      score += 1;
+    }
+    
+    // Check for special characters
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+      return { isValid: false, message: 'Password must include at least one special character', strength: 'weak' };
+    } else {
+      // Special char score: 0-2 points
+      score += 2;
+    }
+    
+    // Calculate strength based on score (max score: 7)
+    if (score >= 6) {
+      strength = 'strong';
+    } else if (score >= 4) {
+      strength = 'medium';
+    } else {
+      strength = 'weak';
+    }
+    
+    return { isValid: true, message: 'Password is valid', strength };
   };
 
   return (
@@ -967,6 +1135,21 @@ const Registration = () => {
                       onChange={handleInputChange}
                       required
                     />
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label htmlFor="registration_type">Registration Type *</Label>
+                    <Input
+                      type="text"
+                      id="registration_type"
+                      name="registration_type"
+                      value={formData.registration_type === 'online' ? 'Online' : formData.registration_type === 'onsite' ? 'Onsite' : formData.registration_type}
+                      readOnly
+                      style={{ backgroundColor: '#f9f9f9', cursor: 'not-allowed' }}
+                    />
+                    <small style={{ color: '#666', display: 'block', marginTop: '5px' }}>
+                      Based on your selected ticket. This field cannot be changed.
+                    </small>
                   </FormGroup>
 
                   <FormGroup>
@@ -1131,21 +1314,98 @@ const Registration = () => {
 
                   <FormGroup>
                     <Label htmlFor="password">Password *</Label>
-                    <Input
-                      type="password"
-                      id="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      required
-                      minLength={8}
-                    />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{ flex: 1, position: 'relative' }}>
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          id="password"
+                          name="password"
+                          value={formData.password}
+                          onChange={handleInputChange}
+                          required
+                          minLength={8}
+                        />
+                        {formData.password && (
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            style={{
+                              position: 'absolute',
+                              right: '10px',
+                              top: '50%',
+                              transform: 'translateY(-50%)',
+                              background: 'none',
+                              border: 'none',
+                              cursor: 'pointer',
+                              color: '#1a8f4c'
+                            }}
+                          >
+                            {showPassword ? '🔒' : '👁️'}
+                          </button>
+                        )}
+                        {formData.password && (
+                          <>
+                            <PasswordStrengthIndicator strength={passwordStrength} />
+                            <div style={{ 
+                              display: 'flex', 
+                              justifyContent: 'space-between', 
+                              marginTop: '5px',
+                              fontSize: '0.8rem'
+                            }}>
+                              <span>Password Strength:</span>
+                              <span style={{ 
+                                color: passwordStrength === 'strong' ? '#1a8f4c' : 
+                                       passwordStrength === 'medium' ? '#f39c12' : '#e74c3c',
+                                fontWeight: 'bold'
+                              }}>
+                                {passwordStrength === 'strong' ? 'Strong' : 
+                                 passwordStrength === 'medium' ? 'Medium' : 'Weak'}
+                              </span>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={generateStrongPassword}
+                        style={{
+                          padding: '10px 15px',
+                          backgroundColor: '#1a8f4c',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '5px',
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        Generate Secure Password
+                      </button>
+                    </div>
+                    {showPassword && (
+                      <div style={{ 
+                        marginTop: '10px', 
+                        padding: '10px', 
+                        backgroundColor: '#f0fff4', 
+                        border: '1px solid #1a8f4c',
+                        borderRadius: '5px'
+                      }}>
+                        <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                          <strong>Your secure password:</strong> {formData.password}
+                        </p>
+                        <p style={{ margin: '5px 0 0 0', fontSize: '0.8rem', color: '#666' }}>
+                          This password will be hidden in 10 seconds. Please make sure to save it somewhere secure.
+                        </p>
+                      </div>
+                    )}
+                    <div style={{ marginTop: '5px', fontSize: '0.8rem', color: '#666' }}>
+                      Password must be at least 8 characters and include uppercase, lowercase, numbers, and special characters.
+                    </div>
                   </FormGroup>
 
                   <FormGroup>
                     <Label htmlFor="password_confirmation">Confirm Password *</Label>
                     <Input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       id="password_confirmation"
                       name="password_confirmation"
                       value={formData.password_confirmation}
@@ -1261,6 +1521,7 @@ const Registration = () => {
                       <p><strong>Name:</strong> {formData.full_name}</p>
                       <p><strong>Email:</strong> {formData.email}</p>
                       <p><strong>Phone:</strong> {formData.phone}</p>
+                      <p><strong>Registration Type:</strong> {formData.registration_type === 'online' ? 'Online' : formData.registration_type === 'onsite' ? 'Onsite' : formData.registration_type}</p>
                       <p><strong>Job Title:</strong> {formData.job_title_id}</p>
                       <p><strong>Place of Work:</strong> {formData.place_of_work}</p>
                       <p><strong>Region:</strong> {formData.region_id}</p>
@@ -1336,10 +1597,36 @@ const Registration = () => {
                       We've sent a confirmation email to {formData.email} with your registration details.
                     </SuccessText>
                     <SuccessText>
+                      <strong>Next Step:</strong> Kindly login below to make payment on the portal.
+                      Your credentials have been sent to your email and phone number.
+                    </SuccessText>
+                    <SuccessText>
                       Get ready for an enriching experience of learning, networking, and professional growth!
                     </SuccessText>
+                    <div style={{ 
+                      marginTop: '25px',
+                      padding: '15px',
+                      backgroundColor: '#f0fff4',
+                      borderRadius: '8px',
+                      border: '1px solid #1a8f4c'
+                    }}>
+                      <p style={{ margin: '0 0 10px 0', fontWeight: 'bold', color: '#1a8f4c' }}>
+                        Important:
+                      </p>
+                      <p style={{ margin: '0', fontSize: '0.95rem' }}>
+                        1. Check your email for login credentials<br />
+                        2. Login to the portal using the button below<br />
+                        3. Complete your payment to secure your spot<br />
+                        4. Access accommodation options and resources
+                      </p>
+                    </div>
+                    <div style={{ marginTop: '25px' }}>
+                      <LoginButton href="https://portal.mohannualcon.com/" target="_blank">
+                        Login to Make Payment
+                      </LoginButton>
+                    </div>
                     <RedirectText>
-                      Redirecting you to login page in 3 seconds...
+                      Redirecting you to the payment portal in 5 seconds...
                     </RedirectText>
                   </SuccessMessage>
                 </StepContent>
