@@ -375,6 +375,23 @@ const DisabledButton = styled.span`
   }
 `;
 
+// Add a styled component for image preview
+const ImagePreview = styled.div`
+  width: 300px;
+  height: 300px;
+  margin: 15px auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
+
 const Nomination = () => {
   const [currentStep, setCurrentStep] = useState(0); // Start with requirements (step 0)
   const [isLoading, setIsLoading] = useState(false);
@@ -405,9 +422,6 @@ const Nomination = () => {
     // Nomination Details
     awardCategory: '',
     reasonForNomination: '',
-    professionalAchievements: '',
-    impactDescription: '',
-    contributionToNursing: '',
     
     // Confirmation
     agreeTerms: false,
@@ -518,7 +532,7 @@ const Nomination = () => {
     console.log(`Using confirmed API endpoint: ${apiEndpoint}`);
     
     try {
-      // Create a payload without user_title_id and job_title_id
+      // Create a payload with all required fields
       const payload = {
         nominee_full_name: formData.nomineeName,
         nominee_institution: formData.nomineeOrganization,
@@ -527,15 +541,35 @@ const Nomination = () => {
         nominator_phone: formData.nominatorPhone,
         nominator_relationship: formData.relationship,
         primary_nomination_reason: formData.reasonForNomination,
-        professional_achievements: formData.professionalAchievements,
-        impact_on_health_care: formData.impactDescription,
-        contribution_to_nursing_excellence: formData.contributionToNursing,
         category_id: String(formData.awardCategory),
-        profile: "data:image/png;base64,"
       };
       
+      // Convert image to base64 if available
+      if (formData.passportPicture) {
+        try {
+          const base64Image = await convertFileToBase64(formData.passportPicture);
+          payload.profile = base64Image;
+        } catch (error) {
+          console.error('Error converting image to base64:', error);
+        }
+      }
+      
+      // Convert CV to base64 if available, but format as image/png
+      if (formData.cv) {
+        try {
+          // Get raw base64 data without the mime type prefix
+          const base64CV = await convertFileToBase64(formData.cv);
+          // Extract just the base64 data part (remove the data:application/pdf;base64, prefix)
+          const base64Data = base64CV.split(',')[1];
+          // Format with the required image/png prefix regardless of actual file type
+          payload.cv = `data:image/png;base64,${base64Data}`;
+        } catch (error) {
+          console.error('Error converting CV to base64:', error);
+        }
+      }
+      
       // Log the payload
-      console.log('Sending payload without title IDs:', payload);
+      console.log('Sending payload:', payload);
       
       // Try different content-type headers
       const contentTypes = [
@@ -666,20 +700,28 @@ const Nomination = () => {
   const handleApiResponse = async (response) => {
     // Get the response content regardless of status code
     let responseData;
-    let responseText = '';
     
     try {
-      // Try to get text response first
-      responseText = await response.text();
-      console.log('Raw response text:', responseText);
+      // Clone the response before reading it
+      const responseClone = response.clone();
       
-      // Then try to parse as JSON if possible
+      // Try to get response as JSON first
       try {
-        responseData = JSON.parse(responseText);
+        responseData = await response.json();
         console.log('Parsed JSON response:', responseData);
-      } catch (e) {
-        console.log('Response is not valid JSON, using text response');
-        responseData = { message: responseText || 'Unknown server error' };
+      } catch (jsonError) {
+        // If JSON parsing fails, try to get text response
+        console.log('Response is not valid JSON, trying text response');
+        const responseText = await responseClone.text();
+        console.log('Raw response text:', responseText);
+        
+        // Try to parse the text as JSON if possible
+        try {
+          responseData = JSON.parse(responseText);
+        } catch (e) {
+          // If parsing fails, use text as is
+          responseData = { message: responseText || 'Unknown server error' };
+        }
       }
     } catch (error) {
       console.error('Error reading response:', error);
@@ -696,7 +738,6 @@ const Nomination = () => {
           status: response.status,
           statusText: response.statusText,
           responseData: responseData,
-          responseText: responseText,
           headers: Object.fromEntries(response.headers.entries())
         });
         throw new Error(`Server error (500). The server encountered an internal error. Check the developer console for details.`);
@@ -911,7 +952,6 @@ const Nomination = () => {
       validateEmail(formData.nominatorEmail) &&
       formData.nominatorPhone?.trim() &&
       validatePhone(formData.nominatorPhone) &&
-      formData.nominatorOrganization?.trim() &&
       formData.relationship
     );
   };
@@ -921,23 +961,21 @@ const Nomination = () => {
       formData.nomineeName?.trim() &&
       formData.nomineePhone?.trim() &&
       validatePhone(formData.nomineePhone) &&
-      // Title fields are no longer required
+      formData.nomineeTitle &&
+      formData.jobTitle &&
       formData.nomineeOrganization?.trim()
     );
   };
   
   const validateDocuments = () => {
-    // Profile picture is no longer required
-    return true;
+    // Profile picture is now required
+    return formData.passportPicture !== null;
   };
 
   const validateReasons = () => {
     return (
       formData.awardCategory &&
-      formData.reasonForNomination?.trim() &&
-      formData.professionalAchievements?.trim() &&
-      formData.impactDescription?.trim() &&
-      formData.contributionToNursing?.trim()
+      formData.reasonForNomination?.trim()
     );
   };
   
@@ -1098,285 +1136,27 @@ const Nomination = () => {
           });
         return;
       }
+    } else if (type === 'cv') {
+      const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      if (!validTypes.includes(file.type)) {
+        alert('Please upload a valid document (PDF, DOC, or DOCX)');
+        e.target.value = ''; // Clear the file input
+        return;
+      }
+      
+      // Check file size - 5MB limit
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+      if (file.size > maxSize) {
+        alert('CV file size should not exceed 5MB. Please upload a smaller file.');
+        e.target.value = ''; // Clear the file input
+        return;
+      }
     }
 
     setFormData(prev => ({
       ...prev,
-        [type]: file
+      [type]: file
     }));
-  };
-
-  // Debug submission to identify problematic fields
-  const debugFieldSubmission = async (endpoint) => {
-    console.log('=========== DEBUGGING FIELD SUBMISSION ===========');
-    console.log(`Testing fields one by one with endpoint: ${endpoint}`);
-    
-    // Define all possible fields to test
-    const allFields = [
-      { key: 'nominee_full_name', value: formData.nomineeName },
-      { key: 'nominee_name', value: formData.nomineeName },
-      { key: 'nominee_institution', value: formData.nomineeOrganization },
-      { key: 'nominee_organization', value: formData.nomineeOrganization },
-      { key: 'nominee_org', value: formData.nomineeOrganization },
-      { key: 'nominee_phone', value: formData.nomineePhone },
-      { key: 'nominee_phone_number', value: formData.nomineePhone },
-      { key: 'nominator_name', value: formData.nominatorName },
-      { key: 'nominator', value: formData.nominatorName },
-      { key: 'nominator_phone', value: formData.nominatorPhone },
-      { key: 'nominator_email', value: formData.nominatorEmail },
-      { key: 'email', value: formData.nominatorEmail },
-      { key: 'phone', value: formData.nominatorPhone },
-      { key: 'category_id', value: formData.awardCategory },
-      { key: 'award_category', value: formData.awardCategory },
-      { key: 'category', value: formData.awardCategory },
-      { key: 'nominator_relationship', value: formData.relationship },
-      { key: 'relationship', value: formData.relationship },
-      { key: 'primary_nomination_reason', value: formData.reasonForNomination },
-      { key: 'reason', value: formData.reasonForNomination },
-      { key: 'nomination_reason', value: formData.reasonForNomination },
-      { key: 'professional_achievements', value: formData.professionalAchievements },
-      { key: 'achievements', value: formData.professionalAchievements },
-      { key: 'impact_on_health_care', value: formData.impactDescription },
-      { key: 'impact', value: formData.impactDescription },
-      { key: 'contribution_to_nursing_excellence', value: formData.contributionToNursing },
-      { key: 'contribution', value: formData.contributionToNursing }
-    ];
-    
-    // Test sets of fields to narrow down problems
-    const fieldSets = [
-      ['nominee_full_name', 'nominee_institution', 'nominee_phone'],
-      ['nominator_name', 'nominator_phone', 'nominator_email'],
-      ['category_id', 'primary_nomination_reason'],
-      ['professional_achievements', 'impact_on_health_care', 'contribution_to_nursing_excellence'],
-      ['nominator_relationship']
-    ];
-    
-    let acceptedFields = [];
-    let rejectedFields = [];
-    
-    // First test sets of fields
-    console.log('Testing sets of fields...');
-    for (const fieldSet of fieldSets) {
-      const formDataToSend = new FormData();
-      
-      // Add this set of fields
-      for (const fieldKey of fieldSet) {
-        const field = allFields.find(f => f.key === fieldKey);
-        if (field && field.value) {
-          formDataToSend.append(field.key, field.value);
-        }
-      }
-      
-      try {
-        console.log(`Testing field set: ${fieldSet.join(', ')}`);
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          body: formDataToSend,
-          headers: {
-            'Accept': 'application/json',
-            'ngrok-skip-browser-warning': 'true'
-          }
-        });
-        
-        if (response.status !== 500) {
-          console.log(`✅ Field set accepted: ${fieldSet.join(', ')} - Status: ${response.status}`);
-          acceptedFields = [...acceptedFields, ...fieldSet];
-        } else {
-          console.log(`❌ Field set rejected: ${fieldSet.join(', ')} - Status: ${response.status}`);
-          rejectedFields = [...rejectedFields, ...fieldSet];
-        }
-      } catch (error) {
-        console.error(`Error testing field set ${fieldSet.join(', ')}:`, error);
-        rejectedFields = [...rejectedFields, ...fieldSet];
-      }
-    }
-    
-    // Then test individual fields from rejected sets
-    const fieldsToTest = [...new Set(rejectedFields)];
-    console.log('\nTesting individual fields from rejected sets...');
-    
-    for (const fieldKey of fieldsToTest) {
-      const field = allFields.find(f => f.key === fieldKey);
-      if (!field || !field.value) continue;
-      
-      const formDataToSend = new FormData();
-      formDataToSend.append(field.key, field.value);
-      
-      try {
-        console.log(`Testing individual field: ${field.key}`);
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          body: formDataToSend,
-          headers: {
-            'Accept': 'application/json',
-            'ngrok-skip-browser-warning': 'true'
-          }
-        });
-        
-        if (response.status !== 500) {
-          console.log(`✅ Field accepted: ${field.key} - Status: ${response.status}`);
-          acceptedFields.push(field.key);
-        } else {
-          console.log(`❌ Field rejected: ${field.key} - Status: ${response.status}`);
-        }
-      } catch (error) {
-        console.error(`Error testing field ${field.key}:`, error);
-      }
-    }
-    
-    // Test file uploads separately
-    console.log('\nTesting file uploads...');
-    if (formData.passportPicture) {
-      const fileFields = [
-        { key: 'profile', file: formData.passportPicture },
-        { key: 'photo', file: formData.passportPicture },
-        { key: 'picture', file: formData.passportPicture },
-        { key: 'passport_picture', file: formData.passportPicture },
-        { key: 'image', file: formData.passportPicture }
-      ];
-      
-      for (const field of fileFields) {
-        const formDataToSend = new FormData();
-        formDataToSend.append(field.key, field.file);
-        
-        try {
-          console.log(`Testing file field: ${field.key}`);
-          const response = await fetch(endpoint, {
-            method: 'POST',
-            body: formDataToSend,
-            headers: {
-              'Accept': 'application/json',
-              'ngrok-skip-browser-warning': 'true'
-            }
-          });
-          
-          if (response.status !== 500) {
-            console.log(`✅ File field accepted: ${field.key} - Status: ${response.status}`);
-            acceptedFields.push(field.key);
-          } else {
-            console.log(`❌ File field rejected: ${field.key} - Status: ${response.status}`);
-          }
-        } catch (error) {
-          console.error(`Error testing file field ${field.key}:`, error);
-        }
-      }
-    }
-    
-    if (formData.cv) {
-      const fileFields = [
-        { key: 'cv', file: formData.cv },
-        { key: 'document', file: formData.cv },
-        { key: 'resume', file: formData.cv },
-        { key: 'documents', file: formData.cv }
-      ];
-      
-      for (const field of fileFields) {
-        const formDataToSend = new FormData();
-        formDataToSend.append(field.key, field.file);
-        
-        try {
-          console.log(`Testing file field: ${field.key}`);
-          const response = await fetch(endpoint, {
-            method: 'POST',
-            body: formDataToSend,
-            headers: {
-              'Accept': 'application/json',
-              'ngrok-skip-browser-warning': 'true'
-            }
-          });
-          
-          if (response.status !== 500) {
-            console.log(`✅ File field accepted: ${field.key} - Status: ${response.status}`);
-            acceptedFields.push(field.key);
-          } else {
-            console.log(`❌ File field rejected: ${field.key} - Status: ${response.status}`);
-          }
-        } catch (error) {
-          console.error(`Error testing file field ${field.key}:`, error);
-        }
-      }
-    }
-    
-    // Summarize findings
-    console.log('\n=========== FIELD TESTING SUMMARY ===========');
-    console.log('Accepted fields:', acceptedFields);
-    console.log('Rejected fields:', rejectedFields.filter(f => !acceptedFields.includes(f)));
-    console.log('==============================================');
-    
-    // Return the list of accepted fields
-    return acceptedFields;
-  };
-
-  // Try a minimal submission with the absolute minimum fields
-  const tryMinimalSubmission = async (endpoint) => {
-    console.log(`Attempting minimal submission to ${endpoint}...`);
-    
-    try {
-      // Create the absolute minimum form data
-      const minimalFormData = new FormData();
-      
-      // Just include the most essential fields with the simplest names
-      minimalFormData.append('name', formData.nomineeName);
-      minimalFormData.append('email', formData.nominatorEmail);
-      
-      console.log('Sending minimal request...');
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        body: minimalFormData,
-        headers: {
-          'Accept': 'application/json',
-          'ngrok-skip-browser-warning': 'true'
-        }
-      });
-      
-      console.log('Minimal submission response:', response.status, response.statusText);
-      
-      if (response.ok) {
-        console.log('Minimal submission succeeded!');
-        return await handleApiResponse(response);
-      } else {
-        // If minimal doesn't work, try single field submissions to find what works
-        console.log('Trying single field submissions...');
-        const fields = [
-          { key: 'nominee', value: formData.nomineeName },
-          { key: 'name', value: formData.nomineeName },
-          { key: 'email', value: formData.nominatorEmail },
-          { key: 'phone', value: formData.nominatorPhone },
-          { key: 'category', value: formData.awardCategory }
-        ];
-        
-        for (const field of fields) {
-          const singleFieldFormData = new FormData();
-          singleFieldFormData.append(field.key, field.value);
-          
-          console.log(`Testing single field: ${field.key}`);
-          const singleFieldResponse = await fetch(endpoint, {
-            method: 'POST',
-            body: singleFieldFormData,
-            headers: {
-              'Accept': 'application/json',
-              'ngrok-skip-browser-warning': 'true'
-            }
-          });
-          
-          if (singleFieldResponse.status !== 500) {
-            console.log(`Field ${field.key} accepted with status ${singleFieldResponse.status}`);
-            
-            if (singleFieldResponse.ok) {
-              console.log(`Single field submission with ${field.key} succeeded!`);
-              return await handleApiResponse(singleFieldResponse);
-            }
-          } else {
-            console.log(`Field ${field.key} rejected with status 500`);
-          }
-        }
-        
-        throw new Error(`Minimal submission failed with status ${response.status}`);
-      }
-    } catch (error) {
-      console.error('Minimal submission failed:', error);
-      throw error;
-    }
   };
 
   // Helper function to convert File to base64
@@ -1401,7 +1181,7 @@ const Nomination = () => {
       <Header />
       <PageContainer>
         <ContentContainer>
-          <PageTitle>Nominate a Healthcare Professional</PageTitle>
+          <PageTitle>Nomination of Nursing and Midwifery Professionals</PageTitle>
           <PageDescription>
             Recognize excellence in healthcare by nominating an outstanding professional for our annual awards. Your nomination helps highlight the incredible work being done in the nursing and healthcare community.
           </PageDescription>
@@ -1489,18 +1269,6 @@ const Nomination = () => {
                 </FormGroup>
                 
                 <FormGroup>
-                  <Label htmlFor="nominatorOrganization">Organization/Institution *</Label>
-                  <Input 
-                    type="text" 
-                    id="nominatorOrganization" 
-                    name="nominatorOrganization" 
-                    value={formData.nominatorOrganization}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </FormGroup>
-                
-                <FormGroup>
                   <Label htmlFor="relationship">Relationship to Nominee *</Label>
                   <Select 
                     id="relationship" 
@@ -1531,13 +1299,14 @@ const Nomination = () => {
                 <p>Please provide comprehensive information about the healthcare professional you are nominating.</p>
                 
                 <FormGroup>
-                  <Label htmlFor="nomineeTitle">Title (Optional)</Label>
+                  <Label htmlFor="nomineeTitle">Title *</Label>
                   <Select 
                     id="nomineeTitle" 
                     name="nomineeTitle" 
                     value={formData.nomineeTitle}
                     onChange={handleInputChange}
                     disabled={isLoadingTitles}
+                    required
                   >
                     <option value="">Select title</option>
                     {isLoadingTitles ? (
@@ -1578,13 +1347,14 @@ const Nomination = () => {
                 </FormGroup>
                 
                 <FormGroup>
-                  <Label htmlFor="jobTitle">Job Title (Optional)</Label>
+                  <Label htmlFor="jobTitle">Job Title *</Label>
                   <Select 
                     id="jobTitle" 
                     name="jobTitle" 
                     value={formData.jobTitle}
                     onChange={handleInputChange}
                     disabled={isLoadingTitles}
+                    required
                   >
                     <option value="">Select job title</option>
                     {isLoadingTitles ? (
@@ -1650,41 +1420,53 @@ const Nomination = () => {
               {/* Step 3: Required Documents */}
               <StepContent active={currentStep === 3}>
                 <h2>Documents</h2>
-                <p>You can upload a passport picture of the nominee if available, but it's not required.</p>
+                <p>Please upload a passport picture of the nominee and their CV.</p>
                 
                 <FormGroup>
-                  <Label>Passport Picture (Optional)</Label>
+                  <Label>Passport Picture *</Label>
                   <FileUploadContainer onClick={() => document.getElementById('passportPicture').click()}>
                     <FileInput
                       type="file"
                       id="passportPicture"
                       accept="image/*"
                       onChange={(e) => handleFileChange(e, 'passportPicture')}
+                      required
                     />
                     <UploadIcon>📸</UploadIcon>
-                    <UploadText>Click to upload a passport picture (optional)</UploadText>
+                    <UploadText>Click to upload a passport picture (required)</UploadText>
                     <UploadText>(Maximum size: 2MB, Format: JPG, PNG)</UploadText>
                     {formData.passportPicture && (
                       <FileName>{formData.passportPicture.name}</FileName>
                     )}
                   </FileUploadContainer>
+                  
+                  {formData.passportPicture && (
+                    <ImagePreview>
+                      <img 
+                        src={URL.createObjectURL(formData.passportPicture)} 
+                        alt="Passport Preview" 
+                      />
+                    </ImagePreview>
+                  )}
                 </FormGroup>
                 
                 <FormGroup>
-                  <Label>Curriculum Vitae (CV)</Label>
-                  <div style={{ 
-                    padding: '20px', 
-                    backgroundColor: '#f5f5f5', 
-                    borderRadius: '5px',
-                    border: '1px solid #ddd',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{ color: '#777', fontSize: '1.5rem', marginBottom: '10px' }}>📄</div>
-                    <div style={{ color: '#777' }}>CV upload is currently disabled</div>
-                    <div style={{ color: '#999', fontSize: '0.9rem', marginTop: '5px' }}>
-                      Only passport picture is required for nomination
-                    </div>
-                  </div>
+                  <Label>Curriculum Vitae (CV) *</Label>
+                  <FileUploadContainer onClick={() => document.getElementById('cv').click()}>
+                    <FileInput
+                      type="file"
+                      id="cv"
+                      accept=".pdf,.doc,.docx"
+                      onChange={(e) => handleFileChange(e, 'cv')}
+                      required
+                    />
+                    <UploadIcon>📄</UploadIcon>
+                    <UploadText>Click to upload nominee's CV (required)</UploadText>
+                    <UploadText>(Maximum size: 5MB, Format: PDF, DOC, DOCX)</UploadText>
+                    {formData.cv && (
+                      <FileName>{formData.cv.name}</FileName>
+                    )}
+                  </FileUploadContainer>
                 </FormGroup>
                 
                 <ButtonGroup>
@@ -1729,50 +1511,14 @@ const Nomination = () => {
                 </FormGroup>
                 
                 <FormGroup>
-                  <Label htmlFor="reasonForNomination">Primary Reason for Nomination *</Label>
+                  <Label htmlFor="reasonForNomination">Reason for Nomination *</Label>
                   <Textarea 
                     id="reasonForNomination" 
                     name="reasonForNomination" 
                     value={formData.reasonForNomination}
                     onChange={handleInputChange}
                     required
-                    placeholder="Explain the main reasons why you are nominating this person"
-                  />
-                </FormGroup>
-                
-                <FormGroup>
-                  <Label htmlFor="professionalAchievements">Professional Achievements *</Label>
-                  <Textarea 
-                    id="professionalAchievements" 
-                    name="professionalAchievements" 
-                    value={formData.professionalAchievements}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="List specific accomplishments, awards, or recognition"
-                  />
-                </FormGroup>
-                
-                <FormGroup>
-                  <Label htmlFor="impactDescription">Impact on Healthcare *</Label>
-                  <Textarea 
-                    id="impactDescription" 
-                    name="impactDescription" 
-                    value={formData.impactDescription}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Describe the impact this person has had on patients, colleagues, or the healthcare community"
-                  />
-                </FormGroup>
-                
-                <FormGroup>
-                  <Label htmlFor="contributionToNursing">Contribution to Nursing Excellence *</Label>
-                  <Textarea 
-                    id="contributionToNursing" 
-                    name="contributionToNursing" 
-                    value={formData.contributionToNursing}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Describe how the nominee has contributed to advancing nursing excellence"
+                    placeholder="Explain why you are nominating this person"
                   />
                 </FormGroup>
                 
