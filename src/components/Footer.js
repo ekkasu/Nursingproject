@@ -127,7 +127,7 @@ const Footer = () => {
               <li><Link to="/events">Events</Link></li>
               <li><Link to="/vote">Vote</Link></li>
               <li><Link to="/privacy-policy">Privacy Policy</Link></li>
-              <li><Link to="/terms">Terms of Service</Link></li>
+              <li><Link to="/terms">Conference Terms & Conditions</Link></li>
             </FooterList>
           </FooterSection>
 

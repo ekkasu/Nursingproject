@@ -24,6 +24,7 @@ import Reservation from './pages/Reservation';
 import ComingSoon from './pages/ComingSoon';
 import UserDashboard from './pages/UserDashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import Terms from './pages/Terms';
 
 // Global styles
 const AppContainer = styled.div`
@@ -68,6 +69,7 @@ const AppContent = () => {
           <Route path="/coming-soon" element={<ComingSoon />} />
           <Route path="/dashboard" element={<UserDashboard />} />
           <Route path="/admin/*" element={<AdminDashboard />} />
+          <Route path="/terms" element={<Terms />} />
         </Routes>
       </MainContent>
       {shouldShowFooter && <Footer />}

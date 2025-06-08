@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import Header from '../components/Header';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -115,6 +115,9 @@ const TicketDescription = styled.p`
   color: #666;
   margin-bottom: 15px;
   font-style: italic;
+  white-space: pre-line;
+  text-align: center;
+  line-height: 1.5;
 `;
 
 const Price = styled.div`
@@ -304,6 +307,20 @@ const SummaryItem = styled.div`
   }
 `;
 
+const TermsLink = styled(Link)`
+  display: block;
+  text-align: center;
+  margin: 40px auto 0;
+  color: #1a8f4c;
+  font-weight: 600;
+  text-decoration: underline;
+  font-size: 16px;
+  
+  &:hover {
+    color: #156e3a;
+  }
+`;
+
 const Tickets = () => {
   const [hoveredCard, setHoveredCard] = useState(null);
   const navigate = useNavigate();
@@ -313,7 +330,7 @@ const Tickets = () => {
       name: "Online",
       apiValue: "online",
       description: "Virtual attendance with full digital access to all sessions",
-      price: 1500,
+      price: 2000,
       currency: "GHS",
       featured: false,
       features: [
@@ -349,9 +366,8 @@ const Tickets = () => {
       hidePrice: true,
       featured: false,
       features: [
-        "Lock in Early Bird Pricing",
+        "Lock in Current Pricing",
         "Payment Deadline: August 19, 2025",
-        "2 Weeks Before Conference",
         "Flexible Payment Options",
         "Priority Access to Sessions",
         "Free Schedule Changes",
@@ -467,6 +483,8 @@ const Tickets = () => {
               </TicketCard>
             ))}
           </TicketsGrid>
+
+          <TermsLink to="/terms">View Conference Registration Terms and Conditions</TermsLink>
         </Container>
       </PageContainer>
     </>

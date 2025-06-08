@@ -188,7 +188,7 @@ const About = () => {
       <HeroSection>
         <HeroContent>
           <h1>About NMCON 2025</h1>
-          <p>Celebrating Excellence in Nursing and Healthcare Innovation</p>
+          <p>Celebrating Excellence in Nursing and Midwifery</p>
         </HeroContent>
       </HeroSection>
 
