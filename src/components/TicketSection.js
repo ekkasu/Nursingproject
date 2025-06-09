@@ -202,7 +202,7 @@ const TicketSection = () => {
   const tickets = [
     {
       name: "Join Us Online",
-      price: 1500,
+      price: 2000,
       currency: "GHS",
       featured: false,
       features: [
