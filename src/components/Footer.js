@@ -135,8 +135,8 @@ const Footer = () => {
             <h3>Contact Info</h3>
             <ContactInfo>
               <p>Nursing Excellence Hub</p>
-              <p>Email: contact@nursingexcellence.org</p>
-              <p>Phone: (555) 123-4567</p>
+              <p>Email: info@mohannualcon.com</p>
+              <p>Phone: 0244846895 / 0509903000</p>
               <p>Address: 123 Healthcare Ave, Medical District</p>
               <SocialLinks>
                 <a href="https://facebook.com/nursingexcellence" target="_blank" rel="noopener noreferrer"><FaFacebook /></a>

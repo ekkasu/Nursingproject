@@ -240,11 +240,11 @@ const Contact = () => {
             <ContactInfo>
               <ContactItem>
                 <span>📧</span>
-                <span>Contact@Conferaevent.Co</span>
+                <span>info@mohannualcon.com</span>
               </ContactItem>
               <ContactItem>
                 <span>📞</span>
-                <span>Support: 1-2344-2345-23</span>
+                <span>Support: 0244846895 / 0509903000</span>
               </ContactItem>
             </ContactInfo>
           </LeftSection>

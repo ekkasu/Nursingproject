@@ -1112,9 +1112,9 @@ const Nomination = () => {
       <Header />
       <PageContainer>
         <ContentContainer>
-          <PageTitle>Nomination of Nursing and Midwifery Professionals</PageTitle>
+          <PageTitle>Call For Nominations - Nurses and Midwives Excellence Awards 2025</PageTitle>
           <PageDescription>
-            Recognize excellence in healthcare by nominating an outstanding professional for our annual awards. Your nomination helps highlight the incredible work being done in the nursing and healthcare community.
+          The awards are for recognition of outstanding nurses and midwives. Your nomination helps highlight the incredible work being done in the nursing and midwives community.
           </PageDescription>
           
           {/* Requirements Section */}
@@ -1212,7 +1212,7 @@ const Nomination = () => {
               {/* Step 2: Nominee's Details */}
               <StepContent active={currentStep === 2}>
                 <h2>Nominee's Details</h2>
-                <p>Please provide comprehensive information about the healthcare professional you are nominating.</p>
+                <p>Please provide comprehensive information about the Nurses or Midwives you are nominating.</p>
                 
                 <FormGroup>
                   <Label htmlFor="user_title_id">Title *</Label>
@@ -1504,7 +1504,7 @@ const Nomination = () => {
                 <SuccessMessage>
                   <SuccessIcon>✓</SuccessIcon>
                   <h2>Nomination Submitted Successfully!</h2>
-                  <p>Thank you for nominating an outstanding healthcare professional. Your nomination has been received and will be reviewed by our awards committee.</p>
+                  <p>Thank you for nominating an outstanding Nurses or Midwives. Your nomination has been received and will be reviewed by our awards committee.</p>
                   <ButtonGroup>
                     <div></div>
                     <Button onClick={handleNextAfterSuccess}>Back to Home</Button>

@@ -880,7 +880,7 @@ const Home = () => {
     {
       image: hero3,
       title: "Celebrating",
-      subtitle: "Healthcare Leadership"
+      subtitle: "Nursing and Midwifery Excellence"
     },
     {
       image: hero4,
@@ -1067,7 +1067,7 @@ const Home = () => {
           <motion.div variants={scrollFadeInVariant}>
             <TimerTitle>Nursing Excellence Conference 2025</TimerTitle>
             <TimerSubtitle>
-              Join us from September 2nd - 5th, 2025 for four days of excellence in nursing leadership
+              Join us from September 2nd - 6th, 2025 for four days of excellence in nursing leadership
             </TimerSubtitle>
           </motion.div>
           
