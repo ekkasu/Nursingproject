@@ -17,27 +17,23 @@ import hero2 from '../assets/images/Hero/005A0024.JPG';
 import hero3 from '../assets/images/Hero/005A0006.JPG';
 import hero4 from '../assets/images/Hero/005A0097.JPG';
 
-// Sample speakers data
+// Update the speakers data to remove images
 const speakers = [
   {
     name: "Dr. James Smith",
-    title: "Chief of Nursing Excellence, Accra Medical Center",
-    image: hero1 // Using hero1 as a placeholder, you should replace with actual speaker images
+    title: "Chief of Nursing Excellence, Accra Medical Center"
   },
   {
     name: "Dr. Anna Paulman",
-    title: "Director of Healthcare Innovation",
-    image: hero2
+    title: "Director of Healthcare Innovation"
   },
   {
     name: "Dr. David Gibson",
-    title: "Head of Clinical Research",
-    image: hero3
+    title: "Head of Clinical Research"
   },
   {
     name: "Dr. Lori Mendoza",
-    title: "Lead Nursing Education Specialist",
-    image: hero4
+    title: "Lead Nursing Education Specialist"
   }
 ];
 
@@ -498,11 +494,12 @@ const NavigationButton = styled.button`
 const SpeakerCard = styled(motion.div)`
   background: white;
   border-radius: 15px;
-  overflow: hidden;
+  padding: 30px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   position: relative;
   flex: 0 0 280px;
+  text-align: center;
   
   &:hover {
     transform: translateY(-10px);
@@ -510,58 +507,22 @@ const SpeakerCard = styled(motion.div)`
   }
 `;
 
-const SpeakerImage = styled.div`
-  width: 100%;
-  height: 400px;
-  background-image: url(${props => props.image});
-  background-size: cover;
-  background-position: center;
-  position: relative;
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    background: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0),
-      rgba(0, 0, 0, 0.2) 50%,
-      rgba(0, 0, 0, 0.7) 85%,
-      rgba(0, 0, 0, 0.85) 100%
-    );
-  }
-
-  @media (max-width: 768px) {
-    height: 300px;
-  }
-`;
-
 const SpeakerInfo = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 30px;
-  color: white;
-  z-index: 1;
+  color: #2d3748;
 `;
 
 const SpeakerName = styled.h3`
-  font-size: 2rem;
-  margin: 0 0 5px 0;
+  font-size: 1.5rem;
+  margin: 0 0 10px 0;
   font-family: 'Playfair Display', serif;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: #1a8f4c;
 `;
 
 const SpeakerTitle = styled.p`
-  font-size: 1.1rem;
+  font-size: 1rem;
   margin: 0;
-  color: #64f4ac;
+  color: #4a5568;
   font-weight: 500;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 `;
 
 const ProgramSection = styled.section`
@@ -1163,7 +1124,6 @@ const Home = () => {
           >
             {speakers.map((speaker, index) => (
               <SpeakerCard key={speaker.name}>
-                <SpeakerImage image={speaker.image} />
                 <SpeakerInfo>
                   <SpeakerName>{speaker.name}</SpeakerName>
                   <SpeakerTitle>{speaker.title}</SpeakerTitle>

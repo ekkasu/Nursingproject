@@ -482,6 +482,10 @@ const Registration = () => {
   // Add registrationSteps
   const registrationSteps = [
     {
+      title: "Terms & Conditions",
+      description: "Please read and agree to our terms and conditions."
+    },
+    {
       title: "Personal Information",
       description: "Fill in your basic contact details and create your account."
     },
@@ -499,10 +503,12 @@ const Registration = () => {
   const getStepLabel = (step) => {
     switch (step) {
       case 1:
-        return "Personal";
+        return "Terms";
       case 2:
-        return "Accommodation";
+        return "Personal";
       case 3:
+        return "Accommodation";
+      case 4:
         return "Confirm";
       default:
         return "";
@@ -718,6 +724,13 @@ const Registration = () => {
   
   const nextStep = () => {
     if (currentStep === 1) {
+      // Validate terms and conditions before proceeding
+      if (!formData.agreeTerms || !formData.agreePrivacy) {
+        return;
+      }
+    }
+    
+    if (currentStep === 2) {
       // Validate passwords before proceeding
       const passwordCheck = checkPasswordStrength(formData.password);
       if (!passwordCheck.isValid) {
@@ -730,7 +743,8 @@ const Registration = () => {
       }
       setPasswordError('');
     }
-    setCurrentStep(currentStep + 1);
+    
+    setCurrentStep(prev => prev + 1);
     // Smooth scroll to top when changing steps
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -740,7 +754,7 @@ const Registration = () => {
       // If going back from first step, show process overview again
       setShowProcessOverview(true);
     } else {
-      setCurrentStep(currentStep - 1);
+      setCurrentStep(prev => prev - 1);
     }
     // Smooth scroll to top when changing steps
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -907,14 +921,16 @@ const Registration = () => {
     }
   };
   
-  // Update the button validation logic
+  // Update the validateForm function
   const validateForm = () => {
-    // Final validation before allowing form submission
+    // For terms and conditions step (step 1)
+    if (currentStep === 1) {
+      return formData.agreeTerms && formData.agreePrivacy;
+    }
+
+    // For other steps
     const isPhoneValid = formData.phone && validatePhone(formData.phone);
-    // Remove email validation - allow any email format
     const isEmailValid = formData.email && formData.email.length > 0;
-    
-    // Check password requirements
     const isPasswordValid = formData.password && formData.password.length >= 8;
     const doPasswordsMatch = formData.password === formData.password_confirmation;
     
@@ -936,8 +952,8 @@ const Registration = () => {
       !phoneError
     );
     
-    // Additional validation for step 3 (confirmation)
-    if (currentStep === 3) {
+    // Additional validation for final confirmation step
+    if (currentStep === 4) {
       return baseValidation && formData.agreeTerms && formData.agreePrivacy;
     }
     
@@ -1064,6 +1080,33 @@ const Registration = () => {
     return { isValid: true, message: 'Password is valid', strength };
   };
 
+  // Add Terms and Conditions content
+  const TermsAndConditions = () => (
+    <div style={{ maxHeight: '400px', overflowY: 'auto', padding: '20px', border: '1px solid #e0e0e0', borderRadius: '8px', marginBottom: '20px' }}>
+      <h3 style={{ color: '#1a8f4c', marginBottom: '15px' }}>Terms and Conditions for NMCON 2025</h3>
+      
+      <p>
+        By registering for this conference and paying the registration fee, you're all set to join us! Please note that we've incurred costs to prepare for the event, and your payment is non-refundable.
+      </p>
+      
+      <p><strong>Important Details:</strong></p>
+      <ul style={{ paddingLeft: '20px', marginBottom: '20px' }}>
+        <li>Your Registration is complete only if you have done full payment of the conference fee of GHS 3,500</li>
+        <li>All payments Must be done by 22nd August being the Deadline for Registration and Payment</li>
+        <li>If you have fully paid and you're unable to attend, Kindly inform us one week before the deadline for 50% refund</li>
+        <li>If you fully paid and unable to attend and you notify us after the deadline you will not qualify for any refund</li>
+      </ul>
+      
+      <p>
+        <strong>Note that</strong>, the GHS 3,500 conference is ONLY for the days lunch + snacks and souvenirs and the awards dinner. Accommodation is NOT included. You will be expected to make your own reservation based on the MoH recommended Hotel List.
+      </p>
+      
+      <p>
+        By registering, you confirm that you've read and agree to these terms. We're looking forward to seeing you at the conference!
+      </p>
+    </div>
+  );
+
   return (
     <>
       <Header />
@@ -1080,7 +1123,7 @@ const Registration = () => {
             ) : (
               <form onSubmit={handleSubmit}>
                     <StepIndicator>
-                  {[1, 2, 3].map((step) => (
+                  {[1, 2, 3, 4].map((step) => (
                     <Step
                       key={step}
                       active={currentStep === step}
@@ -1092,8 +1135,63 @@ const Registration = () => {
                   ))}
                     </StepIndicator>
                   
-                    {/* Step 1: Personal Information */}
+                    {/* Step 1: Terms and Conditions */}
                     <StepContent active={currentStep === 1}>
+                      <h2>Terms and Conditions</h2>
+                      <p>Please read and agree to our terms and conditions before proceeding with registration.</p>
+                      
+                      <TermsAndConditions />
+                      
+                      <FormGroup>
+                        <CheckboxGroup>
+                          <Checkbox 
+                            type="checkbox" 
+                            id="agreeTerms" 
+                            name="agreeTerms" 
+                            checked={formData.agreeTerms}
+                            onChange={handleInputChange}
+                            required
+                          />
+                          <CheckboxLabel htmlFor="agreeTerms">
+                            I have read and agree to the terms and conditions *
+                          </CheckboxLabel>
+                        </CheckboxGroup>
+                        
+                        <CheckboxGroup>
+                          <Checkbox 
+                            type="checkbox" 
+                            id="agreePrivacy" 
+                            name="agreePrivacy" 
+                            checked={formData.agreePrivacy}
+                            onChange={handleInputChange}
+                            required
+                          />
+                          <CheckboxLabel htmlFor="agreePrivacy">
+                            I consent to the processing of my personal data in accordance with the privacy policy *
+                          </CheckboxLabel>
+                        </CheckboxGroup>
+                      </FormGroup>
+                      
+                      <ButtonGroup>
+                        <Button 
+                          type="button" 
+                          onClick={prevStep} 
+                          secondary
+                        >
+                          Back to Overview
+                        </Button>
+                        <Button 
+                          type="button" 
+                          onClick={nextStep} 
+                          disabled={!formData.agreeTerms || !formData.agreePrivacy}
+                        >
+                          Next Step
+                        </Button>
+                      </ButtonGroup>
+                    </StepContent>
+                    
+                {/* Step 2: Personal Information */}
+                    <StepContent active={currentStep === 2}>
                       <h2>Personal Information</h2>
                       <p>Please provide your contact details and create your account password.</p>
                       
@@ -1425,8 +1523,8 @@ const Registration = () => {
                       </ButtonGroup>
                     </StepContent>
                     
-                {/* Step 2: Accommodation (previously Step 4) */}
-                    <StepContent active={currentStep === 2}>
+                {/* Step 3: Accommodation (previously Step 2) */}
+                    <StepContent active={currentStep === 3}>
                       <h2>Select Accommodation</h2>
                       <p>Choose your preferred accommodation option for the duration of the conference.</p>
 
@@ -1500,8 +1598,8 @@ const Registration = () => {
                       </ButtonGroup>
                     </StepContent>
                     
-                {/* Step 3: Confirmation (previously Step 5) */}
-                <StepContent active={currentStep === 3}>
+                {/* Step 4: Confirmation (previously Step 3) */}
+                <StepContent active={currentStep === 4}>
                       <h2>Confirm Registration</h2>
                       <p>Please review your information and confirm your registration.</p>
                       

@@ -234,13 +234,14 @@ const Contact = () => {
           <LeftSection>
             <Title>Contact Us</Title>
             <Subtitle>
-              Not sure what you need? The team at NMCON will be happy to listen to
+              Not sure what you need? The team at Nursing and Midwifery Leaders & Mangers Conference(NMLMCON) will be happy to listen to
               you and suggest event ideas you hadn't considered
             </Subtitle>
             <ContactInfo>
               <ContactItem>
                 <span>📧</span>
                 <span>info@mohannualcon.com</span>
+
               </ContactItem>
               <ContactItem>
                 <span>📞</span>
