@@ -187,14 +187,14 @@ const About = () => {
       <Header />
       <HeroSection>
         <HeroContent>
-          <h1>About NMCON 2025</h1>
+          <h1>About NMLMCON 2025</h1>
           <p>Celebrating Excellence in Nursing and Midwifery</p>
         </HeroContent>
       </HeroSection>
 
       <ContentContainer>
         <Subtitle>
-          The Nursing and Midwifery Conference (NMCON) 2025 is Ghana's premier healthcare event, 
+          The Nursing and Midwifery Leaders & Mangers Conference (NMLMCON) 2025 is Ghana's premier healthcare event, 
           bringing together the brightest minds in nursing and midwifery to celebrate excellence, 
           share knowledge, and shape the future of healthcare delivery.
         </Subtitle>
@@ -223,10 +223,10 @@ const About = () => {
         <Section>
           <SectionTitle>Our Mission</SectionTitle>
           <Text>
-            NMCON 2025 is dedicated to advancing nursing excellence through education,
+            NMLMCON 2025 is dedicated to advancing nursing and midwifery excellence through education,
             innovation, and collaboration. We bring together healthcare professionals
             from across Ghana and beyond to share knowledge, celebrate achievements,
-            and shape the future of nursing care.
+            and shape the future of nursing and midwifery care.
           </Text>
         </Section>
 
@@ -266,7 +266,7 @@ const About = () => {
         <Section>
           <SectionTitle>Our Impact</SectionTitle>
           <Text>
-            Since its inception, NMCON has been at the forefront of nursing excellence,
+            Since its inception, NMLMCON has been at the forefront of nursing and midwifery excellence,
             making significant contributions to healthcare education and practice in Ghana.
           </Text>
           <StatsGrid>
