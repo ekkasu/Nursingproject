@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
@@ -146,13 +146,15 @@ const ViewAllButton = styled(Link)`
 `;
 
 const EventCalendar = () => {
+  const [showFullSchedule, setShowFullSchedule] = useState(false);
+
   // Event data with correct dates and details
   const upcomingEvents = [
     {
       id: 1,
       title: "Conference Arrival & Registration",
       date: { month: "Sep", day: "02", year: "2025" },
-      location: "Accra International Conference Center",
+      location: "Global Dream Hotel, Temale",
       time: "9:00 AM - 4:00 PM",
       type: "Day 1: Arrival, Registration & Welcome Reception",
       link: "/conference-details"
@@ -161,27 +163,48 @@ const EventCalendar = () => {
       id: 2,
       title: "Conference Opening Day",
       date: { month: "Sep", day: "03", year: "2025" },
-      location: "Accra International Conference Center",
+      location: "Global Dream Hotel, Temale",
       time: "9:00 AM - 5:00 PM",
       type: "Day 2: Opening Ceremony & Leadership Sessions",
       link: "/conference-details"
     },
     {
       id: 3,
-      title: "Excellence & Hall of Fame Awards",
+      title: "Main Conference Day",
       date: { month: "Sep", day: "04", year: "2025" },
-      location: "Accra International Conference Center",
+      location: "Global Dream Hotel, Temale",
+      time: "9:00 AM - 5:00 PM",
+      type: "Day 3: Keynote Speeches & Workshops",
+      link: "/conference-details"
+    },
+    {
+      id: 4,
+      title: "Excellence & Hall of Fame Awards",
+      date: { month: "Sep", day: "05", year: "2025" },
+      location: "Global Dream Hotel, Temale",
       time: "10:00 AM - 4:00 PM",
-      type: "Day 3: Awards Ceremony & Gala Dinner",
+      type: "Day 4: Awards Ceremony & Gala Dinner",
+      link: "/conference-details"
+    },
+    {
+      id: 5,
+      title: "Conference Closing Day",
+      date: { month: "Sep", day: "06", year: "2025" },
+      location: "Global Dream Hotel, Temale",
+      time: "9:00 AM - 2:00 PM",
+      type: "Day 5: Closing Sessions & Departure",
       link: "/conference-details"
     }
   ];
+
+  // Get events to display based on showFullSchedule state
+  const displayEvents = showFullSchedule ? upcomingEvents : upcomingEvents.slice(0, 3);
 
   return (
     <CalendarSection>
       <SectionTitle>Conference Schedule</SectionTitle>
       <EventsContainer>
-        {upcomingEvents.map(event => (
+        {displayEvents.map(event => (
           <EventCard key={event.id}>
             <EventDate>
               <div className="month">{event.date.month}</div>
@@ -200,7 +223,13 @@ const EventCalendar = () => {
           </EventCard>
         ))}
       </EventsContainer>
-      <ViewAllButton to="/conference-details">View Full Schedule</ViewAllButton>
+      <ViewAllButton 
+        onClick={() => setShowFullSchedule(!showFullSchedule)}
+        as="button"
+        style={{ cursor: 'pointer' }}
+      >
+        {showFullSchedule ? 'Show Less' : 'View Full Schedule'}
+      </ViewAllButton>
     </CalendarSection>
   );
 };

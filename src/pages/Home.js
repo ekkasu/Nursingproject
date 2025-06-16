@@ -1026,7 +1026,7 @@ const Home = () => {
           variants={scrollFadeInVariant}
         >
           <motion.div variants={scrollFadeInVariant}>
-            <TimerTitle>Nursing Excellence Conference 2025</TimerTitle>
+            <TimerTitle>Nursing and Midwifery Leaders & Mangers Conference (NMLMCON) 2025</TimerTitle>
             <TimerSubtitle>
               Join us from September 2nd - 6th, 2025 for four days of excellence in nursing leadership
             </TimerSubtitle>
