@@ -41,6 +41,12 @@ const PageContainer = styled.div`
   background: linear-gradient(135deg, #f5f7fa 0%, #e8f5ee 100%);
   position: relative;
   padding-top: 80px;
+  
+  @media (max-width: 768px) {
+    height: auto;
+    min-height: 100vh;
+    padding-top: 60px;
+  }
 `;
 
 const ContentContainer = styled.div`
@@ -57,6 +63,15 @@ const ContentContainer = styled.div`
   &::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
   }
+  
+  @media (max-width: 768px) {
+    height: auto;
+    padding: 0 15px 30px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0 10px 20px;
+  }
 `;
 
 const PageTitle = styled.h1`
@@ -65,6 +80,16 @@ const PageTitle = styled.h1`
   margin-bottom: 15px;
   text-align: center;
   font-weight: 700;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+    margin-bottom: 12px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+  }
 `;
 
 const PageDescription = styled.p`
@@ -75,6 +100,16 @@ const PageDescription = styled.p`
   max-width: 700px;
   margin-left: auto;
   margin-right: auto;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    margin-bottom: 30px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.95rem;
+    margin-bottom: 25px;
+  }
 `;
 
 // Form container and elements
@@ -84,6 +119,18 @@ const FormContainer = styled.div`
   padding: 40px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
   margin-bottom: 40px;
+  
+  @media (max-width: 768px) {
+    padding: 25px 20px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 20px 15px;
+    margin-bottom: 25px;
+    border-radius: 6px;
+  }
 `;
 
 const StepIndicator = styled.div`
@@ -102,6 +149,14 @@ const StepIndicator = styled.div`
     background: #e0e0e0;
     transform: translateY(-50%);
     z-index: 1;
+  }
+  
+  @media (max-width: 768px) {
+    margin-bottom: 30px;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 25px;
   }
 `;
 
@@ -130,6 +185,30 @@ const Step = styled.div`
     left: 50%;
     transform: translateX(-50%);
   }
+  
+  @media (max-width: 768px) {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+    
+    &::after {
+      font-size: 0.7rem;
+      width: 70px;
+      top: 40px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;
+    
+    &::after {
+      font-size: 0.6rem;
+      width: 60px;
+      top: 35px;
+    }
+  }
 `;
 
 const StepContent = styled.div`
@@ -138,6 +217,14 @@ const StepContent = styled.div`
 
 const FormGroup = styled.div`
   margin-bottom: 25px;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 20px;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 18px;
+  }
 `;
 
 const Label = styled.label`
@@ -146,6 +233,16 @@ const Label = styled.label`
   font-weight: 600;
   color: #34495e;
   margin-bottom: 8px;
+  
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+  }
 `;
 
 const Input = styled.input`
@@ -159,6 +256,16 @@ const Input = styled.input`
   &:focus {
     outline: none;
     border-color: #1a8f4c;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 10px 12px;
+    font-size: 0.95rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 8px 10px;
+    font-size: 0.9rem;
   }
 `;
 
@@ -176,6 +283,18 @@ const Textarea = styled.textarea`
     outline: none;
     border-color: #1a8f4c;
   }
+  
+  @media (max-width: 768px) {
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    min-height: 100px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+    min-height: 80px;
+  }
 `;
 
 const Select = styled.select`
@@ -191,34 +310,88 @@ const Select = styled.select`
     outline: none;
     border-color: #1a8f4c;
   }
+  
+  @media (max-width: 768px) {
+    padding: 10px 12px;
+    font-size: 0.95rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
 `;
 
 const RadioGroup = styled.div`
   margin-bottom: 15px;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 12px;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 10px;
+  }
 `;
 
 const RadioOption = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 10px;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 8px;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 6px;
+  }
 `;
 
-const Radio = styled.input`
+const RadioInput = styled.input`
   margin-right: 10px;
   width: 18px;
   height: 18px;
   accent-color: #1a8f4c;
+  
+  @media (max-width: 768px) {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+  }
+  
+  @media (max-width: 480px) {
+    width: 14px;
+    height: 14px;
+    margin-right: 6px;
+  }
 `;
 
 const RadioLabel = styled.label`
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: #34495e;
+  
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.85rem;
+  }
 `;
 
 const CheckboxGroup = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 15px;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 12px;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 10px;
+  }
 `;
 
 const Checkbox = styled.input`
@@ -226,17 +399,50 @@ const Checkbox = styled.input`
   width: 18px;
   height: 18px;
   accent-color: #1a8f4c;
+  margin-top: 2px;
+  
+  @media (max-width: 768px) {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+  }
+  
+  @media (max-width: 480px) {
+    width: 14px;
+    height: 14px;
+    margin-right: 6px;
+  }
 `;
 
 const CheckboxLabel = styled.label`
   font-size: 0.9rem;
   color: #34495e;
+  line-height: 1.4;
+  
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.8rem;
+  }
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
   justify-content: space-between;
   margin-top: 40px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 30px;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 12px;
+    margin-top: 25px;
+  }
 `;
 
 const Button = styled.button`
@@ -249,7 +455,6 @@ const Button = styled.button`
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 600;
-  min-width: 120px;
   
   &:hover {
     background-color: ${props => props.secondary ? '#f9f9f9' : '#156e3a'};
@@ -263,11 +468,63 @@ const Button = styled.button`
     transform: none;
     border: none;
   }
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 10px 18px;
+    font-size: 0.9rem;
+  }
 `;
 
 const SuccessMessage = styled.div`
   text-align: center;
   padding: 40px 20px;
+  
+  h2 {
+    color: #1a8f4c;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
+  
+  p {
+    color: #4a5568;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 30px 15px;
+    
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+    }
+    
+    p {
+      font-size: 0.95rem;
+      margin-bottom: 25px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    padding: 25px 10px;
+    
+    h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+    }
+    
+    p {
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+  }
 `;
 
 const SuccessIcon = styled.div`
@@ -278,15 +535,37 @@ const SuccessIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 30px;
+  margin: 0 auto 20px;
   color: white;
-  font-size: 2.5rem;
+  font-size: 2rem;
+  
+  @media (max-width: 768px) {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+  
+  @media (max-width: 480px) {
+    width: 50px;
+    height: 50px;
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+  }
 `;
 
 const ErrorText = styled.div`
   color: #e74c3c;
   font-size: 0.85rem;
   margin-top: 5px;
+  
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.75rem;
+  }
 `;
 
 // Add new styled components for requirements section
@@ -338,15 +617,25 @@ const RequirementCard = styled.div`
 // Add new styled components for file upload
 const FileUploadContainer = styled.div`
   border: 2px dashed #1a8f4c;
-  border-radius: 5px;
-  padding: 20px;
+  border-radius: 8px;
+  padding: 30px;
   text-align: center;
-  margin-bottom: 15px;
   cursor: pointer;
   transition: all 0.3s ease;
-
+  background: #f8f9fa;
+  
   &:hover {
-    background: rgba(26, 143, 76, 0.05);
+    background: #e8f5ee;
+    border-color: #156e3a;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 20px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 15px;
+    border-radius: 6px;
   }
 `;
 
@@ -356,68 +645,80 @@ const FileInput = styled.input`
 
 const UploadIcon = styled.div`
   font-size: 2rem;
-  color: #1a8f4c;
   margin-bottom: 10px;
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.3rem;
+    margin-bottom: 6px;
+  }
 `;
 
-const UploadText = styled.p`
-  color: #4a5568;
+const UploadText = styled.div`
+  color: #1a8f4c;
   font-size: 0.9rem;
-  margin: 5px 0;
+  margin-bottom: 5px;
+  
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.8rem;
+    margin-bottom: 3px;
+  }
 `;
 
 const FileName = styled.div`
-  color: #1a8f4c;
-  font-size: 0.9rem;
+  color: #156e3a;
+  font-weight: 600;
   margin-top: 10px;
-  font-weight: 600;
-`;
-
-// Add a disabled button component
-const DisabledButton = styled.span`
-  padding: 12px 25px;
-  font-size: 1rem;
-  background-color: #e0e0e0;
-  color: #999;
-  border: none;
-  border-radius: 5px;
-  cursor: not-allowed;
-  font-weight: 600;
-  min-width: 120px;
-  position: relative;
-  display: inline-block;
-  text-align: center;
+  font-size: 0.85rem;
   
-  &:hover::after {
-    content: 'Coming soon';
-    position: absolute;
-    bottom: -40px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 5px 10px;
-    border-radius: 4px;
+  @media (max-width: 768px) {
     font-size: 0.8rem;
-    white-space: nowrap;
-    z-index: 10;
+    margin-top: 8px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.75rem;
+    margin-top: 6px;
   }
 `;
 
 // Add a styled component for image preview
 const ImagePreview = styled.div`
-  width: 300px;
-  height: 300px;
-  margin: 15px auto;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  overflow: hidden;
-  position: relative;
+  margin-top: 15px;
+  text-align: center;
   
   img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
+    border: 2px solid #1a8f4c;
+  }
+  
+  @media (max-width: 768px) {
+    margin-top: 12px;
+    
+    img {
+      max-width: 150px;
+      max-height: 150px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    margin-top: 10px;
+    
+    img {
+      max-width: 120px;
+      max-height: 120px;
+    }
   }
 `;
 

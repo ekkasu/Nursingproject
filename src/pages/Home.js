@@ -51,6 +51,11 @@ const HeroSection = styled.section`
   @media (max-width: 768px) {
     height: calc(100vh - 60px);
     margin-top: 60px;
+    min-height: 600px;
+  }
+  
+  @media (max-width: 480px) {
+    min-height: 500px;
   }
 `;
 
@@ -89,6 +94,11 @@ const HeroContent = styled(motion.div)`
   @media (max-width: 768px) {
     padding: 0 15px;
     text-align: center;
+    justify-content: center;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0 10px;
   }
 `;
 
@@ -98,6 +108,10 @@ const MainHeadingContainer = styled.div`
   
   @media (max-width: 768px) {
     margin-bottom: 25px;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 20px;
   }
 `;
 
@@ -110,6 +124,11 @@ const MainHeadingPart = styled.span`
 
   @media (max-width: 768px) {
     font-size: clamp(1.5rem, 4vw, 2.5rem);
+    line-height: 1.3;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: clamp(1.3rem, 3.5vw, 2rem);
   }
 `;
 
@@ -121,6 +140,11 @@ const GreenText = styled(MainHeadingPart)`
     margin-right: 10px;
     display: block;
     margin-bottom: 5px;
+  }
+  
+  @media (max-width: 480px) {
+    margin-right: 0;
+    margin-bottom: 3px;
   }
 `;
 
@@ -145,6 +169,13 @@ const EventDetails = styled(motion.div)`
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 10px;
+    margin-top: 20px;
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+  }
+  
+  @media (max-width: 480px) {
+    margin-top: 15px;
+    gap: 8px;
   }
   
   span {
@@ -173,6 +204,12 @@ const ButtonGroup = styled(motion.div)`
     gap: 12px;
     margin-top: 30px;
   }
+  
+  @media (max-width: 480px) {
+    max-width: 250px;
+    gap: 10px;
+    margin-top: 25px;
+  }
 `;
 
 const Button = styled(Link)`
@@ -196,6 +233,11 @@ const Button = styled(Link)`
     padding: 14px 24px;
     min-width: unset;
     font-size: 0.9rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 12px 20px;
+    font-size: 0.85rem;
   }
 `;
 
@@ -265,6 +307,11 @@ const CarouselControls = styled.div`
     bottom: 20px;
     gap: 8px;
   }
+  
+  @media (max-width: 480px) {
+    bottom: 15px;
+    gap: 6px;
+  }
 `;
 
 const CarouselDot = styled.button`
@@ -280,6 +327,12 @@ const CarouselDot = styled.button`
   @media (max-width: 768px) {
     width: 8px;
     height: 8px;
+  }
+  
+  @media (max-width: 480px) {
+    width: 6px;
+    height: 6px;
+    border-width: 1px;
   }
 
   &:hover {
@@ -323,6 +376,10 @@ const EventTimerSection = styled.section`
   @media (max-width: 768px) {
     padding: 40px 0;
   }
+  
+  @media (max-width: 480px) {
+    padding: 30px 0;
+  }
 `;
 
 const TimerTitle = styled.h2`
@@ -334,12 +391,28 @@ const TimerTitle = styled.h2`
   
   @media (max-width: 768px) {
     font-size: clamp(1.5rem, 3vw, 2rem);
+    margin-bottom: 15px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+    margin-bottom: 12px;
   }
 `;
 
 const TimerSubtitle = styled(SectionSubtitle)`
   color: #1a8f4c !important;
   opacity: 0.9;
+  
+  @media (max-width: 768px) {
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    margin-bottom: 40px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.85rem;
+    margin-bottom: 30px;
+  }
 `;
 
 const CountdownContainer = styled.div`
@@ -348,6 +421,16 @@ const CountdownContainer = styled.div`
   gap: clamp(10px, 2vw, 20px);
   margin: clamp(20px, 4vw, 40px) 0;
   flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    gap: 15px;
+    margin: 30px 0;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 10px;
+    margin: 25px 0;
+  }
 `;
 
 const CountdownBox = styled.div`
@@ -363,6 +446,12 @@ const CountdownBox = styled.div`
     min-width: 70px;
     padding: 12px 8px;
   }
+  
+  @media (max-width: 480px) {
+    min-width: 60px;
+    padding: 10px 6px;
+    border-radius: 8px;
+  }
 `;
 
 const CountdownNumber = styled.div`
@@ -371,6 +460,16 @@ const CountdownNumber = styled.div`
   color: #156e3a;
   line-height: 1;
   margin-bottom: 6px;
+  
+  @media (max-width: 768px) {
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    margin-bottom: 4px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    margin-bottom: 3px;
+  }
 `;
 
 const CountdownLabel = styled.div`
@@ -379,6 +478,15 @@ const CountdownLabel = styled.div`
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: 500;
+  
+  @media (max-width: 768px) {
+    font-size: clamp(0.6rem, 1.5vw, 0.7rem);
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.55rem;
+    letter-spacing: 0.5px;
+  }
 `;
 
 const SpeakersSection = styled.section`
@@ -532,6 +640,10 @@ const ProgramSection = styled.section`
   @media (max-width: 768px) {
     padding: 40px 0;
   }
+  
+  @media (max-width: 480px) {
+    padding: 30px 0;
+  }
 `;
 
 const ProgramContainer = styled.div`
@@ -552,6 +664,11 @@ const ProgramContainer = styled.div`
     padding: 0 15px;
     gap: 30px;
   }
+  
+  @media (max-width: 480px) {
+    padding: 0 10px;
+    gap: 25px;
+  }
 `;
 
 const ProgramContent = styled.div`
@@ -563,6 +680,12 @@ const ProgramContent = styled.div`
 
     @media (max-width: 768px) {
       font-size: clamp(1.5rem, 3vw, 2rem);
+      margin-bottom: 15px;
+    }
+    
+    @media (max-width: 480px) {
+      font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+      margin-bottom: 12px;
     }
   }
 
@@ -575,6 +698,12 @@ const ProgramContent = styled.div`
     @media (max-width: 768px) {
       font-size: 0.9rem;
       margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    
+    @media (max-width: 480px) {
+      font-size: 0.85rem;
+      margin-bottom: 15px;
     }
   }
 `;
@@ -589,6 +718,11 @@ const ProgramFeatures = styled.div`
     grid-template-columns: 1fr;
     gap: 15px;
     margin-bottom: 25px;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 12px;
+    margin-bottom: 20px;
   }
 `;
 
@@ -610,6 +744,20 @@ const Feature = styled.div`
       width: 16px;
       height: 16px;
     }
+    
+    @media (max-width: 480px) {
+      width: 14px;
+      height: 14px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.8rem;
+    gap: 8px;
   }
 `;
 
@@ -627,11 +775,16 @@ const FlyerContainer = styled.div`
     border-radius: 12px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   }
+  
+  @media (max-width: 480px) {
+    max-width: 250px;
+    border-radius: 10px;
+  }
 
   img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     transition: transform 0.3s ease;
   }
   
@@ -659,6 +812,11 @@ const ProgramButton = styled(Link)`
     padding: 12px 24px;
   }
   
+  @media (max-width: 480px) {
+    padding: 10px 20px;
+    font-size: 0.85rem;
+  }
+  
   &:hover {
     background: #156e3a;
     transform: translateY(-2px);
@@ -669,9 +827,14 @@ const ProgramButton = styled(Link)`
     height: 18px;
     transition: transform 0.3s ease;
   
-  @media (max-width: 768px) {
+    @media (max-width: 768px) {
       width: 16px;
       height: 16px;
+    }
+    
+    @media (max-width: 480px) {
+      width: 14px;
+      height: 14px;
     }
   }
 
@@ -692,6 +855,10 @@ const QuickActionsSection = styled.section`
     margin-top: 0;
     padding: 8px 0;
   }
+  
+  @media (max-width: 480px) {
+    padding: 6px 0;
+  }
 `;
 
 const QuickActionsContainer = styled.div`
@@ -709,6 +876,7 @@ const QuickActionsContainer = styled.div`
   @media (max-width: 576px) {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
+    padding: 0 8px;
   }
 `;
 
@@ -743,6 +911,10 @@ const ActionIcon = styled.div`
     font-size: 1.3rem;
     margin-bottom: 0;
   }
+  
+  @media (max-width: 480px) {
+    font-size: 1.1rem;
+  }
 `;
 
 const ActionTitle = styled.h3`
@@ -754,6 +926,10 @@ const ActionTitle = styled.h3`
   
   @media (max-width: 768px) {
     font-size: 0.8rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.7rem;
   }
 `;
 
@@ -787,6 +963,12 @@ const QuickActionButton = styled(Link)`
     padding: 8px;
     gap: 3px;
   }
+  
+  @media (max-width: 480px) {
+    padding: 6px;
+    gap: 2px;
+    border-radius: 4px;
+  }
 
   &.ticket-button {
     background: white;
@@ -802,6 +984,10 @@ const QuickActionButton = styled(Link)`
       
       @media (max-width: 768px) {
         font-size: 1.5rem;
+      }
+      
+      @media (max-width: 480px) {
+        font-size: 1.3rem;
       }
     }
   }
@@ -1082,7 +1268,7 @@ const Home = () => {
         </SectionContainer>
         </EventTimerSection>
         
-      <SpeakersSection
+      {/* <SpeakersSection
         ref={speakersSectionRef}
         as={motion.section}
         initial="hidden"
@@ -1132,7 +1318,7 @@ const Home = () => {
             ))}
           </SpeakersTrack>
         </SpeakersContainer>
-      </SpeakersSection>
+      </SpeakersSection> */}
         
       <ProgramSection>
         <ProgramContainer>

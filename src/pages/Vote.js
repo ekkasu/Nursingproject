@@ -8,12 +8,28 @@ const PageContainer = styled.div`
   min-height: 100vh;
   padding: 120px 0 80px;
   background: linear-gradient(135deg, #f5f7fa 0%, #e8f5ee 100%);
+  
+  @media (max-width: 768px) {
+    padding: 100px 0 60px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 80px 0 40px;
+  }
 `;
 
 const ContentContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+  
+  @media (max-width: 768px) {
+    padding: 0 15px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0 10px;
+  }
 `;
 
 const PageTitle = styled.h1`
@@ -32,6 +48,16 @@ const PageTitle = styled.h1`
     background: #FFD700;
     margin: 15px auto 0;
   }
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+    margin-bottom: 25px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
 `;
 
 const RulesSummarySection = styled.div`
@@ -40,6 +66,18 @@ const RulesSummarySection = styled.div`
   padding: 40px;
   margin-bottom: 40px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  
+  @media (max-width: 768px) {
+    padding: 25px 20px;
+    margin-bottom: 30px;
+    border-radius: 12px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 20px 15px;
+    margin-bottom: 25px;
+    border-radius: 10px;
+  }
 `;
 
 const SummaryTitle = styled.h2`
@@ -48,6 +86,16 @@ const SummaryTitle = styled.h2`
   margin-bottom: 25px;
   text-align: center;
   font-weight: 600;
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+  }
 `;
 
 const RulesGrid = styled.div`
@@ -55,6 +103,17 @@ const RulesGrid = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 30px;
   margin-bottom: 30px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-bottom: 25px;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 15px;
+    margin-bottom: 20px;
+  }
 `;
 
 const RuleCard = styled.div`
@@ -62,6 +121,17 @@ const RuleCard = styled.div`
   border-radius: 10px;
   padding: 25px;
   border-left: 4px solid #1a8f4c;
+  
+  @media (max-width: 768px) {
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 15px;
+    border-radius: 6px;
+    border-left-width: 3px;
+  }
 
   h3 {
     color: #1a8f4c;
@@ -73,6 +143,18 @@ const RuleCard = styled.div`
 
     &::before {
       content: '${props => props.icon}';
+    }
+    
+    @media (max-width: 768px) {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+    
+    @media (max-width: 480px) {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      gap: 6px;
     }
   }
 
@@ -99,6 +181,19 @@ const RuleCard = styled.div`
       &:last-child {
         margin-bottom: 0;
       }
+      
+      @media (max-width: 768px) {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        padding-left: 18px;
+        margin-bottom: 8px;
+      }
+      
+      @media (max-width: 480px) {
+        font-size: 0.85rem;
+        padding-left: 16px;
+        margin-bottom: 6px;
+      }
     }
   }
 `;
@@ -109,9 +204,16 @@ const ButtonGroup = styled.div`
   gap: 20px;
   margin-top: 40px;
 
-  @media (max-width: 576px) {
+  @media (max-width: 768px) {
     flex-direction: column;
     align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 12px;
+    margin-top: 25px;
   }
 `;
 
@@ -128,6 +230,8 @@ const ActionButton = styled(Link)`
   display: flex;
   align-items: center;
   gap: 10px;
+  text-align: center;
+  justify-content: center;
 
   &:hover {
     background: ${props => props.primary ? '#156e3a' : '#f5f7fa'};
@@ -137,6 +241,20 @@ const ActionButton = styled(Link)`
 
   &::before {
     content: ${props => props.icon || 'none'};
+  }
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 300px;
+    padding: 14px 30px;
+    font-size: 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    max-width: 280px;
+    padding: 12px 25px;
+    font-size: 0.95rem;
+    gap: 8px;
   }
 `;
 

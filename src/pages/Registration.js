@@ -13,12 +13,20 @@ const PageContainer = styled.div`
   padding: 120px 0 80px;
   background: linear-gradient(135deg, #f5f7fa 0%, #e8f5ee 100%);
   position: relative;
+  
+  @media (max-width: 768px) {
+    padding: 100px 0 60px;
+  }
 `;
 
 const ContentContainer = styled.div`
   max-width: 900px;
   margin: 0 auto;
   padding: 0 20px;
+  
+  @media (max-width: 768px) {
+    padding: 0 15px;
+  }
 `;
 
 const PageTitle = styled.h1`
@@ -27,6 +35,15 @@ const PageTitle = styled.h1`
   margin-bottom: 15px;
   text-align: center;
   font-weight: 700;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.8rem;
+  }
 `;
 
 const PageDescription = styled.p`
@@ -37,6 +54,11 @@ const PageDescription = styled.p`
   max-width: 700px;
   margin-left: auto;
   margin-right: auto;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    margin-bottom: 30px;
+  }
 `;
 
 // Form container and elements
@@ -46,6 +68,15 @@ const FormContainer = styled.div`
   padding: 40px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
   margin-bottom: 30px;
+  
+  @media (max-width: 768px) {
+    padding: 25px 20px;
+    margin-bottom: 20px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 20px 15px;
+  }
 `;
 
 const StepIndicator = styled.div`
@@ -64,6 +95,14 @@ const StepIndicator = styled.div`
     background: #e0e0e0;
     transform: translateY(-50%);
     z-index: 1;
+  }
+  
+  @media (max-width: 768px) {
+    margin-bottom: 30px;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 25px;
   }
 `;
 
@@ -92,6 +131,30 @@ const Step = styled.div`
     left: 50%;
     transform: translateX(-50%);
   }
+  
+  @media (max-width: 768px) {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+    
+    &::after {
+      font-size: 0.7rem;
+      width: 70px;
+      top: 40px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;
+    
+    &::after {
+      font-size: 0.6rem;
+      width: 60px;
+      top: 35px;
+    }
+  }
 `;
 
 const StepContent = styled.div`
@@ -100,6 +163,10 @@ const StepContent = styled.div`
 
 const FormGroup = styled.div`
   margin-bottom: 25px;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 20px;
+  }
 `;
 
 const Label = styled.label`
@@ -108,6 +175,11 @@ const Label = styled.label`
   font-weight: 600;
   color: #34495e;
   margin-bottom: 8px;
+  
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+  }
 `;
 
 const Input = styled.input`
@@ -121,6 +193,11 @@ const Input = styled.input`
   &:focus {
     outline: none;
     border-color: #1a8f4c;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 10px 12px;
+    font-size: 0.95rem;
   }
 `;
 
@@ -137,12 +214,21 @@ const Select = styled.select`
     outline: none;
     border-color: #1a8f4c;
   }
+  
+  @media (max-width: 768px) {
+    padding: 10px 12px;
+    font-size: 0.95rem;
+  }
 `;
 
 const CheckboxGroup = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 15px;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 12px;
+  }
 `;
 
 const Checkbox = styled.input`
@@ -150,17 +236,33 @@ const Checkbox = styled.input`
   width: 18px;
   height: 18px;
   accent-color: #1a8f4c;
+  
+  @media (max-width: 768px) {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+  }
 `;
 
 const CheckboxLabel = styled.label`
   font-size: 0.9rem;
   color: #34495e;
+  
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+  }
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
   justify-content: space-between;
   margin-top: 40px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 30px;
+  }
 `;
 
 const Button = styled.button`
@@ -186,6 +288,12 @@ const Button = styled.button`
     transform: none;
     border: none;
   }
+  
+  @media (max-width: 768px) {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    width: 100%;
+  }
 `;
 
 const SuccessMessage = styled.div`
@@ -196,6 +304,10 @@ const SuccessMessage = styled.div`
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @media (max-width: 768px) {
+    padding: 30px 15px;
   }
 `;
 
@@ -216,12 +328,24 @@ const SuccessIcon = styled.div`
     from { transform: scale(0); }
     to { transform: scale(1); }
   }
+  
+  @media (max-width: 768px) {
+    width: 80px;
+    height: 80px;
+    font-size: 2.5rem;
+    margin-bottom: 25px;
+  }
 `;
 
 const SuccessTitle = styled.h2`
   color: #1a8f4c;
   font-size: 2rem;
   margin-bottom: 20px;
+  
+  @media (max-width: 768px) {
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+  }
 `;
 
 const SuccessText = styled.p`
@@ -229,12 +353,22 @@ const SuccessText = styled.p`
   font-size: 1.1rem;
   margin-bottom: 15px;
   line-height: 1.6;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
 `;
 
 const RedirectText = styled.p`
   color: #718096;
   font-size: 0.9rem;
   margin-top: 30px;
+  
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+    margin-top: 25px;
+  }
 `;
 
 const LoginButton = styled.a`
@@ -253,6 +387,13 @@ const LoginButton = styled.a`
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
+  
+  @media (max-width: 768px) {
+    padding: 12px 25px;
+    font-size: 0.95rem;
+    width: 100%;
+    max-width: 300px;
+  }
 `;
 
 const ProcessSection = styled.div`
@@ -261,6 +402,11 @@ const ProcessSection = styled.div`
   padding: 40px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
   margin-bottom: 30px;
+  
+  @media (max-width: 768px) {
+    padding: 25px 20px;
+    margin-bottom: 20px;
+  }
 `;
 
 const ProcessTitle = styled.h2`
@@ -282,6 +428,15 @@ const ProcessTitle = styled.h2`
     background: linear-gradient(90deg, #1a8f4c, #FFD700);
     margin: 10px auto 0;
   }
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    margin-bottom: 25px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.3rem;
+  }
 `;
 
 const ProcessSteps = styled.div`
@@ -289,6 +444,12 @@ const ProcessSteps = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 30px;
   margin-top: 40px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-top: 30px;
+  }
 `;
 
 const ProcessStep = styled.div`
@@ -323,6 +484,16 @@ const ProcessStep = styled.div`
     font-weight: bold;
     border: 2px solid white;
   }
+  
+  @media (max-width: 768px) {
+    padding: 25px 15px;
+    
+    &::before {
+      width: 25px;
+      height: 25px;
+      font-size: 0.9rem;
+    }
+  }
 `;
 
 const StepTitle = styled.h3`
@@ -330,12 +501,21 @@ const StepTitle = styled.h3`
   font-size: 1.2rem;
   margin-bottom: 15px;
   font-weight: 600;
+  
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
 `;
 
 const StepDescription = styled.p`
   color: #666;
   font-size: 0.95rem;
   line-height: 1.6;
+  
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
 `;
 
 const AccommodationCard = styled.div`
@@ -352,24 +532,43 @@ const AccommodationCard = styled.div`
     border-color: #1a8f4c;
     transform: translateY(-2px);
   }
+  
+  @media (max-width: 768px) {
+    padding: 15px;
+    margin-bottom: 12px;
+  }
 `;
 
 const AccommodationTitle = styled.h3`
   color: #1a8f4c;
   margin-bottom: 10px;
   font-size: 1.2rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+  }
 `;
 
 const AccommodationDetails = styled.div`
   color: #4a5568;
   font-size: 0.9rem;
   margin-bottom: 10px;
+  
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+  }
 `;
 
 const AccommodationPrice = styled.div`
   font-weight: 600;
   color: #2d3748;
   font-size: 1.1rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 
 const ErrorText = styled.div`
@@ -384,6 +583,10 @@ const ErrorText = styled.div`
   
   li {
     margin-bottom: 3px;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
   }
 `;
 
@@ -448,6 +651,7 @@ const Registration = () => {
   const [isLoadingDistricts, setIsLoadingDistricts] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState('');
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
   
   // Data from API endpoints
   const [jobTitles, setJobTitles] = useState([]);
@@ -647,24 +851,29 @@ const Registration = () => {
     }
     
     if (name === 'phone') {
+      // Remove any non-digit characters
+      const digitsOnly = value.replace(/\D/g, '');
+      
+      // Limit to 10 digits
+      const limitedDigits = digitsOnly.slice(0, 10);
+      
       // Always update the form data
       setFormData(prev => ({
         ...prev,
-        [name]: value
+        [name]: limitedDigits
       }));
       
       // Only show validation errors if there's input and it's invalid
-      if (value && value.length > 0) {
-      const isValid = validatePhone(value);
-        if (!isValid) {
-          setPhoneError('Please enter a valid phone number (minimum 9 digits)');
+      if (limitedDigits && limitedDigits.length > 0) {
+        if (limitedDigits.length !== 10) {
+          setPhoneError('Phone number must be exactly 10 digits');
         } else {
           setPhoneError('');
         }
       } else {
         setPhoneError('');
       }
-        return;
+      return;
     } else if (name === 'email') {
       // Always update the form data without validation
       setFormData(prev => ({
@@ -833,8 +1042,8 @@ const Registration = () => {
           place_of_work: formData.place_of_work,
           region_id: String(formData.region_id),
           district_id: String(formData.district_id),
-          password: hashPassword(formData.password),
-          password_confirmation: hashPassword(formData.password_confirmation),
+          password: formData.password,
+          password_confirmation: formData.password_confirmation,
           registration_type: formData.registration_type
         };
         
@@ -862,11 +1071,6 @@ const Registration = () => {
           }
         });
         
-        // Explicitly add password fields to ensure they're sent correctly
-        formDataToSend.set('password', hashPassword(formData.password));
-        formDataToSend.set('password_confirmation', hashPassword(formData.password_confirmation));
-        console.log('Password fields added to FormData');
-        
         // Add profile picture if selected
         if (profilePicture) {
           formDataToSend.append('profile', profilePicture);
@@ -880,7 +1084,7 @@ const Registration = () => {
       
       if (response) {
         // Handle successful registration
-        setCurrentStep(4); // Show success message
+        setRegistrationSuccess(true);
         
         // Redirect to external portal after 5 seconds
         setTimeout(() => {
@@ -929,7 +1133,7 @@ const Registration = () => {
     }
 
     // For other steps
-    const isPhoneValid = formData.phone && validatePhone(formData.phone);
+    const isPhoneValid = formData.phone && formData.phone.length === 10 && /^\d{10}$/.test(formData.phone);
     const isEmailValid = formData.email && formData.email.length > 0;
     const isPasswordValid = formData.password && formData.password.length >= 8;
     const doPasswordsMatch = formData.password === formData.password_confirmation;
@@ -1014,13 +1218,6 @@ const Registration = () => {
     }, 10000);
   };
   
-  // Hash password before sending to API
-  const hashPassword = (password) => {
-    // Simple encoding - in production, use a proper hashing library or let the server handle hashing
-    // This is just to avoid sending plain text passwords over the network
-    return btoa(unescape(encodeURIComponent(password)));
-  };
-
   // Check password strength
   const checkPasswordStrength = (password) => {
     if (!password) return { isValid: false, message: 'Password is required', strength: '' };
@@ -1082,15 +1279,33 @@ const Registration = () => {
 
   // Add Terms and Conditions content
   const TermsAndConditions = () => (
-    <div style={{ maxHeight: '400px', overflowY: 'auto', padding: '20px', border: '1px solid #e0e0e0', borderRadius: '8px', marginBottom: '20px' }}>
-      <h3 style={{ color: '#1a8f4c', marginBottom: '15px' }}>Terms and Conditions for NMCON 2025</h3>
+    <div style={{ 
+      maxHeight: '400px', 
+      overflowY: 'auto', 
+      padding: window.innerWidth <= 768 ? '15px' : '20px', 
+      border: '1px solid #e0e0e0', 
+      borderRadius: '8px', 
+      marginBottom: '20px',
+      fontSize: window.innerWidth <= 768 ? '0.9rem' : '1rem'
+    }}>
+      <h3 style={{ 
+        color: '#1a8f4c', 
+        marginBottom: '15px',
+        fontSize: window.innerWidth <= 768 ? '1.2rem' : '1.3rem'
+      }}>
+        Terms and Conditions for NMCON 2025
+      </h3>
       
       <p>
         By registering for this conference and paying the registration fee, you're all set to join us! Please note that we've incurred costs to prepare for the event, and your payment is non-refundable.
       </p>
       
       <p><strong>Important Details:</strong></p>
-      <ul style={{ paddingLeft: '20px', marginBottom: '20px' }}>
+      <ul style={{ 
+        paddingLeft: window.innerWidth <= 768 ? '15px' : '20px', 
+        marginBottom: '20px',
+        fontSize: 'inherit'
+      }}>
         <li>Your Registration is complete only if you have done full payment of the conference fee of GHS 3,500</li>
         <li>All payments Must be done by 22nd August being the Deadline for Registration and Payment</li>
         <li>If you have fully paid and you're unable to attend, Kindly inform us one week before the deadline for 50% refund</li>
@@ -1117,12 +1332,54 @@ const Registration = () => {
             Join us for an enriching experience of learning, networking, and professional growth.
           </PageDescription>
 
-            <FormContainer>
-              {showProcessOverview ? (
+          <FormContainer>
+            {showProcessOverview ? (
               <ProcessOverview onStart={startRegistration} steps={registrationSteps} />
+            ) : registrationSuccess ? (
+              // Show success message only after successful registration
+              <SuccessMessage>
+                <SuccessIcon>✓</SuccessIcon>
+                <SuccessTitle>Registration Successful!</SuccessTitle>
+                <SuccessText>
+                  Congratulations! Your registration for NMCON 2025 has been completed successfully.
+                  We've sent a confirmation email to {formData.email} with your registration details.
+                </SuccessText>
+                <SuccessText>
+                  <strong>Next Step:</strong> Kindly login below to make payment on the portal.
+                  Your credentials have been sent to your email and phone number.
+                </SuccessText>
+                <SuccessText>
+                  Get ready for an enriching experience of learning, networking, and professional growth!
+                </SuccessText>
+                <div style={{ 
+                  marginTop: '25px',
+                  padding: '15px',
+                  backgroundColor: '#f0fff4',
+                  borderRadius: '8px',
+                  border: '1px solid #1a8f4c'
+                }}>
+                  <p style={{ margin: '0 0 10px 0', fontWeight: 'bold', color: '#1a8f4c' }}>
+                    Important:
+                  </p>
+                  <p style={{ margin: '0', fontSize: '0.95rem' }}>
+                    1. Check your email for login credentials<br />
+                    2. Login to the portal using the button below<br />
+                    3. Complete your payment to secure your spot<br />
+                    4. Access accommodation options and resources
+                  </p>
+                </div>
+                <div style={{ marginTop: '25px' }}>
+                  <LoginButton href="https://portal.mohannualcon.com/" target="_blank">
+                    Login to Make Payment
+                  </LoginButton>
+                </div>
+                <RedirectText>
+                  Redirecting you to the payment portal in 5 seconds...
+                </RedirectText>
+              </SuccessMessage>
             ) : (
               <form onSubmit={handleSubmit}>
-                    <StepIndicator>
+                <StepIndicator>
                   {[1, 2, 3, 4].map((step) => (
                     <Step
                       key={step}
@@ -1131,99 +1388,99 @@ const Registration = () => {
                       label={getStepLabel(step)}
                     >
                       {step}
-                      </Step>
+                    </Step>
                   ))}
-                    </StepIndicator>
+                </StepIndicator>
+                
+                {/* Step 1: Terms and Conditions */}
+                <StepContent active={currentStep === 1}>
+                  <h2>Terms and Conditions</h2>
+                  <p>Please read and agree to our terms and conditions before proceeding with registration.</p>
                   
-                    {/* Step 1: Terms and Conditions */}
-                    <StepContent active={currentStep === 1}>
-                      <h2>Terms and Conditions</h2>
-                      <p>Please read and agree to our terms and conditions before proceeding with registration.</p>
-                      
-                      <TermsAndConditions />
-                      
-                      <FormGroup>
-                        <CheckboxGroup>
-                          <Checkbox 
-                            type="checkbox" 
-                            id="agreeTerms" 
-                            name="agreeTerms" 
-                            checked={formData.agreeTerms}
-                            onChange={handleInputChange}
-                            required
-                          />
-                          <CheckboxLabel htmlFor="agreeTerms">
-                            I have read and agree to the terms and conditions *
-                          </CheckboxLabel>
-                        </CheckboxGroup>
-                        
-                        <CheckboxGroup>
-                          <Checkbox 
-                            type="checkbox" 
-                            id="agreePrivacy" 
-                            name="agreePrivacy" 
-                            checked={formData.agreePrivacy}
-                            onChange={handleInputChange}
-                            required
-                          />
-                          <CheckboxLabel htmlFor="agreePrivacy">
-                            I consent to the processing of my personal data in accordance with the privacy policy *
-                          </CheckboxLabel>
-                        </CheckboxGroup>
-                      </FormGroup>
-                      
-                      <ButtonGroup>
-                        <Button 
-                          type="button" 
-                          onClick={prevStep} 
-                          secondary
-                        >
-                          Back to Overview
-                        </Button>
-                        <Button 
-                          type="button" 
-                          onClick={nextStep} 
-                          disabled={!formData.agreeTerms || !formData.agreePrivacy}
-                        >
-                          Next Step
-                        </Button>
-                      </ButtonGroup>
-                    </StepContent>
+                  <TermsAndConditions />
+                  
+                  <FormGroup>
+                    <CheckboxGroup>
+                      <Checkbox 
+                        type="checkbox" 
+                        id="agreeTerms" 
+                        name="agreeTerms" 
+                        checked={formData.agreeTerms}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <CheckboxLabel htmlFor="agreeTerms">
+                        I have read and agree to the terms and conditions *
+                      </CheckboxLabel>
+                    </CheckboxGroup>
                     
+                    <CheckboxGroup>
+                      <Checkbox 
+                        type="checkbox" 
+                        id="agreePrivacy" 
+                        name="agreePrivacy" 
+                        checked={formData.agreePrivacy}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <CheckboxLabel htmlFor="agreePrivacy">
+                        I consent to the processing of my personal data in accordance with the privacy policy *
+                      </CheckboxLabel>
+                    </CheckboxGroup>
+                  </FormGroup>
+                  
+                  <ButtonGroup>
+                    <Button 
+                      type="button" 
+                      onClick={prevStep} 
+                      secondary
+                    >
+                      Back to Overview
+                    </Button>
+                    <Button 
+                      type="button" 
+                      onClick={nextStep} 
+                      disabled={!formData.agreeTerms || !formData.agreePrivacy}
+                    >
+                      Next Step
+                    </Button>
+                  </ButtonGroup>
+                </StepContent>
+                
                 {/* Step 2: Personal Information */}
-                    <StepContent active={currentStep === 2}>
-                      <h2>Personal Information</h2>
-                      <p>Please provide your contact details and create your account password.</p>
-                      
-                      <FormGroup>
-                        <Label htmlFor="user_title_id">Title *</Label>
-                        <Select
-                          id="user_title_id"
-                          name="user_title_id"
-                          value={formData.user_title_id}
-                          onChange={handleInputChange}
-                          required
-                        >
-                          <option value="">Select Title</option>
-                          {userTitles.map(title => (
-                            <option key={title.id} value={title.id}>
-                              {title.name}
-                            </option>
-                          ))}
-                        </Select>
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="full_name">Full Name *</Label>
-                        <Input
-                          type="text"
-                          id="full_name"
-                          name="full_name"
-                          value={formData.full_name}
-                          onChange={handleInputChange}
-                          required
-                        />
-                      </FormGroup>
+                <StepContent active={currentStep === 2}>
+                  <h2>Personal Information</h2>
+                  <p>Please provide your contact details and create your account password.</p>
+                  
+                  <FormGroup>
+                    <Label htmlFor="user_title_id">Title *</Label>
+                    <Select
+                      id="user_title_id"
+                      name="user_title_id"
+                      value={formData.user_title_id}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="">Select Title</option>
+                      {userTitles.map(title => (
+                        <option key={title.id} value={title.id}>
+                          {title.name}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="full_name">Full Name *</Label>
+                    <Input
+                      type="text"
+                      id="full_name"
+                      name="full_name"
+                      value={formData.full_name}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </FormGroup>
 
                   <FormGroup>
                     <Label htmlFor="registration_type">Registration Type *</Label>
@@ -1239,142 +1496,146 @@ const Registration = () => {
                       Based on your selected ticket. This field cannot be changed.
                     </small>
                   </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="phone">Phone Number *</Label>
-                        <Input
-                          type="tel"
-                          id="phone"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleInputChange}
-                      placeholder="e.g. +233 20 123 4567"
-                          required
-                        />
+                  
+                  <FormGroup>
+                    <Label htmlFor="phone">Phone Number *</Label>
+                    <Input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      placeholder="e.g. 0201234567"
+                      maxLength={10}
+                      required
+                    />
                     {phoneError && (
                       <ErrorText>{phoneError}</ErrorText>
                     )}
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="email">Email Address *</Label>
-                        <Input
-                          type="text"
-                          id="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          placeholder="e.g. your.name@example.com"
-                          required
-                        />
-                        {emailError && (
-                          <ErrorText>{emailError}</ErrorText>
-                        )}
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="gender">Gender *</Label>
-                        <Select
-                          id="gender"
-                          name="gender"
-                          value={formData.gender}
-                          onChange={handleInputChange}
-                          required
-                        >
-                          <option value="">Select Gender</option>
-                          <option value="male">Male</option>
-                          <option value="female">Female</option>
-                        </Select>
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="job_title_id">Job Title *</Label>
-                        <Select
-                          id="job_title_id"
-                          name="job_title_id"
-                          value={formData.job_title_id}
-                          onChange={handleInputChange}
-                          required
-                        >
-                          <option value="">Select Job Title</option>
-                          {jobTitles && jobTitles.length > 0 ? (
+                    <small style={{ color: '#666', display: 'block', marginTop: '5px', fontSize: '0.8rem' }}>
+                      Enter exactly 10 digits (e.g., 0201234567)
+                    </small>
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="email">Email Address *</Label>
+                    <Input
+                      type="text"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      placeholder="e.g. your.name@example.com"
+                      required
+                    />
+                    {emailError && (
+                      <ErrorText>{emailError}</ErrorText>
+                    )}
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="gender">Gender *</Label>
+                    <Select
+                      id="gender"
+                      name="gender"
+                      value={formData.gender}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </Select>
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="job_title_id">Job Title *</Label>
+                    <Select
+                      id="job_title_id"
+                      name="job_title_id"
+                      value={formData.job_title_id}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="">Select Job Title</option>
+                      {jobTitles && jobTitles.length > 0 ? (
                         jobTitles.map(title => (
-                                <option key={title.id} value={title.id}>
-                                  {title.name || title.title || 'Unnamed Title'}
-                                </option>
+                          <option key={title.id} value={title.id}>
+                            {title.name || title.title || 'Unnamed Title'}
+                          </option>
                         ))
-                          ) : (
-                            <option value="" disabled>Loading job titles...</option>
-                          )}
-                        </Select>
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="place_of_work">Place of Work *</Label>
-                        <Input
-                          type="text"
-                          id="place_of_work"
-                          name="place_of_work"
-                          value={formData.place_of_work}
-                          onChange={handleInputChange}
-                          required
-                        />
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="region_id">Region *</Label>
-                        <Select
-                          id="region_id"
-                          name="region_id"
-                          value={formData.region_id}
-                          onChange={handleInputChange}
-                          required
-                        >
-                          <option value="">Select Region</option>
+                      ) : (
+                        <option value="" disabled>Loading job titles...</option>
+                      )}
+                    </Select>
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="place_of_work">Place of Work *</Label>
+                    <Input
+                      type="text"
+                      id="place_of_work"
+                      name="place_of_work"
+                      value={formData.place_of_work}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="region_id">Region *</Label>
+                    <Select
+                      id="region_id"
+                      name="region_id"
+                      value={formData.region_id}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="">Select Region</option>
                       {regions && regions.length > 0 ? (
                         regions.map(region => (
-                            <option key={region.id} value={region.id}>
+                          <option key={region.id} value={region.id}>
                             {region.region_name || region.name || 'Unnamed Region'}
-                            </option>
+                          </option>
                         ))
                       ) : (
                         <option value="" disabled>Loading regions...</option>
                       )}
-                        </Select>
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="district_id">District *</Label>
-                        <Select
-                          id="district_id"
-                          name="district_id"
-                          value={formData.district_id}
-                          onChange={handleInputChange}
-                          required
+                    </Select>
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="district_id">District *</Label>
+                    <Select
+                      id="district_id"
+                      name="district_id"
+                      value={formData.district_id}
+                      onChange={handleInputChange}
+                      required
                       disabled={!formData.region_id || isLoadingDistricts}
-                        >
-                          <option value="">Select District</option>
+                    >
+                      <option value="">Select District</option>
                       {isLoadingDistricts ? (
                         <option value="" disabled>Loading districts...</option>
                       ) : districts && districts.length > 0 ? (
                         districts.map(district => (
-                            <option key={district.id} value={district.id}>
+                          <option key={district.id} value={district.id}>
                             {district.district_name || district.name || 'Unnamed District'}
-                            </option>
+                          </option>
                         ))
                       ) : (
                         <option value="" disabled>{formData.region_id ? 'No districts found for this region' : 'Select a region first'}</option>
                       )}
-                        </Select>
-                      </FormGroup>
-                      
-                      <FormGroup>
+                    </Select>
+                  </FormGroup>
+                  
+                  <FormGroup>
                     <Label htmlFor="profile">Profile Picture</Label>
                     <div>
-                        <Input
+                      <Input
                         type="file"
-                          id="profile"
-                          name="profile"
+                        id="profile"
+                        name="profile"
                         accept="image/*"
                         onChange={handleProfilePictureChange}
                         style={{ marginBottom: '10px' }}
@@ -1398,12 +1659,12 @@ const Registration = () => {
                         Upload a profile picture (optional)
                       </small>
                     </div>
-                      </FormGroup>
-                      
-                      <FormGroup>
-                        <Label htmlFor="password">Password *</Label>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ flex: 1, position: 'relative' }}>
+                  </FormGroup>
+                  
+                  <FormGroup>
+                    <Label htmlFor="password">Password *</Label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexDirection: window.innerWidth <= 768 ? 'column' : 'row' }}>
+                      <div style={{ flex: 1, position: 'relative', width: '100%' }}>
                         <Input
                           type={showPassword ? "text" : "password"}
                           id="password"
@@ -1425,7 +1686,8 @@ const Registration = () => {
                               background: 'none',
                               border: 'none',
                               cursor: 'pointer',
-                              color: '#1a8f4c'
+                              color: '#1a8f4c',
+                              fontSize: window.innerWidth <= 768 ? '1.2rem' : '1rem'
                             }}
                           >
                             {showPassword ? '🔒' : '👁️'}
@@ -1438,7 +1700,7 @@ const Registration = () => {
                               display: 'flex', 
                               justifyContent: 'space-between', 
                               marginTop: '5px',
-                              fontSize: '0.8rem'
+                              fontSize: window.innerWidth <= 768 ? '0.75rem' : '0.8rem'
                             }}>
                               <span>Password Strength:</span>
                               <span style={{ 
@@ -1457,16 +1719,18 @@ const Registration = () => {
                         type="button"
                         onClick={generateStrongPassword}
                         style={{
-                          padding: '10px 15px',
+                          padding: window.innerWidth <= 768 ? '12px 15px' : '10px 15px',
                           backgroundColor: '#1a8f4c',
                           color: 'white',
                           border: 'none',
                           borderRadius: '5px',
                           cursor: 'pointer',
-                          whiteSpace: 'nowrap'
+                          whiteSpace: 'nowrap',
+                          fontSize: window.innerWidth <= 768 ? '0.9rem' : '1rem',
+                          width: window.innerWidth <= 768 ? '100%' : 'auto'
                         }}
                       >
-                        Generate Secure Password
+                        {window.innerWidth <= 768 ? 'Generate Password' : 'Generate Secure Password'}
                       </button>
                     </div>
                     {showPassword && (
@@ -1475,203 +1739,204 @@ const Registration = () => {
                         padding: '10px', 
                         backgroundColor: '#f0fff4', 
                         border: '1px solid #1a8f4c',
-                        borderRadius: '5px'
+                        borderRadius: '5px',
+                        fontSize: window.innerWidth <= 768 ? '0.85rem' : '0.9rem'
                       }}>
-                        <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                        <p style={{ margin: 0, fontSize: 'inherit' }}>
                           <strong>Your secure password:</strong> {formData.password}
                         </p>
-                        <p style={{ margin: '5px 0 0 0', fontSize: '0.8rem', color: '#666' }}>
+                        <p style={{ margin: '5px 0 0 0', fontSize: window.innerWidth <= 768 ? '0.75rem' : '0.8rem', color: '#666' }}>
                           This password will be hidden in 10 seconds. Please make sure to save it somewhere secure.
                         </p>
                       </div>
                     )}
-                    <div style={{ marginTop: '5px', fontSize: '0.8rem', color: '#666' }}>
+                    <div style={{ marginTop: '5px', fontSize: window.innerWidth <= 768 ? '0.75rem' : '0.8rem', color: '#666' }}>
                       Password must be at least 8 characters and include uppercase, lowercase, numbers, and special characters.
                     </div>
-                      </FormGroup>
+                  </FormGroup>
 
-                      <FormGroup>
-                        <Label htmlFor="password_confirmation">Confirm Password *</Label>
-                        <Input
+                  <FormGroup>
+                    <Label htmlFor="password_confirmation">Confirm Password *</Label>
+                    <Input
                       type={showPassword ? "text" : "password"}
-                          id="password_confirmation"
-                          name="password_confirmation"
-                          value={formData.password_confirmation}
-                          onChange={handleInputChange}
-                          required
-                        />
-                        {passwordError && (
-                          <ErrorText>{passwordError}</ErrorText>
-                        )}
-                      </FormGroup>
-                      
-                      <ButtonGroup>
-                        <Button 
-                          type="button" 
-                          onClick={prevStep} 
-                          secondary
-                        >
-                          Back to Overview
-                        </Button>
-                        <Button 
-                          type="button" 
-                          onClick={nextStep} 
-                          disabled={!validateForm()}
-                        >
-                          Next Step
-                        </Button>
-                      </ButtonGroup>
-                    </StepContent>
-                    
-                {/* Step 3: Accommodation (previously Step 2) */}
-                    <StepContent active={currentStep === 3}>
-                      <h2>Select Accommodation</h2>
-                      <p>Choose your preferred accommodation option for the duration of the conference.</p>
+                      id="password_confirmation"
+                      name="password_confirmation"
+                      value={formData.password_confirmation}
+                      onChange={handleInputChange}
+                      required
+                    />
+                    {passwordError && (
+                      <ErrorText>{passwordError}</ErrorText>
+                    )}
+                  </FormGroup>
+                  
+                  <ButtonGroup>
+                    <Button 
+                      type="button" 
+                      onClick={prevStep} 
+                      secondary
+                    >
+                      Back to Overview
+                    </Button>
+                    <Button 
+                      type="button" 
+                      onClick={nextStep} 
+                      disabled={!validateForm()}
+                    >
+                      Next Step
+                    </Button>
+                  </ButtonGroup>
+                </StepContent>
+                
+                {/* Step 3: Accommodation */}
+                <StepContent active={currentStep === 3}>
+                  <h2>Select Accommodation</h2>
+                  <p>Choose your preferred accommodation option for the duration of the conference.</p>
 
-                      <FormGroup>
-                        <AccommodationCard 
-                          selected={formData.accommodation === 'standard'}
-                          onClick={() => handleInputChange({ target: { name: 'accommodation', value: 'standard' } })}
-                        >
-                          <AccommodationTitle>Standard Room</AccommodationTitle>
-                          <AccommodationDetails>
-                            <ul>
-                              <li>Single occupancy</li>
-                              <li>En-suite bathroom</li>
-                              <li>Basic amenities</li>
-                              <li>Daily housekeeping</li>
-                            </ul>
-                          </AccommodationDetails>
-                          <AccommodationPrice>$150/night</AccommodationPrice>
-                        </AccommodationCard>
+                  <FormGroup>
+                    <AccommodationCard 
+                      selected={formData.accommodation === 'standard'}
+                      onClick={() => handleInputChange({ target: { name: 'accommodation', value: 'standard' } })}
+                    >
+                      <AccommodationTitle>Standard Room</AccommodationTitle>
+                      <AccommodationDetails>
+                        <ul>
+                          <li>Single occupancy</li>
+                          <li>En-suite bathroom</li>
+                          <li>Basic amenities</li>
+                          <li>Daily housekeeping</li>
+                        </ul>
+                      </AccommodationDetails>
+                      <AccommodationPrice>$150/night</AccommodationPrice>
+                    </AccommodationCard>
 
-                        <AccommodationCard 
-                          selected={formData.accommodation === 'deluxe'}
-                          onClick={() => handleInputChange({ target: { name: 'accommodation', value: 'deluxe' } })}
-                        >
-                          <AccommodationTitle>Deluxe Room</AccommodationTitle>
-                          <AccommodationDetails>
-                            <ul>
-                              <li>Spacious room with city view</li>
-                              <li>Premium amenities</li>
-                              <li>Work desk and seating area</li>
-                              <li>24/7 room service</li>
-                            </ul>
-                          </AccommodationDetails>
-                          <AccommodationPrice>$250/night</AccommodationPrice>
-                        </AccommodationCard>
+                    <AccommodationCard 
+                      selected={formData.accommodation === 'deluxe'}
+                      onClick={() => handleInputChange({ target: { name: 'accommodation', value: 'deluxe' } })}
+                    >
+                      <AccommodationTitle>Deluxe Room</AccommodationTitle>
+                      <AccommodationDetails>
+                        <ul>
+                          <li>Spacious room with city view</li>
+                          <li>Premium amenities</li>
+                          <li>Work desk and seating area</li>
+                          <li>24/7 room service</li>
+                        </ul>
+                      </AccommodationDetails>
+                      <AccommodationPrice>$250/night</AccommodationPrice>
+                    </AccommodationCard>
 
-                        <AccommodationCard 
-                          selected={formData.accommodation === 'suite'}
-                          onClick={() => handleInputChange({ target: { name: 'accommodation', value: 'suite' } })}
-                        >
-                          <AccommodationTitle>Executive Suite</AccommodationTitle>
-                          <AccommodationDetails>
-                            <ul>
-                              <li>Separate living area</li>
-                              <li>Luxury amenities</li>
-                              <li>Complimentary breakfast</li>
-                              <li>VIP services</li>
-                            </ul>
-                          </AccommodationDetails>
-                          <AccommodationPrice>$350/night</AccommodationPrice>
-                        </AccommodationCard>
+                    <AccommodationCard 
+                      selected={formData.accommodation === 'suite'}
+                      onClick={() => handleInputChange({ target: { name: 'accommodation', value: 'suite' } })}
+                    >
+                      <AccommodationTitle>Executive Suite</AccommodationTitle>
+                      <AccommodationDetails>
+                        <ul>
+                          <li>Separate living area</li>
+                          <li>Luxury amenities</li>
+                          <li>Complimentary breakfast</li>
+                          <li>VIP services</li>
+                        </ul>
+                      </AccommodationDetails>
+                      <AccommodationPrice>$350/night</AccommodationPrice>
+                    </AccommodationCard>
 
-                        <AccommodationCard 
-                          selected={formData.accommodation === 'none'}
-                          onClick={() => handleInputChange({ target: { name: 'accommodation', value: 'none' } })}
-                        >
-                          <AccommodationTitle>No Accommodation Needed</AccommodationTitle>
-                          <AccommodationDetails>
-                            Select this option if you have your own accommodation arrangements.
-                          </AccommodationDetails>
-                        </AccommodationCard>
-                      </FormGroup>
+                    <AccommodationCard 
+                      selected={formData.accommodation === 'none'}
+                      onClick={() => handleInputChange({ target: { name: 'accommodation', value: 'none' } })}
+                    >
+                      <AccommodationTitle>No Accommodation Needed</AccommodationTitle>
+                      <AccommodationDetails>
+                        Select this option if you have your own accommodation arrangements.
+                      </AccommodationDetails>
+                    </AccommodationCard>
+                  </FormGroup>
 
-                      <ButtonGroup>
-                        <Button type="button" onClick={prevStep} secondary>
-                          Previous Step
-                        </Button>
+                  <ButtonGroup>
+                    <Button type="button" onClick={prevStep} secondary>
+                      Previous Step
+                    </Button>
                     <Button type="button" onClick={nextStep}>
-                          Next Step
-                        </Button>
-                      </ButtonGroup>
-                    </StepContent>
-                    
-                {/* Step 4: Confirmation (previously Step 3) */}
+                      Next Step
+                    </Button>
+                  </ButtonGroup>
+                </StepContent>
+                
+                {/* Step 4: Confirmation */}
                 <StepContent active={currentStep === 4}>
-                      <h2>Confirm Registration</h2>
-                      <p>Please review your information and confirm your registration.</p>
-                      
-                      {console.log('Summary Data:', {
-                        userTitles,
-                        jobTitles,
-                        regions,
-                        districts,
-                        formData
-                      })}
-                      
-                      <div style={{ marginBottom: '30px' }}>
-                        <h3 style={{ color: '#2c3e50', marginBottom: '15px' }}>Registration Summary</h3>
-                        <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '8px' }}>
-                          <p><strong>Title:</strong> {userTitles.find(title => String(title.id) === String(formData.user_title_id))?.name || formData.user_title_id}</p>
-                          <p><strong>Name:</strong> {formData.full_name}</p>
-                          <p><strong>Email:</strong> {formData.email}</p>
-                          <p><strong>Phone:</strong> {formData.phone}</p>
-                          <p><strong>Registration Type:</strong> {formData.registration_type === 'online' ? 'Online' : formData.registration_type === 'onsite' ? 'Onsite' : formData.registration_type}</p>
-                          <p><strong>Job Title:</strong> {jobTitles.find(title => String(title.id) === String(formData.job_title_id))?.name || formData.job_title_id}</p>
-                          <p><strong>Place of Work:</strong> {formData.place_of_work}</p>
-                          <p><strong>Region:</strong> {regions.find(region => String(region.id) === String(formData.region_id))?.region_name || regions.find(region => String(region.id) === String(formData.region_id))?.name || formData.region_id}</p>
-                          <p><strong>District:</strong> {districts.find(district => String(district.id) === String(formData.district_id))?.district_name || districts.find(district => String(district.id) === String(formData.district_id))?.name || formData.district_id}</p>
-                          <p><strong>Accommodation:</strong> {formData.accommodation === 'standard' ? 'Standard Room' : 
-                                                           formData.accommodation === 'deluxe' ? 'Deluxe Room' : 
-                                                           formData.accommodation === 'suite' ? 'Executive Suite' : 
-                                                           formData.accommodation === 'none' ? 'No Accommodation Needed' : 
-                                                           formData.accommodation || 'None selected'}</p>
-                        </div>
-                      </div>
-                      
-                      <FormGroup>
-                        <CheckboxGroup>
-                          <Checkbox 
-                            type="checkbox" 
-                            id="agreeTerms" 
-                            name="agreeTerms" 
-                            checked={formData.agreeTerms}
-                            onChange={handleInputChange}
-                            required
-                          />
-                          <CheckboxLabel htmlFor="agreeTerms">
-                            I agree to the terms and conditions of the conference *
-                          </CheckboxLabel>
-                        </CheckboxGroup>
-                        
-                        <CheckboxGroup>
-                          <Checkbox 
-                            type="checkbox" 
-                            id="agreePrivacy" 
-                            name="agreePrivacy" 
-                            checked={formData.agreePrivacy}
-                            onChange={handleInputChange}
-                            required
-                          />
-                          <CheckboxLabel htmlFor="agreePrivacy">
-                            I consent to the processing of my personal data in accordance with the privacy policy *
-                          </CheckboxLabel>
-                        </CheckboxGroup>
-                      </FormGroup>
-                      
-                      <ButtonGroup>
-                        <Button type="button" onClick={prevStep} secondary>
-                          Previous Step
-                        </Button>
-                        <Button 
-                          type="submit" 
-                          disabled={!validateForm() || isSubmitting}
-                        >
-                          {isSubmitting ? 'Processing...' : 'Complete Registration'}
-                        </Button>
-                      </ButtonGroup>
+                  <h2>Confirm Registration</h2>
+                  <p>Please review your information and confirm your registration.</p>
+                  
+                  {console.log('Summary Data:', {
+                    userTitles,
+                    jobTitles,
+                    regions,
+                    districts,
+                    formData
+                  })}
+                  
+                  <div style={{ marginBottom: '30px' }}>
+                    <h3 style={{ color: '#2c3e50', marginBottom: '15px' }}>Registration Summary</h3>
+                    <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '8px' }}>
+                      <p><strong>Title:</strong> {userTitles.find(title => String(title.id) === String(formData.user_title_id))?.name || formData.user_title_id}</p>
+                      <p><strong>Name:</strong> {formData.full_name}</p>
+                      <p><strong>Email:</strong> {formData.email}</p>
+                      <p><strong>Phone:</strong> {formData.phone}</p>
+                      <p><strong>Registration Type:</strong> {formData.registration_type === 'online' ? 'Online' : formData.registration_type === 'onsite' ? 'Onsite' : formData.registration_type}</p>
+                      <p><strong>Job Title:</strong> {jobTitles.find(title => String(title.id) === String(formData.job_title_id))?.name || formData.job_title_id}</p>
+                      <p><strong>Place of Work:</strong> {formData.place_of_work}</p>
+                      <p><strong>Region:</strong> {regions.find(region => String(region.id) === String(formData.region_id))?.region_name || regions.find(region => String(region.id) === String(formData.region_id))?.name || formData.region_id}</p>
+                      <p><strong>District:</strong> {districts.find(district => String(district.id) === String(formData.district_id))?.district_name || districts.find(district => String(district.id) === String(formData.district_id))?.name || formData.district_id}</p>
+                      <p><strong>Accommodation:</strong> {formData.accommodation === 'standard' ? 'Standard Room' : 
+                                                       formData.accommodation === 'deluxe' ? 'Deluxe Room' : 
+                                                       formData.accommodation === 'suite' ? 'Executive Suite' : 
+                                                       formData.accommodation === 'none' ? 'No Accommodation Needed' : 
+                                                       formData.accommodation || 'None selected'}</p>
+                    </div>
+                  </div>
+                  
+                  <FormGroup>
+                    <CheckboxGroup>
+                      <Checkbox 
+                        type="checkbox" 
+                        id="agreeTerms" 
+                        name="agreeTerms" 
+                        checked={formData.agreeTerms}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <CheckboxLabel htmlFor="agreeTerms">
+                        I agree to the terms and conditions of the conference *
+                      </CheckboxLabel>
+                    </CheckboxGroup>
+                    
+                    <CheckboxGroup>
+                      <Checkbox 
+                        type="checkbox" 
+                        id="agreePrivacy" 
+                        name="agreePrivacy" 
+                        checked={formData.agreePrivacy}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <CheckboxLabel htmlFor="agreePrivacy">
+                        I consent to the processing of my personal data in accordance with the privacy policy *
+                      </CheckboxLabel>
+                    </CheckboxGroup>
+                  </FormGroup>
+                  
+                  <ButtonGroup>
+                    <Button type="button" onClick={prevStep} secondary>
+                      Previous Step
+                    </Button>
+                    <Button 
+                      type="submit" 
+                      disabled={!validateForm() || isSubmitting}
+                    >
+                      {isSubmitting ? 'Processing...' : 'Complete Registration'}
+                    </Button>
+                  </ButtonGroup>
 
                   {registrationError && (
                     <div style={{ 
@@ -1686,53 +1951,9 @@ const Registration = () => {
                       {registrationError}
                     </div>
                   )}
-                    </StepContent>
-                    
-                    {/* Success Message */}
-                <StepContent active={currentStep === 4}>
-                      <SuccessMessage>
-                        <SuccessIcon>✓</SuccessIcon>
-                        <SuccessTitle>Registration Successful!</SuccessTitle>
-                        <SuccessText>
-                          Congratulations! Your registration for NMCON 2025 has been completed successfully.
-                          We've sent a confirmation email to {formData.email} with your registration details.
-                        </SuccessText>
-                    <SuccessText>
-                      <strong>Next Step:</strong> Kindly login below to make payment on the portal.
-                      Your credentials have been sent to your email and phone number.
-                    </SuccessText>
-                        <SuccessText>
-                          Get ready for an enriching experience of learning, networking, and professional growth!
-                        </SuccessText>
-                    <div style={{ 
-                      marginTop: '25px',
-                      padding: '15px',
-                      backgroundColor: '#f0fff4',
-                      borderRadius: '8px',
-                      border: '1px solid #1a8f4c'
-                    }}>
-                      <p style={{ margin: '0 0 10px 0', fontWeight: 'bold', color: '#1a8f4c' }}>
-                        Important:
-                      </p>
-                      <p style={{ margin: '0', fontSize: '0.95rem' }}>
-                        1. Check your email for login credentials<br />
-                        2. Login to the portal using the button below<br />
-                        3. Complete your payment to secure your spot<br />
-                        4. Access accommodation options and resources
-                      </p>
-                    </div>
-                    <div style={{ marginTop: '25px' }}>
-                      <LoginButton href="https://portal.mohannualcon.com/" target="_blank">
-                        Login to Make Payment
-                      </LoginButton>
-                    </div>
-                        <RedirectText>
-                      Redirecting you to the payment portal in 5 seconds...
-                        </RedirectText>
-                      </SuccessMessage>
-                    </StepContent>
-                  </form>
-              )}
+                </StepContent>
+              </form>
+            )}
           </FormContainer>
         </ContentContainer>
       </PageContainer>
