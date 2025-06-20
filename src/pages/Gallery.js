@@ -97,6 +97,7 @@ const ItemImage = styled(motion.img)`
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
   aspect-ratio: 4/3;
   transition: transform 0.3s ease;
+  loading="lazy";
 `;
 
 const PlayButton = styled.button`
@@ -375,6 +376,7 @@ const Gallery = () => {
                         src={item.thumb}
                         alt="Video thumbnail"
                         variants={itemVariants}
+                        loading="lazy"
                       />
                       <PlayButton />
                     </VideoContainer>
@@ -393,6 +395,7 @@ const Gallery = () => {
                       alt="Gallery item"
                       onClick={() => handlePhotoClick(index)}
                       variants={itemVariants}
+                      loading="lazy"
                     />
                   </Tilt>
                 )

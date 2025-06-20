@@ -993,6 +993,21 @@ const QuickActionButton = styled(Link)`
   }
 `;
 
+// Animation variants
+const pageContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.25
+    }
+  }
+};
+const sectionVariants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' } }
+};
+
 const Home = () => {
   const [[page, direction], setPage] = useState([0, 0]);
   const [timeLeft, setTimeLeft] = useState({
@@ -1086,308 +1101,267 @@ const Home = () => {
   };
 
   return (
-    <HomeContainer>
+    <HomeContainer as={motion.div} variants={pageContainerVariants} initial="hidden" animate="visible">
       <Header />
-      <HeroSection>
-        <AnimatePresence mode="wait">
-          <SlideContainer
-            key={page}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <HeroBackground backgroundImage={slides[imageIndex].image} />
-            <HeroContent>
-              <MainHeadingContainer>
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
+      <motion.div variants={sectionVariants}>
+        <HeroSection>
+          <AnimatePresence mode="wait">
+            <SlideContainer
+              key={page}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <HeroBackground backgroundImage={slides[imageIndex].image} />
+              <HeroContent>
+                <MainHeadingContainer>
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                  >
+                    <GreenText>{slides[imageIndex].title}</GreenText>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.3 }}
+                  >
+                    <WhiteText>{slides[imageIndex].subtitle}</WhiteText>
+                  </motion.div>
+                </MainHeadingContainer>
+
+                <ButtonGroup
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
                 >
-                  <GreenText>{slides[imageIndex].title}</GreenText>
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                >
-                  <WhiteText>{slides[imageIndex].subtitle}</WhiteText>
-                </motion.div>
-              </MainHeadingContainer>
+                  {imageIndex === 0 && (
+                    <>
+                      <PrimaryButton to="/registration">
+                        Register Now
+                      </PrimaryButton>
+                      <SecondaryButton to="/conference-details">
+                        Conference Details
+                      </SecondaryButton>
+                    </>
+                  )}
+                  {imageIndex === 1 && (
+                    <>
+                      <PrimaryButton to="/nomination">
+                        Nominate Now
+                      </PrimaryButton>
+                      <SecondaryButton to="/awards-criteria">
+                        Awards Criteria
+                      </SecondaryButton>
+                    </>
+                  )}
+                  {imageIndex === 2 && (
+                    <>
+                      <PrimaryButton to="/speakers">
+                        Meet Our Speakers
+                      </PrimaryButton>
+                      <SecondaryButton to="/schedule">
+                        View Schedule
+                      </SecondaryButton>
+                    </>
+                  )}
+                  {imageIndex === 3 && (
+                    <>
+                      <PrimaryButton to="/registration">
+                        Join Us
+                      </PrimaryButton>
+                      <SecondaryButton to="/about">
+                        Learn More
+                      </SecondaryButton>
+                    </>
+                  )}
+                </ButtonGroup>
+              </HeroContent>
+            </SlideContainer>
+          </AnimatePresence>
 
-              <ButtonGroup
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-              >
-                {imageIndex === 0 && (
-                  <>
-                    <PrimaryButton to="/registration">
-                      Register Now
-                    </PrimaryButton>
-                    <SecondaryButton to="/conference-details">
-                      Conference Details
-                    </SecondaryButton>
-                  </>
-                )}
-                {imageIndex === 1 && (
-                  <>
-                    <PrimaryButton to="/nomination">
-                      Nominate Now
-                    </PrimaryButton>
-                    <SecondaryButton to="/awards-criteria">
-                      Awards Criteria
-                    </SecondaryButton>
-                  </>
-                )}
-                {imageIndex === 2 && (
-                  <>
-                    <PrimaryButton to="/speakers">
-                      Meet Our Speakers
-                    </PrimaryButton>
-                    <SecondaryButton to="/schedule">
-                      View Schedule
-                    </SecondaryButton>
-                  </>
-                )}
-                {imageIndex === 3 && (
-                  <>
-                    <PrimaryButton to="/registration">
-                      Join Us
-                    </PrimaryButton>
-                    <SecondaryButton to="/about">
-                      Learn More
-                    </SecondaryButton>
-                  </>
-                )}
-              </ButtonGroup>
-            </HeroContent>
-          </SlideContainer>
-        </AnimatePresence>
-
-        <CarouselControls>
-          {slides.map((_, index) => (
-            <CarouselDot
-              key={index}
-              active={index === imageIndex}
-              onClick={() => setPage([index, index > imageIndex ? 1 : -1])}
-            />
-          ))}
-        </CarouselControls>
-      </HeroSection>
-      
-      <QuickActionsSection>
-        <QuickActionsContainer>
-          <QuickActionButton to="/tickets" className="ticket-button">
-            <ActionIcon>🎟️</ActionIcon>
-            <ActionTitle>Buy Tickets</ActionTitle>
-          </QuickActionButton>
-          
-          <QuickActionButton to="/nomination">
-            <ActionIcon>🏆</ActionIcon>
-            <ActionTitle>Nominate</ActionTitle>
-          </QuickActionButton>
-          
-          <QuickActionButton to="/nomination-rules">
-            <ActionIcon>📋</ActionIcon>
-            <ActionTitle>Guidelines</ActionTitle>
-          </QuickActionButton>
-
-          <QuickActionButton to="/gallery">
-            <ActionIcon>📸</ActionIcon>
-            <ActionTitle>Gallery</ActionTitle>
-          </QuickActionButton>
-        </QuickActionsContainer>
-      </QuickActionsSection>
-      
-      <EventTimerSection
-        ref={timerSectionRef}
-        as={motion.section}
-        initial="hidden"
-        animate={timerInView ? "visible" : "hidden"}
-        variants={scrollStaggerVariant}
-      >
-        <SectionContainer
-          variants={scrollFadeInVariant}
-        >
-          <motion.div variants={scrollFadeInVariant}>
-            <TimerTitle>Nursing and Midwifery Leaders & Mangers Conference (NMLMCON) 2025</TimerTitle>
-            <TimerSubtitle>
-              Join us from September 2nd - 6th, 2025 for four days of excellence in nursing leadership
-            </TimerSubtitle>
-          </motion.div>
-          
-          <motion.div variants={scrollFadeInVariant}>
-            <TimerSubtitle>
-              Countdown to Day 1
-            </TimerSubtitle>
-          </motion.div>
+          <CarouselControls>
+            {slides.map((_, index) => (
+              <CarouselDot
+                key={index}
+                active={index === imageIndex}
+                onClick={() => setPage([index, index > imageIndex ? 1 : -1])}
+              />
+            ))}
+          </CarouselControls>
+        </HeroSection>
+      </motion.div>
+      <motion.div variants={sectionVariants}>
+        <QuickActionsSection>
+          <QuickActionsContainer>
+            <QuickActionButton to="/tickets" className="ticket-button">
+              <ActionIcon>🎟️</ActionIcon>
+              <ActionTitle>Buy Tickets</ActionTitle>
+            </QuickActionButton>
             
-            <CountdownContainer>
-            {Object.entries(timeLeft).map(([unit, value], index) => (
-              <motion.div
-                key={unit}
-                variants={{
-                  hidden: { opacity: 0, y: 20 },
-                  visible: {
-                    opacity: 1,
-                    y: 0,
-                    transition: {
-                      delay: index * 0.1,
-                      duration: 0.5
+            <QuickActionButton to="/nomination">
+              <ActionIcon>🏆</ActionIcon>
+              <ActionTitle>Nominate</ActionTitle>
+            </QuickActionButton>
+            
+            <QuickActionButton to="/nomination-rules">
+              <ActionIcon>📋</ActionIcon>
+              <ActionTitle>Guidelines</ActionTitle>
+            </QuickActionButton>
+
+            <QuickActionButton to="/gallery">
+              <ActionIcon>📸</ActionIcon>
+              <ActionTitle>Gallery</ActionTitle>
+            </QuickActionButton>
+          </QuickActionsContainer>
+        </QuickActionsSection>
+      </motion.div>
+      <motion.div variants={sectionVariants}>
+        <EventTimerSection
+          ref={timerSectionRef}
+          as={motion.section}
+          initial="hidden"
+          animate={timerInView ? "visible" : "hidden"}
+          variants={scrollStaggerVariant}
+        >
+          <SectionContainer
+            variants={scrollFadeInVariant}
+          >
+            <motion.div variants={scrollFadeInVariant}>
+              <TimerTitle>Nursing and Midwifery Leaders & Mangers Conference (NMLMCON) 2025</TimerTitle>
+              <TimerSubtitle>
+                Join us from September 2nd - 6th, 2025 for four days of excellence in nursing leadership
+              </TimerSubtitle>
+            </motion.div>
+            
+            <motion.div variants={scrollFadeInVariant}>
+              <TimerSubtitle>
+                Countdown to Day 1
+              </TimerSubtitle>
+            </motion.div>
+              
+              <CountdownContainer>
+              {Object.entries(timeLeft).map(([unit, value], index) => (
+                <motion.div
+                  key={unit}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: {
+                        delay: index * 0.1,
+                        duration: 0.5
+                      }
                     }
-                  }
+                  }}
+                >
+                <CountdownBox>
+                    <CountdownNumber>{value}</CountdownNumber>
+                    <CountdownLabel>{unit.charAt(0).toUpperCase() + unit.slice(1)}</CountdownLabel>
+                </CountdownBox>
+                </motion.div>
+              ))}
+              </CountdownContainer>
+              
+            <motion.div 
+              variants={scrollFadeInVariant}
+              style={{ textAlign: 'center', marginTop: '40px' }}
+            >
+              <PrimaryButton 
+                to="/reservation"
+                style={{ 
+                  background: '#ffffff', 
+                  color: '#1a8f4c',
+                  minWidth: '250px',
+                  fontSize: '1.1rem',
+                  fontWeight: '600'
                 }}
               >
-              <CountdownBox>
-                  <CountdownNumber>{value}</CountdownNumber>
-                  <CountdownLabel>{unit.charAt(0).toUpperCase() + unit.slice(1)}</CountdownLabel>
-              </CountdownBox>
+                Reserve Your Spot Now
+              </PrimaryButton>
+            </motion.div>
+          </SectionContainer>
+          </EventTimerSection>
+      </motion.div>
+      <motion.div variants={sectionVariants}>
+        <ProgramSection>
+          <ProgramContainer>
+            <ProgramContent>
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+        viewport={{ once: true }}
+                variants={scrollFadeInVariant}
+              >
+                <h2>6th Annual Nursing and Midwifery Leaders & Managers Conference & 5th Excellence and Hall of Fame Awards</h2>
+                <p>
+                  Join us for this prestigious four-day event from September 2nd - 5th, 2025, that brings together nursing and midwifery leaders 
+                  to celebrate excellence in healthcare leadership. This dual event combines our annual 
+                  conference with the recognition of outstanding achievements in nursing and midwifery.
+                </p>
+                <ProgramFeatures>
+                  <Feature>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM8 15L3 10L4.41 8.59L8 12.17L15.59 4.58L17 6L8 15Z" fill="currentColor"/>
+                    </svg>
+                    <span>Leadership Conference</span>
+                  </Feature>
+                  <Feature>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM8 15L3 10L4.41 8.59L8 12.17L15.59 4.58L17 6L8 15Z" fill="currentColor"/>
+                    </svg>
+                    <span>Excellence Awards</span>
+                  </Feature>
+                  <Feature>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM8 15L3 10L4.41 8.59L8 12.17L15.59 4.58L17 6L8 15Z" fill="currentColor"/>
+                    </svg>
+                    <span>Networking Events</span>
+                  </Feature>
+                  <Feature>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM8 15L3 10L4.41 8.59L8 12.17L15.59 4.58L17 6L8 15Z" fill="currentColor"/>
+                    </svg>
+                    <span>Hall of Fame</span>
+                  </Feature>
+                </ProgramFeatures>
+                <ProgramButton to="/conference-and-awards">
+                  Learn More
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 17L8.59 15.59L13.17 11H3V9H13.17L8.59 4.41L10 3L17 10L10 17Z"/>
+                  </svg>
+                </ProgramButton>
               </motion.div>
-            ))}
-            </CountdownContainer>
+            </ProgramContent>
             
-          <motion.div 
-            variants={scrollFadeInVariant}
-            style={{ textAlign: 'center', marginTop: '40px' }}
-          >
-            <PrimaryButton 
-              to="/reservation"
-              style={{ 
-                background: '#ffffff', 
-                color: '#1a8f4c',
-                minWidth: '250px',
-                fontSize: '1.1rem',
-                fontWeight: '600'
-              }}
-            >
-              Reserve Your Spot Now
-            </PrimaryButton>
-          </motion.div>
-        </SectionContainer>
-        </EventTimerSection>
-        
-      {/* <SpeakersSection
-        ref={speakersSectionRef}
-        as={motion.section}
-        initial="hidden"
-        animate={speakersInView ? "visible" : "hidden"}
-        variants={scrollStaggerVariant}
-      >
-        <SpeakersHeader>
-          <motion.div variants={scrollFadeInVariant}>
-            <SpeakersTitle>Featured Speakers</SpeakersTitle>
-          </motion.div>
-        </SpeakersHeader>
-
-        <SpeakersContainer ref={speakersContainerRef}>
-          <NavigationButton 
-            className="prev" 
-            onClick={prevSpeaker}
-            disabled={currentSpeaker === 0}
-          >
-            ←
-          </NavigationButton>
-          
-          <NavigationButton 
-            className="next" 
-            onClick={nextSpeaker}
-            disabled={currentSpeaker === speakers.length - 1}
-          >
-            →
-          </NavigationButton>
-
-          <SpeakersTrack
-            animate={{
-              x: currentSpeaker * -310 // 280px card width + 30px gap
-            }}
-            transition={{
-              type: "spring",
-              stiffness: 300,
-              damping: 30
-            }}
-          >
-            {speakers.map((speaker, index) => (
-              <SpeakerCard key={speaker.name}>
-                <SpeakerInfo>
-                  <SpeakerName>{speaker.name}</SpeakerName>
-                  <SpeakerTitle>{speaker.title}</SpeakerTitle>
-                </SpeakerInfo>
-              </SpeakerCard>
-            ))}
-          </SpeakersTrack>
-        </SpeakersContainer>
-      </SpeakersSection> */}
-        
-      <ProgramSection>
-        <ProgramContainer>
-          <ProgramContent>
             <motion.div
               initial="hidden"
               whileInView="visible"
-      viewport={{ once: true }}
+              viewport={{ once: true }}
               variants={scrollFadeInVariant}
             >
-              <h2>6th Annual Nursing and Midwifery Leaders & Managers Conference & 5th Excellence and Hall of Fame Awards</h2>
-              <p>
-                Join us for this prestigious four-day event from September 2nd - 5th, 2025, that brings together nursing and midwifery leaders 
-                to celebrate excellence in healthcare leadership. This dual event combines our annual 
-                conference with the recognition of outstanding achievements in nursing and midwifery.
-              </p>
-              <ProgramFeatures>
-                <Feature>
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM8 15L3 10L4.41 8.59L8 12.17L15.59 4.58L17 6L8 15Z" fill="currentColor"/>
-                  </svg>
-                  <span>Leadership Conference</span>
-                </Feature>
-                <Feature>
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM8 15L3 10L4.41 8.59L8 12.17L15.59 4.58L17 6L8 15Z" fill="currentColor"/>
-                  </svg>
-                  <span>Excellence Awards</span>
-                </Feature>
-                <Feature>
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM8 15L3 10L4.41 8.59L8 12.17L15.59 4.58L17 6L8 15Z" fill="currentColor"/>
-                  </svg>
-                  <span>Networking Events</span>
-                </Feature>
-                <Feature>
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM8 15L3 10L4.41 8.59L8 12.17L15.59 4.58L17 6L8 15Z" fill="currentColor"/>
-                  </svg>
-                  <span>Hall of Fame</span>
-                </Feature>
-              </ProgramFeatures>
-              <ProgramButton to="/conference-and-awards">
-                Learn More
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M10 17L8.59 15.59L13.17 11H3V9H13.17L8.59 4.41L10 3L17 10L10 17Z"/>
-                </svg>
-              </ProgramButton>
+              <FlyerContainer>
+                <ConferenceFlyer />
+              </FlyerContainer>
             </motion.div>
-          </ProgramContent>
-          
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={scrollFadeInVariant}
-          >
-            <FlyerContainer>
-              <ConferenceFlyer />
-            </FlyerContainer>
-          </motion.div>
-        </ProgramContainer>
-      </ProgramSection>
-
-      <EventCalendar />
-      
-      <TicketSection />
-      <SponsorsSection />
-      <NewsFeed />
+          </ProgramContainer>
+        </ProgramSection>
+      </motion.div>
+      <motion.div variants={sectionVariants}>
+        <EventCalendar />
+      </motion.div>
+      <motion.div variants={sectionVariants}>
+        <TicketSection />
+      </motion.div>
+      <motion.div variants={sectionVariants}>
+        <SponsorsSection />
+      </motion.div>
+      <motion.div variants={sectionVariants}>
+        <NewsFeed />
+      </motion.div>
     </HomeContainer>
   );
 };

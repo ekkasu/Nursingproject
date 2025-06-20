@@ -25,6 +25,7 @@ import ComingSoon from './pages/ComingSoon';
 import UserDashboard from './pages/UserDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import Terms from './pages/Terms';
+import Analytics from './pages/Analytics';
 
 // Global styles
 const AppContainer = styled.div`
@@ -43,7 +44,7 @@ const MainContent = styled.main`
 // Component to handle conditional footer rendering
 const AppContent = () => {
   const location = useLocation();
-  const hideFooterPaths = ['/login', '/tickets', '/nomination', '/reservation', '/coming-soon', '/dashboard', '/admin'];
+  const hideFooterPaths = ['/login', '/tickets', '/nomination', '/reservation', '/coming-soon', '/dashboard', '/admin', '/analytics'];
   const shouldShowFooter = !hideFooterPaths.includes(location.pathname) && !location.pathname.startsWith('/dashboard') && !location.pathname.startsWith('/admin');
 
   return (
@@ -70,6 +71,7 @@ const AppContent = () => {
           <Route path="/dashboard" element={<UserDashboard />} />
           <Route path="/admin/*" element={<AdminDashboard />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/analytics" element={<Analytics />} />
         </Routes>
       </MainContent>
       {shouldShowFooter && <Footer />}
