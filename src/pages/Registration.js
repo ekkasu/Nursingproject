@@ -652,6 +652,7 @@ const Registration = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState('');
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [profilePictureError, setProfilePictureError] = useState('');
   
   // Data from API endpoints
   const [jobTitles, setJobTitles] = useState([]);
@@ -933,14 +934,18 @@ const Registration = () => {
   
   const nextStep = () => {
     if (currentStep === 1) {
-      // Validate terms and conditions before proceeding
       if (!formData.agreeTerms || !formData.agreePrivacy) {
         return;
       }
     }
-    
+
     if (currentStep === 2) {
-      // Validate passwords before proceeding
+      if (!profilePicture) {
+        setProfilePictureError('Profile picture is required');
+        return;
+      } else {
+        setProfilePictureError('');
+      }
       const passwordCheck = checkPasswordStrength(formData.password);
       if (!passwordCheck.isValid) {
         setPasswordError(passwordCheck.message);
@@ -952,9 +957,8 @@ const Registration = () => {
       }
       setPasswordError('');
     }
-    
+
     setCurrentStep(prev => prev + 1);
-    // Smooth scroll to top when changing steps
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   
@@ -1137,6 +1141,7 @@ const Registration = () => {
     const isEmailValid = formData.email && formData.email.length > 0;
     const isPasswordValid = formData.password && formData.password.length >= 8;
     const doPasswordsMatch = formData.password === formData.password_confirmation;
+    const isProfilePictureValid = !!profilePicture;
     
     // Basic validation for all steps
     const baseValidation = (
@@ -1153,7 +1158,8 @@ const Registration = () => {
       doPasswordsMatch &&
       formData.registration_type &&
       !passwordError &&
-      !phoneError
+      !phoneError &&
+      isProfilePictureValid
     );
     
     // Additional validation for final confirmation step
@@ -1630,7 +1636,7 @@ const Registration = () => {
                   </FormGroup>
                   
                   <FormGroup>
-                    <Label htmlFor="profile">Profile Picture</Label>
+                    <Label htmlFor="profile">Profile Picture <span style={{ color: '#000000' }}>*</span></Label>
                     <div>
                       <Input
                         type="file"
@@ -1655,8 +1661,9 @@ const Registration = () => {
                           />
                         </div>
                       )}
+                      {profilePictureError && (<ErrorText>{profilePictureError}</ErrorText>)}
                       <small style={{ color: '#666', display: 'block', marginTop: '5px' }}>
-                        Upload a profile picture (optional)
+                        Upload a profile picture (required)
                       </small>
                     </div>
                   </FormGroup>
