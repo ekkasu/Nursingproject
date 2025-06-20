@@ -1293,7 +1293,7 @@ const Registration = () => {
         marginBottom: '15px',
         fontSize: window.innerWidth <= 768 ? '1.2rem' : '1.3rem'
       }}>
-        Terms and Conditions for NMCON 2025
+        Terms and Conditions for NMLMCON 2025
       </h3>
       
       <p>
@@ -1327,7 +1327,7 @@ const Registration = () => {
       <Header />
       <PageContainer>
         <ContentContainer>
-          <PageTitle>Register for NMCON 2025</PageTitle>
+          <PageTitle>Register for NMLMCON 2025</PageTitle>
           <PageDescription>
             Join us for an enriching experience of learning, networking, and professional growth.
           </PageDescription>
@@ -1341,7 +1341,7 @@ const Registration = () => {
                 <SuccessIcon>✓</SuccessIcon>
                 <SuccessTitle>Registration Successful!</SuccessTitle>
                 <SuccessText>
-                  Congratulations! Your registration for NMCON 2025 has been completed successfully.
+                  Congratulations! Your registration for NMLMCON 2025 has been completed successfully.
                   We've sent a confirmation email to {formData.email} with your registration details.
                 </SuccessText>
                 <SuccessText>
